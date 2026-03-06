@@ -7,8 +7,8 @@ A personal events listing (concerts, festivals, trips, etc.) with two interfaces
 
 ## Data
 - Source: plain text file (`events.txt`), one event per line
-- Format: TBD (to be documented once nailed down)
-- Sample data in `sample/events.txt`
+- Format: documented in `FORMAT.md`
+- Sample data in `sample/events.txt` (not the master copy, may be outdated)
 
 ## Key Decisions
 - Web app is fully static — loads and parses events.txt client-side
