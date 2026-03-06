@@ -8,7 +8,8 @@
 - [ ] Flesh out CLAUDE.md: project structure, conventions, verification steps (interview user and/or propose defaults once web app work begins)
 
 ## Web App — Implementation
-- [ ] Vendor Alpine.js locally
+- [x] Vendor Alpine.js locally (spa/vendor/alpine-3.15.8.min.js)
+- [ ] Add a command/script to update vendored Alpine.js to the latest release
 - [ ] SPA skeleton (index.html, app.js, style.css)
 - [ ] Event parser in JS (based on FORMAT.md spec)
 - [ ] Event listing view (newest first)
