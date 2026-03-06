@@ -9,6 +9,7 @@ A personal events listing (concerts, festivals, trips, etc.) with two interfaces
 - Source: plain text file (`events.txt`), one event per line
 - Format: documented in `FORMAT.md`
 - Sample data in `sample/events.txt` (not the master copy, may be outdated)
+- **The repo is public** — do not commit secrets, credentials, or other sensitive data
 
 ## Key Decisions
 - Web app is fully static — loads and parses events.txt client-side
