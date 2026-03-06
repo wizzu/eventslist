@@ -5,6 +5,7 @@
 - [x] Define and document the event line format (FORMAT.md)
 - [x] Design document (DESIGN.md)
 - [x] Get gigcount.py into the repo
+- [ ] Flesh out CLAUDE.md: project structure, conventions, verification steps (interview user and/or propose defaults once web app work begins)
 
 ## Web App — Implementation
 - [ ] Vendor Alpine.js locally
