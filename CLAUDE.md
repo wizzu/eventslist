@@ -13,5 +13,7 @@ A personal events listing (concerts, festivals, trips, etc.) with two interfaces
 ## Key Decisions
 - Web app is fully static — loads and parses events.txt client-side
 - No backend/server required for the web app
+- Alpine.js (vendored locally) for UI reactivity
 - Parsing logic exists separately in JS (web) and Python (CLI) — accepted tradeoff
 - gigcount.py remains a standalone CLI tool
+- See DESIGN.md for detailed design, FORMAT.md for data format spec
