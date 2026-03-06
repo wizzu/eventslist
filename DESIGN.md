@@ -26,7 +26,7 @@ static/
 Single page with:
 - **Header** — title, summary counts
 - **Search box** — single input, filters as you type (matches performer/event names, location, year)
-- **Listing view** — events displayed chronologically, newest first by default
+- **Listing view** — events displayed newest first by default (note: events.txt itself is ordered oldest-first)
 - **Statistics view** — performer counts and yearly counts (mirrors gigcount.py output)
 - Both views respect the current filter
 - Listing and statistics could be shown as a toggle (switch between views) or as a dual/split view — to be evaluated during implementation
