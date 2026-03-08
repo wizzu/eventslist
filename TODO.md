@@ -12,12 +12,12 @@ Steps are intentionally small to facilitate incremental learning alongside build
 
 - [x] Vendor Alpine.js locally (spa/vendor/alpine-3.15.8.min.js)
 - [ ] Add a command/script to update vendored Alpine.js to the latest release
-- [ ] Minimal `index.html` shell — boilerplate, load Alpine.js + CSS + JS, static placeholder content
-- [ ] Base CSS — page layout structure (header, main area), basic visual skeleton
-- [ ] Wire up Alpine.js — `x-data` on the app root, confirm reactivity works with a simple test
-- [ ] Fetch `events.txt` on load — read the file via HTTP, log raw text to confirm it works
-- [ ] JS parser — parse raw text into event objects (based on FORMAT.md)
-- [ ] Event listing view — render parsed events with `x-for`, newest first
+- [x] Minimal `index.html` shell — boilerplate, load Alpine.js + CSS + JS, static placeholder content
+- [x] Base CSS — page layout structure (header, main area), basic visual skeleton
+- [x] Wire up Alpine.js — `x-data` on the app root, confirm reactivity works with a simple test
+- [x] Fetch `events.txt` on load — read the file via HTTP, log raw text to confirm it works
+- [x] JS parser — parse raw text into event objects (based on FORMAT.md)
+- [x] Event listing view — render parsed events with `x-for`, newest first
 - [ ] Search/filter box — `x-model` input, filter the event list reactively
 - [ ] Header summary counts — total events, filtered count
 - [ ] Statistics view — performer counts table (derived from filtered list)

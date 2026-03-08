@@ -19,7 +19,7 @@ spa/
     app.js              # Event parsing, stats computation, app logic
     style.css           # Styling
     vendor/
-      alpine.min.js     # Vendored Alpine.js
+      alpine-3.15.8.min.js  # Vendored Alpine.js
 ```
 
 ## UI Layout

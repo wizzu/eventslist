@@ -92,8 +92,17 @@ document.addEventListener('alpine:init', () => {
     async init() {
       const response = await fetch('events.txt');
       const text = await response.text();
-      this.events = parseEvents(text);
+      this.events = parseEvents(text).reverse(); // newest first
       this.status = `Loaded ${this.events.length} events.`;
+    },
+
+    // Build a display title from the parsed event object.
+    eventTitle(event) {
+      if (event.performers.length > 0) {
+        const names = event.performers.map(p => p.name).join(', ');
+        return event.eventName ? `${event.eventName}: ${names}` : names;
+      }
+      return event.eventName || '';
     },
   }));
 });
