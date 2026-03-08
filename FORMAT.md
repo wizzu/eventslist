@@ -2,6 +2,13 @@
 
 Each line in `events.txt` represents one event. Blank lines are ignored.
 
+## Evolving the Format
+
+The format can be changed if there's a good reason (e.g. to simplify parsing or remove ambiguity). Any proposed change must:
+- Be small and targeted — nothing that requires touching every line in the file
+- Come with a concrete proposal before any files are modified
+- Be applied consistently to `events.txt`, `sample/events.txt`, `gigcount.py`, and this document
+
 ## Basic Structure
 
 ```
