@@ -5,20 +5,21 @@ This document captures the current design approach. It is not set in stone — i
 ## Architecture
 
 - Fully static SPA — no backend required
-- `index.html` + JS/CSS assets + `events.txt` served from same directory
+- Everything under `spa/`: `index.html`, JS/CSS assets, and `events.txt`
 - Alpine.js (vendored locally) for UI reactivity
 - Event parsing and stats computation in vanilla JS
 
 ## File Structure
 
 ```
-index.html              # The SPA
-events.txt              # Event data (default location, configurable)
-static/
-  app.js                # Event parsing, stats computation, app logic
-  style.css             # Styling
-  vendor/
-    alpine.min.js       # Vendored Alpine.js
+spa/
+  index.html            # The SPA
+  events.txt            # Event data
+  static/
+    app.js              # Event parsing, stats computation, app logic
+    style.css           # Styling
+    vendor/
+      alpine.min.js     # Vendored Alpine.js
 ```
 
 ## UI Layout
@@ -89,7 +90,7 @@ Standalone Python script for generating concert statistics from events.txt. Pred
 
 Local testing:
 ```bash
-python3 -m http.server
+cd spa && python3 -m http.server
 # then open http://localhost:8000
 ```
 

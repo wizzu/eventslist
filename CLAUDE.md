@@ -44,7 +44,7 @@ Implementation is incremental — one small piece at a time, each followed by an
 
 Local web development:
 ```bash
-python3 -m http.server
+cd spa && python3 -m http.server
 # open http://localhost:8000
 ```
 
