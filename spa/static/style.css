@@ -1,1 +1,41 @@
-/* styles go here */
+/* Make padding/border included in element width (not added on top).
+   This is the modern default reset — without it sizing gets confusing. */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Turn the page into a vertical flex container so the header sticks to
+   the top and main content fills the rest of the viewport height. */
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #e8e8e8;
+  color: #222;
+
+  min-height: 100vh;      /* at least full viewport height */
+  display: flex;
+  flex-direction: column; /* stack children vertically */
+}
+
+/* Fixed header bar at the top. */
+header {
+  background: #1a1a2e;
+  color: #eee;
+  padding: 1rem 2rem;     /* rem = relative to root font size (~16px) */
+}
+
+/* Remove default top/bottom margin so the h1 doesn't push outside the header. */
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+/* Main content area. flex: 1 means "take all remaining vertical space".
+   max-width + margin: auto centers it on wide screens. */
+main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
