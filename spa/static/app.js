@@ -3,8 +3,8 @@
 // Matches a full event line. Permissive about text content to support Unicode.
 // Groups: (1) full date, (2) year, (3) description (performers or event desc),
 //         (4) location, (5) " [C]" or " [MC]" (optional).
-// The "; " separates description from location; " [C]"/[MC]" anchors the end.
-const LINE_RE = /^([\d?]{1,3}\.[\d?]{1,2}\.(\d{4}))\s+(.+); (.+?)( \[M?C\])?$/;
+// Location explicitly excludes "[" so it can't accidentally consume the type tag.
+const LINE_RE = /^([\d?]{1,3}\.[\d?]{1,2}\.(\d{4}))\s+(.+); ([^\[]+)( \[M?C\])?$/;
 
 // Split performers on comma or +, but NOT inside parentheses.
 // e.g. "Fish (with band), Opeth" splits into ["Fish (with band)", "Opeth"]
