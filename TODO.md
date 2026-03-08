@@ -8,14 +8,21 @@
 - [ ] Flesh out CLAUDE.md: project structure, conventions, verification steps (interview user and/or propose defaults once web app work begins)
 
 ## Web App — Implementation
+Steps are intentionally small to facilitate incremental learning alongside building.
+
 - [x] Vendor Alpine.js locally (spa/vendor/alpine-3.15.8.min.js)
 - [ ] Add a command/script to update vendored Alpine.js to the latest release
-- [ ] SPA skeleton (index.html, app.js, style.css)
-- [ ] Event parser in JS (based on FORMAT.md spec)
-- [ ] Event listing view (newest first)
-- [ ] Search/filter box (matches name, location, year)
-- [ ] Statistics view (performer counts, yearly counts, totals)
-- [ ] Filtered statistics (stats update based on current filter)
+- [ ] Minimal `index.html` shell — boilerplate, load Alpine.js + CSS + JS, static placeholder content
+- [ ] Base CSS — page layout structure (header, main area), basic visual skeleton
+- [ ] Wire up Alpine.js — `x-data` on the app root, confirm reactivity works with a simple test
+- [ ] Fetch `events.txt` on load — read the file via HTTP, log raw text to confirm it works
+- [ ] JS parser — parse raw text into event objects (based on FORMAT.md)
+- [ ] Event listing view — render parsed events with `x-for`, newest first
+- [ ] Search/filter box — `x-model` input, filter the event list reactively
+- [ ] Header summary counts — total events, filtered count
+- [ ] Statistics view — performer counts table (derived from filtered list)
+- [ ] Per-year counts table
+- [ ] Confirm stats match gigcount.py output (validation step)
 
 ## Future / Nice-to-have
 - [ ] Sort order toggle (newest/oldest first)

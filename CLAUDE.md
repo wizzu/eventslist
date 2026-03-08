@@ -5,6 +5,8 @@ A personal events listing (concerts, festivals, trips, etc.) with two interfaces
 1. **Web SPA** — static single-page app for browsing and statistics (no backend)
 2. **CLI tool** (`gigcount.py`) — Python script for generating statistics
 
+**Project goals:** Build the app AND learn web technologies along the way. Implementation is intentionally incremental to support this — see "Teaching & Learning Goal" section below.
+
 ## Data
 - Source: plain text file (`events.txt`), one event per line
 - Format: documented in `FORMAT.md`
@@ -18,6 +20,25 @@ A personal events listing (concerts, festivals, trips, etc.) with two interfaces
 - Parsing logic exists separately in JS (web) and Python (CLI) — accepted tradeoff
 - gigcount.py remains a standalone CLI tool
 - See DESIGN.md for detailed design, FORMAT.md for data format spec
+
+## Teaching & Learning Goal
+
+**This is a dual-purpose project: build the app AND learn web technologies.**
+
+Implementation is incremental — one small piece at a time, each followed by an explanation of what was added and how it works. This is a first-class goal, not a side note.
+
+**User background:**
+- 20+ years software development, fluent in Python
+- Familiar with HTML basics, has worked with JS/TS, used Bootstrap ~15 years ago
+- CSS is rusty but picks up quickly
+- Not yet familiar with Alpine.js or modern web patterns
+
+**How to pitch explanations:**
+- Skip HTML basics and general programming concepts
+- Focus on **modern web-specific concepts**: the DOM, how browsers load/execute code, modern CSS (flexbox/grid replacing float-based layouts, CSS custom properties)
+- Explain **Alpine.js** constructs as they're introduced (`x-data`, `x-bind`, `x-for`, etc.)
+- Explain **why** things are done a certain way, not just what they do
+- After each step, say what to look for in the browser to verify it works
 
 ## Development
 
