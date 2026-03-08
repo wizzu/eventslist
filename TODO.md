@@ -18,6 +18,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Fetch `events.txt` on load — read the file via HTTP, log raw text to confirm it works
 - [x] JS parser — parse raw text into event objects (based on FORMAT.md)
 - [x] Event listing view — render parsed events with `x-for`, newest first
+- [ ] Filter out non-concert events (type === null) — SPA is gigs-only, no UI toggle needed
 - [ ] Search/filter box — `x-model` input, filter the event list reactively
 - [ ] Header summary counts — total events, filtered count
 - [ ] Statistics view — performer counts table (derived from filtered list)
