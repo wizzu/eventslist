@@ -25,6 +25,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [ ] Confirm stats match gigcount.py output (validation step)
 
 ## Future / Nice-to-have
+- [ ] Add a favicon (currently causes a 404 in the browser console)
 - [ ] Sort order toggle (newest/oldest first)
 - [ ] Evaluate listing + stats as dual/split view vs toggle
 - [ ] Rich statistics visualizations (bar charts, graphs, etc.)
