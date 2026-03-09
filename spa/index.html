@@ -14,20 +14,25 @@
     <span class="header-counts" x-text="counts"></span>
   </header>
   <main>
-    <p x-show="!events.length" x-text="status"></p>
-    <div class="search-wrap">
-      <input class="search-box" type="search" placeholder="Search events…" x-model="query">
-      <button class="search-clear" x-show="query" @click="query = ''" aria-label="Clear search">✕</button>
+    <div class="left-col">
+      <p x-show="!events.length" x-text="status"></p>
+      <div class="search-wrap">
+        <input class="search-box" type="search" placeholder="Search events…" x-model="query">
+        <button class="search-clear" x-show="query" @click="query = ''" aria-label="Clear search">✕</button>
+      </div>
+      <div class="event-list">
+        <template x-for="(event, index) in filteredEvents" :key="index">
+          <div class="event-row">
+            <span class="event-date" x-text="event.date"></span>
+            <span class="event-title" x-text="eventTitle(event)"></span>
+            <span class="event-location" x-text="event.location"></span>
+            <span class="event-type" x-show="event.type" x-text="event.type ? '[' + event.type + ']' : ''"></span>
+          </div>
+        </template>
+      </div>
     </div>
-    <div class="event-list">
-      <template x-for="(event, index) in filteredEvents" :key="index">
-        <div class="event-row">
-          <span class="event-date" x-text="event.date"></span>
-          <span class="event-title" x-text="eventTitle(event)"></span>
-          <span class="event-location" x-text="event.location"></span>
-          <span class="event-type" x-show="event.type" x-text="event.type ? '[' + event.type + ']' : ''"></span>
-        </div>
-      </template>
+    <div class="right-col">
+      <p class="stats-placeholder">Stats coming soon…</p>
     </div>
   </main>
 </body>
