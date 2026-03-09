@@ -21,6 +21,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Filter out non-concert events (type === null) — SPA is gigs-only, no UI toggle needed
 - [x] Search/filter box — `x-model` input, filter the event list reactively
 - [x] Header summary counts — total events, filtered count
+- [ ] Header counts should always show totals only; move filtered counts to the stats panel (above the performer table)
 - [ ] Two-column layout — left: search + scrollable listing (65%), right: sticky stats panel (35%)
 - [ ] Statistics view — performer counts table (name, C, MC, total), sorted by total desc; year counts table
 - [ ] Per-year counts table
@@ -33,6 +34,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [ ] Add a favicon (currently causes a 404 in the browser console)
 - [ ] Sort order toggle (newest/oldest first)
 - [ ] Evaluate listing + stats as dual/split view vs toggle
+- [ ] MC indicator in event listing — mini-concerts should be visually indicated (full concert is implied); avoid showing raw [C]/[MC] tags; consider inline badge/label rather than a separate column. Add a legend for the stats table headers too.
 - [ ] Rich statistics visualizations (bar charts, graphs, etc.)
 - [ ] Responsive design
 - [ ] Configurable events.txt path
