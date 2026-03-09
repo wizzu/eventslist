@@ -21,7 +21,7 @@ DATE  DESCRIPTION; LOCATION [TAG]
 - **LOCATION** — venue and optionally city/country, after the semicolon.
 - **TAG** — optional, at the end of the line:
   - `[C]` — concert (gig)
-  - `[MC]` — mini-concert
+  - `[MC]` — mini-concert: fewer than 6 songs and under 30 minutes. Applied per performer — a multi-act event can have individual performers tagged `[MC]` if their slot was short, even if the overall event was long.
 
 ## Description Variants
 
@@ -60,12 +60,16 @@ Performer A, Performer B, Performer C [MC]; Example Location [C]
 ```
 Here A and B are full concerts, C is a mini-concert.
 
-### Multi-day events
-Some events note duration in parentheses after the location:
+### Event comment
+An optional parenthesized comment can appear after the location (and before the tag):
 ```
 6.8.1994   Ropecon 1994; Paasitorni (2 days)
+24.4.2004  Nerdee; Ylä-Pirkanmaan Messut, Mänttä (1) [C]
+24.4.2004  Nerdee; Ylä-Pirkanmaan Messut, Mänttä (2) [C]
 ```
-This is part of the location field, not a separate parsed element.
+The comment applies to the whole event. Common uses: event duration (`2 days`), show number disambiguation when the same performer played multiple shows at the same venue on the same date (`(1)`, `(2)`).
+
+Currently the comment is not parsed out as a separate field — it is included in the location string.
 
 ## Statistics
 

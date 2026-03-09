@@ -98,6 +98,16 @@ document.addEventListener('alpine:init', () => {
       this.status = `Loaded ${this.events.length} events.`;
     },
 
+    get counts() {
+      const fmt = events => {
+        const c = events.filter(e => e.type === 'C').length;
+        const mc = events.filter(e => e.type === 'MC').length;
+        return `${c} (${mc})`;
+      };
+      if (!this.query.trim()) return fmt(this.events);
+      return `${fmt(this.filteredEvents)} / ${fmt(this.events)}`;
+    },
+
     // Returns events matching the current search query.
     get filteredEvents() {
       const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);

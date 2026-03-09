@@ -8,12 +8,13 @@
   <script src="static/app.js" defer></script>
   <script src="static/vendor/alpine-3.15.8.min.js" defer></script>
 </head>
-<body>
+<body x-data="app">
   <header>
     <h1>Events</h1>
+    <span class="header-counts" x-text="counts"></span>
   </header>
-  <main x-data="app">
-    <p x-text="status"></p>
+  <main>
+    <p x-show="!events.length" x-text="status"></p>
     <input class="search-box" type="search" placeholder="Search events…" x-model="query">
     <div class="event-list">
       <template x-for="(event, index) in filteredEvents" :key="index">

@@ -51,6 +51,7 @@ Single page with:
     { name: "Performer B", type: "MC" }
   ],
   location: "Venue, City, Country",
+  comment: "2 days" | "(1)" | null,  // trailing parenthesized note after location (not yet parsed)
   type: "C" | "MC" | null,
   raw: "original line text"
 }

@@ -20,10 +20,13 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Event listing view — render parsed events with `x-for`, newest first
 - [x] Filter out non-concert events (type === null) — SPA is gigs-only, no UI toggle needed
 - [x] Search/filter box — `x-model` input, filter the event list reactively
-- [ ] Header summary counts — total events, filtered count
+- [x] Header summary counts — total events, filtered count
 - [ ] Statistics view — performer counts table (derived from filtered list)
 - [ ] Per-year counts table
 - [ ] Confirm stats match gigcount.py output (validation step)
+
+## Parser / Format
+- [ ] Extract trailing `(comment)` after location as a separate `comment` field — currently swallowed into the location string. Used for show number disambiguation e.g. `(1)`, `(2)`, and possibly other notes. Needs regex care (performer parens are in description, not location). Update FORMAT.md and gigcount.py too.
 
 ## Future / Nice-to-have
 - [ ] Add a favicon (currently causes a 404 in the browser console)

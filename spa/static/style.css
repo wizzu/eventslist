@@ -24,10 +24,23 @@ header {
   padding: 1rem 2rem;     /* rem = relative to root font size (~16px) */
 }
 
+/* Lay out header contents horizontally, vertically centered. */
+header {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+}
+
 /* Remove default top/bottom margin so the h1 doesn't push outside the header. */
 header h1 {
   margin: 0;
   font-size: 1.5rem;
+}
+
+/* Muted count display next to the title. */
+.header-counts {
+  color: #aaa;
+  font-size: 0.9rem;
 }
 
 /* Main content area. flex: 1 means "take all remaining vertical space".
