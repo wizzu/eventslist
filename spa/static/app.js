@@ -87,13 +87,25 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('app', () => ({
     status: 'Loading...',
     events: [],
+    query: '',
 
     // Called automatically by Alpine when the component initializes.
     async init() {
       const response = await fetch('events.txt');
       const text = await response.text();
-      this.events = parseEvents(text).reverse(); // newest first
+      const concerts = parseEvents(text).filter(e => e.type !== null);
+      this.events = concerts.reverse(); // newest first
       this.status = `Loaded ${this.events.length} events.`;
+    },
+
+    // Returns events matching the current search query.
+    get filteredEvents() {
+      const q = this.query.trim().toLowerCase();
+      if (!q) return this.events;
+      return this.events.filter(e => {
+        const haystack = [e.date, this.eventTitle(e), e.location].join(' ').toLowerCase();
+        return haystack.includes(q);
+      });
     },
 
     // Build a display title from the parsed event object.

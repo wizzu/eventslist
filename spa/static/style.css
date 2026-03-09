@@ -40,6 +40,18 @@ main {
   margin: 0 auto;
 }
 
+/* Full-width search input above the event list. */
+.search-box {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+}
+
 /* Each event is a horizontal row of fields. gap adds space between them. */
 .event-row {
   display: flex;

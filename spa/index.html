@@ -14,8 +14,9 @@
   </header>
   <main x-data="app">
     <p x-text="status"></p>
+    <input class="search-box" type="search" placeholder="Search events…" x-model="query">
     <div class="event-list">
-      <template x-for="(event, index) in events" :key="index">
+      <template x-for="(event, index) in filteredEvents" :key="index">
         <div class="event-row">
           <span class="event-date" x-text="event.date"></span>
           <span class="event-title" x-text="eventTitle(event)"></span>
