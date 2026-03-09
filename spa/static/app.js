@@ -10,6 +10,12 @@ const LINE_RE = /^([\d?]{1,3}\.[\d?]{1,2}\.(\d{4}))\s+(.+); ([^\[]+)( \[M?C\])?$
 // e.g. "Fish (with band), Opeth" splits into ["Fish (with band)", "Opeth"]
 const PERF_SPLIT_RE = /[,+]\s+(?![^()]*\))/;
 
+// Convert "D.M.YYYY" to a numeric sort key (YYYYMMDD). '?' treated as 0.
+function dateSortKey(dateStr) {
+  const [d, m, y] = dateStr.split('.').map(p => parseInt(p) || 0);
+  return y * 10000 + m * 100 + d;
+}
+
 function parseEvents(text) {
   const events = [];
   for (const raw of text.split('\n')) {
@@ -94,7 +100,7 @@ document.addEventListener('alpine:init', () => {
       const response = await fetch('events.txt');
       const text = await response.text();
       const concerts = parseEvents(text).filter(e => e.type !== null);
-      this.events = concerts.reverse(); // newest first
+      this.events = concerts.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date)); // newest first
       this.status = `Loaded ${this.events.length} events.`;
     },
 
@@ -115,6 +121,38 @@ document.addEventListener('alpine:init', () => {
       return this.events.filter(e => {
         const haystack = [e.date, this.eventTitle(e), e.location].join(' ').toLowerCase();
         return words.every(w => haystack.includes(w));
+      });
+    },
+
+    // Aggregate per-performer counts from the filtered event list.
+    // If a search word matches performer names, only those performers are counted.
+    // If the event matched on location/date (no performers match), all are counted.
+    get performerStats() {
+      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      const map = new Map();
+
+      for (const event of this.filteredEvents) {
+        // Which performers in this event match at least one search word?
+        const matched = words.length
+          ? event.performers.filter(p => words.some(w => p.name.toLowerCase().includes(w)))
+          : event.performers;
+        // If none matched by name, the event matched on another field — include all.
+        const toCount = matched.length ? matched : event.performers;
+
+        for (const p of toCount) {
+          if (!map.has(p.name)) map.set(p.name, { name: p.name, c: 0, mc: 0 });
+          const entry = map.get(p.name);
+          if (p.type === 'C') entry.c++;
+          else if (p.type === 'MC') entry.mc++;
+        }
+      }
+
+      return [...map.values()].sort((a, b) => {
+        const cDiff = b.c - a.c;
+        if (cDiff !== 0) return cDiff;
+        const mcDiff = b.mc - a.mc;
+        if (mcDiff !== 0) return mcDiff;
+        return a.name.localeCompare(b.name);
       });
     },
 
