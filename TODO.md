@@ -21,7 +21,8 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Filter out non-concert events (type === null) — SPA is gigs-only, no UI toggle needed
 - [x] Search/filter box — `x-model` input, filter the event list reactively
 - [x] Header summary counts — total events, filtered count
-- [ ] Statistics view — performer counts table (derived from filtered list)
+- [ ] Two-column layout — left: search + scrollable listing (65%), right: sticky stats panel (35%)
+- [ ] Statistics view — performer counts table (name, C, MC, total), sorted by total desc; year counts table
 - [ ] Per-year counts table
 - [ ] Confirm stats match gigcount.py output (validation step)
 

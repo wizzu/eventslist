@@ -27,10 +27,10 @@ spa/
 Single page with:
 - **Header** — title, summary counts
 - **Search box** — single input, filters as you type (matches performer/event names, location, year)
-- **Listing view** — events displayed newest first by default (note: events.txt itself is ordered oldest-first)
-- **Statistics view** — performer counts and yearly counts (mirrors gigcount.py output)
-- Both views respect the current filter
-- Listing and statistics could be shown as a toggle (switch between views) or as a dual/split view — to be evaluated during implementation
+- **Search box** — in the left column, associated with the listing (stats update reactively as a side effect)
+- **Listing view** — left column (≈65% width), scrollable independently, events newest first
+- **Statistics view** — right column (≈35% width), sticky, visible alongside the listing at all times
+- Both views reflect the current search filter live
 
 ## Data Flow
 
