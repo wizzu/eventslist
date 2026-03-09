@@ -53,16 +53,43 @@ main {
   margin: 0 auto;
 }
 
+/* Wrapper positions the clear button relative to the input. */
+.search-wrap {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
 /* Full-width search input above the event list. */
 .search-box {
   display: block;
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 1rem;
+  padding: 0.5rem 2.5rem 0.5rem 0.75rem; /* right padding leaves room for clear button */
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   background: #fff;
+  /* Hide the browser's native clear button */
+  -webkit-appearance: none;
+}
+.search-box::-webkit-search-cancel-button {
+  display: none;
+}
+
+/* Clear button overlaid on the right side of the input. */
+.search-clear {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  padding: 0 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 0.85rem;
+}
+.search-clear:hover {
+  color: #333;
 }
 
 /* Each event is a horizontal row of fields. gap adds space between them. */
