@@ -24,12 +24,14 @@ spa/
 
 ## UI Layout
 
+*This section reflects current intent. Layout details are expected to evolve through experimentation.*
+
 Single page with:
 - **Header** — title, summary counts
 - **Search box** — single input, filters as you type (matches performer/event names, location, year)
-- **Search box** — in the left column, associated with the listing (stats update reactively as a side effect)
+- **Search box** — planned in the left column, associated with the listing (stats update reactively as a side effect); may move to span both columns if that feels more natural
 - **Listing view** — left column (≈65% width), scrollable independently, events newest first
-- **Statistics view** — right column (≈35% width), sticky, visible alongside the listing at all times
+- **Statistics view** — right column (≈35% width), sticky, visible alongside the listing at all times; starting point, layout may be adjusted through experimentation
 - Both views reflect the current search filter live
 
 ## Data Flow
