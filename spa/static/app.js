@@ -100,11 +100,11 @@ document.addEventListener('alpine:init', () => {
 
     // Returns events matching the current search query.
     get filteredEvents() {
-      const q = this.query.trim().toLowerCase();
-      if (!q) return this.events;
+      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      if (!words.length) return this.events;
       return this.events.filter(e => {
         const haystack = [e.date, this.eventTitle(e), e.location].join(' ').toLowerCase();
-        return haystack.includes(q);
+        return words.every(w => haystack.includes(w));
       });
     },
 
