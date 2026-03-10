@@ -17,8 +17,8 @@
     <div class="left-col">
       <p x-show="!events.length" x-text="status"></p>
       <div class="search-wrap">
-        <input class="search-box" type="search" placeholder="Search events…" x-model="query">
-        <button class="search-clear" x-show="query" @click="query = ''" aria-label="Clear search">✕</button>
+        <input class="search-box" type="search" placeholder="Search events…" x-model="query" x-ref="search">
+        <button class="search-clear" x-show="query" @click="query = ''; $refs.search.focus()" aria-label="Clear search">✕</button>
       </div>
       <div class="event-list">
         <template x-for="(event, index) in filteredEvents" :key="index">
