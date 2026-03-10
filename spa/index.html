@@ -32,7 +32,63 @@
       </div>
     </div>
     <div class="right-col">
-      <p class="stats-placeholder">Stats coming soon…</p>
+      <h2 class="stats-heading">By year</h2>
+      <div class="stats-table-scroll">
+      <table class="stats-table">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th title="Full concerts">[C]</th>
+            <th title="Mini-concerts">[MC]</th>
+          </tr>
+        </thead>
+        <template x-for="y in yearStats" :key="y.year">
+          <tr>
+            <td x-text="y.year"></td>
+            <td x-text="y.c"></td>
+            <td x-text="y.mc"></td>
+          </tr>
+        </template>
+      </table>
+      </div>
+
+      <h2 class="stats-heading" style="margin-top: 1.5rem">By location</h2>
+      <div class="stats-table-scroll">
+      <table class="stats-table">
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th title="Full concerts">[C]</th>
+            <th title="Mini-concerts">[MC]</th>
+          </tr>
+        </thead>
+        <template x-for="l in locationStats" :key="l.location">
+          <tr>
+            <td x-text="l.location"></td>
+            <td x-text="l.c"></td>
+            <td x-text="l.mc"></td>
+          </tr>
+        </template>
+      </table>
+      </div>
+
+      <h2 class="stats-heading" style="margin-top: 1.5rem">Performers</h2>
+      <table class="stats-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th title="Full concerts">[C]</th>
+            <th title="Mini-concerts">[MC]</th>
+          </tr>
+        </thead>
+        <template x-for="p in performerStats" :key="p.name">
+          <tr>
+            <td x-text="p.name"></td>
+            <td x-text="p.c"></td>
+            <td x-text="p.mc"></td>
+          </tr>
+        </template>
+      </table>
     </div>
   </main>
 </body>

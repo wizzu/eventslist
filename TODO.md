@@ -27,6 +27,9 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [ ] Per-year counts table
 - [ ] Confirm stats match gigcount.py output (validation step)
 
+## Data / Format Issues
+- [ ] "Britannia (Espoontori)" and "Britannia (Kannelmäki)" are the same pub chain in different districts — currently parsed as one venue due to comment-stripping. Need to decide how to represent chain venues with district in the data format without conflicting with the trailing (comment) syntax.
+
 ## Parser / Format
 - [ ] Extract trailing `(comment)` after location as a separate `comment` field — currently swallowed into the location string. Used for show number disambiguation e.g. `(1)`, `(2)`, and possibly other notes. Needs regex care (performer parens are in description, not location). Update FORMAT.md and gigcount.py too.
 

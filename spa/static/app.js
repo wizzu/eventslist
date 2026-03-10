@@ -124,6 +124,38 @@ document.addEventListener('alpine:init', () => {
       });
     },
 
+    // Aggregate per-location counts from the filtered event list.
+    get locationStats() {
+      const map = new Map();
+      for (const event of this.filteredEvents) {
+        // Strip trailing (comment) from location for grouping purposes.
+        const loc = event.location.replace(/\s*\([^)]*\)\s*$/, '').trim();
+        if (!map.has(loc)) map.set(loc, { location: loc, c: 0, mc: 0 });
+        const entry = map.get(loc);
+        if (event.type === 'C') entry.c++;
+        else if (event.type === 'MC') entry.mc++;
+      }
+      return [...map.values()].sort((a, b) => {
+        const cDiff = b.c - a.c;
+        if (cDiff !== 0) return cDiff;
+        const mcDiff = b.mc - a.mc;
+        if (mcDiff !== 0) return mcDiff;
+        return a.location.localeCompare(b.location);
+      });
+    },
+
+    // Aggregate per-year counts from the filtered event list.
+    get yearStats() {
+      const map = new Map();
+      for (const event of this.filteredEvents) {
+        if (!map.has(event.year)) map.set(event.year, { year: event.year, c: 0, mc: 0 });
+        const entry = map.get(event.year);
+        if (event.type === 'C') entry.c++;
+        else if (event.type === 'MC') entry.mc++;
+      }
+      return [...map.values()].sort((a, b) => b.year - a.year);
+    },
+
     // Aggregate per-performer counts from the filtered event list.
     // If a search word matches performer names, only those performers are counted.
     // If the event matched on location/date (no performers match), all are counted.
