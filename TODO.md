@@ -22,9 +22,9 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Search/filter box — `x-model` input, filter the event list reactively
 - [x] Header summary counts — total events, filtered count
 - [ ] Header counts should always show totals only; move filtered counts to the stats panel (above the performer table)
-- [ ] Two-column layout — left: search + scrollable listing (65%), right: sticky stats panel (35%)
-- [ ] Statistics view — performer counts table (name, C, MC, total), sorted by total desc; year counts table
-- [ ] Per-year counts table
+- [x] Two-column layout — left: search + scrollable listing (65%), right: sticky stats panel (35%)
+- [x] Statistics view — performer counts table, by-year table, by-location table; all react to search filter
+- [x] Per-year counts table
 - [ ] Confirm stats match gigcount.py output (validation step)
 
 ## Data / Format Issues

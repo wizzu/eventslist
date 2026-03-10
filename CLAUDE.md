@@ -53,6 +53,10 @@ CLI tool:
 python3 gigcount.py events.txt
 ```
 
+## TODO Hygiene
+
+When completing a task from TODO.md, mark it `[x]` in the same commit. When adding new tasks mid-session, add them to TODO.md immediately so nothing gets lost.
+
 ## Project Structure, Conventions & Verification
 
 **This section needs to be filled in as the project develops.**
