@@ -21,7 +21,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Filter out non-concert events (type === null) — SPA is gigs-only, no UI toggle needed
 - [x] Search/filter box — `x-model` input, filter the event list reactively
 - [x] Header summary counts — total events, filtered count
-- [ ] Header counts should always show totals only; move filtered counts to the stats panel (above the performer table)
+- [x] Header counts should always show totals only; move filtered counts to the stats panel (above the performer table)
 - [x] Two-column layout — left: search + scrollable listing (65%), right: sticky stats panel (35%)
 - [x] Statistics view — performer counts table, by-year table, by-location table; all react to search filter
 - [x] Per-year counts table
@@ -37,6 +37,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [ ] Review JS and CSS for missing comments — add concise explanations for non-obvious patterns (Alpine directives, flex/layout tricks, regex, reactive getters). Skip obvious things. Aimed at someone learning the stack.
 
 ## Future / Nice-to-have
+- [ ] Add a small, non-prominent "Generated with [eventslist](github repo url)" link, e.g. top-right corner, very small text
 - [ ] Column sorting for stats tables (By Year, By Location, Performers) — click column header to sort by name/count; count column sorts as a single value (C+MC combined or C-primary/MC-secondary as currently); ascending only is probably sufficient; event listing doesn't need alternate sort orders
 - [ ] Add a favicon (currently causes a 404 in the browser console)
 - [ ] Sort order toggle (newest/oldest first)

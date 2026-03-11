@@ -82,7 +82,11 @@ function parseLine(raw) {
     eventName = eventName || descPart.trim();
   }
 
-  return { date, year, eventName, performers, location, type, raw };
+  // A multi-performer [MC] event is a full [C] event — the event wasn't a
+  // mini-concert, only the individual sets were. Single-performer [MC] stays MC.
+  const eventType = (type === 'MC' && performers.length > 1) ? 'C' : type;
+
+  return { date, year, eventName, performers, location, type: eventType, raw };
 }
 
 
@@ -104,15 +108,39 @@ document.addEventListener('alpine:init', () => {
       this.status = `Loaded ${this.events.length} events.`;
     },
 
-    get counts() {
-      const fmt = events => {
-        const c = events.filter(e => e.type === 'C').length;
-        const mc = events.filter(e => e.type === 'MC').length;
-        return `${c} (${mc})`;
-      };
-      if (!this.query.trim()) return fmt(this.events);
-      return `${fmt(this.filteredEvents)} / ${fmt(this.events)}`;
+    // Format a list of events as "C (MC)".
+    fmtCounts(events) {
+      const c = events.filter(e => e.type === 'C').length;
+      const mc = events.filter(e => e.type === 'MC').length;
+      return `${c} (${mc})`;
     },
+
+    // Total event counts, always unfiltered — shown in the header.
+    get counts() {
+      return this.fmtCounts(this.events);
+    },
+
+    // 'performer' if every filtered event has at least one performer matching the query.
+    // 'other' if events matched on event name, location, or date instead.
+    get searchMode() {
+      if (!this.query.trim() || !this.filteredEvents.length) return 'other';
+      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      return this.filteredEvents.every(event =>
+        event.performers.some(p => words.some(w => p.name.toLowerCase().includes(w)))
+      ) ? 'performer' : 'other';
+    },
+
+    // Sum of all performer counts in the current filtered view — i.e. total performances.
+    get performanceCounts() {
+      return this.performerStats.reduce((s, p) => ({ c: s.c + p.c, mc: s.mc + p.mc }), { c: 0, mc: 0 });
+    },
+
+    // Formatted performance counts string for the summary block.
+    get performanceCountsStr() {
+      const { c, mc } = this.performanceCounts;
+      return `${c} (${mc})`;
+    },
+
 
     // Returns events matching the current search query.
     get filteredEvents() {
@@ -179,7 +207,7 @@ document.addEventListener('alpine:init', () => {
         }
       }
 
-      return [...map.values()].sort((a, b) => {
+return [...map.values()].sort((a, b) => {
         const cDiff = b.c - a.c;
         if (cDiff !== 0) return cDiff;
         const mcDiff = b.mc - a.mc;

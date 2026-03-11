@@ -20,6 +20,7 @@
         <input class="search-box" type="search" placeholder="Search events…" x-model="query" x-ref="search">
         <button class="search-clear" x-show="query" @click="query = ''; $refs.search.focus()" aria-label="Clear search">✕</button>
       </div>
+      <div class="event-count" x-text="fmtCounts(filteredEvents) + ' events'"></div>
       <div class="event-list">
         <template x-for="(event, index) in filteredEvents" :key="index">
           <div class="event-row">
@@ -32,7 +33,25 @@
       </div>
     </div>
     <div class="right-col">
-      <h2 class="stats-heading">By year</h2>
+      <dl class="stats-summary">
+        <div class="stats-summary-row">
+          <dt>Events</dt>
+          <dd x-text="fmtCounts(filteredEvents)"></dd>
+        </div>
+        <div class="stats-summary-row">
+          <dt>Performances</dt>
+          <dd x-text="performanceCountsStr"></dd>
+        </div>
+        <div class="stats-summary-row">
+          <dt>Performers</dt>
+          <dd x-text="performerStats.length"></dd>
+        </div>
+        <div class="stats-summary-row">
+          <dt>Years</dt>
+          <dd x-text="yearStats.length"></dd>
+        </div>
+      </dl>
+      <h2 class="stats-heading stats-heading--first">Events by year</h2>
       <div class="stats-table-scroll">
       <table class="stats-table">
         <thead>
@@ -52,7 +71,7 @@
       </table>
       </div>
 
-      <h2 class="stats-heading" style="margin-top: 1.5rem">By location</h2>
+      <h2 class="stats-heading" style="margin-top: 1.5rem">Events by location</h2>
       <div class="stats-table-scroll">
       <table class="stats-table">
         <thead>

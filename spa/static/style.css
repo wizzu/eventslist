@@ -121,9 +121,35 @@ main {
 }
 
 /* First heading needs no top border or padding. */
-.stats-heading:first-child {
+.stats-heading--first {
   padding-top: 0;
   border-top: none;
+}
+
+/* Summary block at the top of the stats panel. Always visible, reacts to search. */
+.stats-summary {
+  margin: 0 0 1.5rem 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr auto; /* label left, value right */
+  gap: 0.2rem 1rem;
+  font-size: 0.85rem;
+}
+
+/* Each row is itself a grid item spanning both columns via subgrid. */
+.stats-summary-row {
+  display: contents; /* lets dt and dd participate directly in the parent grid */
+}
+
+.stats-summary dt {
+  color: #888;
+  font-weight: normal;
+}
+
+.stats-summary dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums; /* keep numbers from shifting width as they change */
 }
 
 /* Wrapper for year table — limits height so performer table stays visible. */
@@ -160,6 +186,14 @@ main {
 .stats-table td:nth-child(3) {
   text-align: right;
   width: 3rem;
+}
+
+
+/* Event count shown above the event list. */
+.event-count {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 0.5rem;
 }
 
 /* Each event is a horizontal row of fields. gap adds space between them. */
