@@ -38,8 +38,14 @@ function parseLine(raw) {
   const date = m[1];
   const year = parseInt(m[2]);
   const desc = m[3];
-  const location = m[4].trim();
+  const rawLocation = m[4].trim();
   const typeStr = m[5] ? m[5].trim() : null;
+
+  // Extract trailing (comment) from location, e.g. "Tavastia (2)" → location="Tavastia", comment="2".
+  // Greedy first group ensures we match the *last* parenthesized group.
+  const locMatch = rawLocation.match(/^(.*\S)\s*\(([^)]+)\)$/);
+  const location = locMatch ? locMatch[1].trim() : rawLocation;
+  const comment  = locMatch ? locMatch[2] : null;
   const type = typeStr ? (typeStr.includes('MC') ? 'MC' : 'C') : null;
 
   // Detect optional event name prefix: "Ruisrock-95: The Beautiful South, ..."
@@ -86,7 +92,7 @@ function parseLine(raw) {
   // mini-concert, only the individual sets were. Single-performer [MC] stays MC.
   const eventType = (type === 'MC' && performers.length > 1) ? 'C' : type;
 
-  return { date, year, eventName, performers, location, type: eventType, raw };
+  return { date, year, eventName, performers, location, comment, type: eventType, raw };
 }
 
 
@@ -194,8 +200,7 @@ document.addEventListener('alpine:init', () => {
     get locationStats() {
       const map = new Map();
       for (const event of this.filteredEvents) {
-        // Strip trailing (comment) from location for grouping purposes.
-        const loc = event.location.replace(/\s*\([^)]*\)\s*$/, '').trim();
+        const loc = event.location;
         if (!map.has(loc)) map.set(loc, { location: loc, c: 0, mc: 0 });
         const entry = map.get(loc);
         if (event.type === 'C') entry.c++;

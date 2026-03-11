@@ -33,7 +33,9 @@
           <div class="event-row">
             <span class="event-date" x-text="event.date"></span>
             <span class="event-title" x-text="eventTitle(event)"></span>
-            <span class="event-location" x-text="event.location"></span>
+            <span class="event-location">
+              <span x-text="event.location"></span><span class="event-comment" x-show="event.comment" x-text="event.comment ? ' · ' + event.comment : ''"></span>
+            </span>
             <span class="event-type" x-show="event.type" x-text="event.type ? '[' + event.type + ']' : ''"></span>
           </div>
         </template>

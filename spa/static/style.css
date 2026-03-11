@@ -289,6 +289,12 @@ main {
   text-align: right;
 }
 
+/* Muted event comment appended after location, e.g. " · 2". */
+.event-comment {
+  color: #aaa;
+  font-size: 0.85rem;
+}
+
 /* Type tag ([C] / [MC]) at the far right, small and muted. */
 .event-type {
   flex: 0 0 3rem;

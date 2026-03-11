@@ -69,7 +69,7 @@ An optional parenthesized comment can appear after the location (and before the 
 ```
 The comment applies to the whole event. Common uses: event duration (`2 days`), show number disambiguation when the same performer played multiple shows at the same venue on the same date (`(1)`, `(2)`).
 
-Currently the comment is not parsed out as a separate field — it is included in the location string.
+The comment is parsed out as a separate `comment` field; `location` contains only the venue name.
 
 ## Statistics
 
