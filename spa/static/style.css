@@ -27,6 +27,7 @@ header {
 
 /* Lay out header contents horizontally, vertically centered. */
 header {
+  position: relative; /* anchor for .home-link absolute positioning */
   display: flex;
   align-items: baseline;
   gap: 1.5rem;
@@ -53,6 +54,21 @@ header h1 {
 .header-legend {
   color: #999;
   font-size: 0.75rem;
+}
+
+/* Small unobtrusive home link pinned to the top-right corner of the header. */
+.home-link {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.75rem;
+  font-size: 0.7rem;
+  color: #666;
+}
+.home-link a {
+  color: #777;
+}
+.home-link a:hover {
+  color: #aaa;
 }
 
 /* Main content area fills remaining viewport height and splits into two columns. */
