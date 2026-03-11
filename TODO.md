@@ -39,6 +39,10 @@ Steps are intentionally small to facilitate incremental learning alongside build
 ## Future / Nice-to-have
 - [ ] Add a small, non-prominent "Generated with [eventslist](github repo url)" link, e.g. top-right corner, very small text
 - [ ] Column sorting for stats tables (By Year, By Location, Performers) — click column header to sort by name/count; count column sorts as a single value (C+MC combined or C-primary/MC-secondary as currently); ascending only is probably sufficient; event listing doesn't need alternate sort orders
+- [ ] Leverage searchMode to enrich the UI:
+  - [ ] Highlight matched performers in the event list (bold/colour matching names within each event title row)
+  - [ ] Search mode indicator near the search box showing how the query was interpreted (performer / venue / year / mixed — e.g. "Maija 2006" matched both performer and year)
+  - [ ] Emphasise the relevant summary block row based on search mode (Performances row for performer searches, Events row for others)
 - [ ] Add a favicon (currently causes a 404 in the browser console)
 - [ ] Sort order toggle (newest/oldest first)
 - [ ] Evaluate listing + stats as dual/split view vs toggle
