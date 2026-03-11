@@ -1,4 +1,5 @@
 // ---- Parser ----
+// Keep in sync with gigcount.py
 
 // Matches a full event line. Permissive about text content to support Unicode.
 // Groups: (1) full date, (2) year, (3) description (performers or event desc),
