@@ -13,7 +13,7 @@ args = parser.parse_args()
 events_file = args.events_file
 
 
-LINE_PATTERN = r"^[\d?]{1,3}\.[\d?]{1,2}\.(?P<year>\d{4})\s+(?P<event>[\w '!?,:&-]+: )?(?P<performers>.+); (?P<location>[\w, '\.:()&-]+)(?P<count>\(\d+[ \w]*\))?(?P<type>( \[M?C\])?)$"
+LINE_PATTERN = r"^[\d?]{1,3}\.[\d?]{1,2}\.(?P<year>\d{4})\s+(?P<event>[\w '!?,:&+\-]+: )?(?P<performers>.+); (?P<location>[\w, '\.:()&-]+)(?P<count>\(\d+[ \w]*\))?(?P<type>( \[M?C\])?)$"
 pat = re.compile(LINE_PATTERN)
 PERFORMER_SPLIT_PATTERN = r'[,+]\s+(?![^()]*\))'
 perf_split_pat = re.compile(PERFORMER_SPLIT_PATTERN)
@@ -39,6 +39,21 @@ with open(events_file) as f:
         is_gig = type and "[C]" in type
         is_minigig = type and "[MC]" in type
         is_other = not (is_gig or is_minigig)
+        perf_base_is_gig = is_gig
+        perf_base_is_minigig = is_minigig
+        perf_list = []
+
+        if is_gig or is_minigig:
+          perf_list = [p.strip() for p in perf_split_pat.split(performers)]
+          # Reclassify event type for event counting: a multi-performer [MC] event
+          # is a full [C] event — only the individual sets were mini-concerts.
+          # Preserve original type so performers still inherit the correct base type.
+          perf_base_is_gig = is_gig
+          perf_base_is_minigig = is_minigig
+          if is_minigig and len(perf_list) > 1:
+            is_gig = True
+            is_minigig = False
+
         if year not in year_stats:
           year_stats[year] = {"gigs": 0, "minigigs": 0, "other": 0}
         if is_gig:
@@ -51,17 +66,16 @@ with open(events_file) as f:
           year_stats[year]["other"] += 1
           total_stats["other"] += 1
 
-        if is_gig or is_minigig:
-          for p in perf_split_pat.split(performers):
-            performer = p.strip()
+        if perf_base_is_gig or perf_base_is_minigig:
+          for performer in perf_list:
             mp = perf_name_pat.fullmatch(performer)
             if not mp:
               print(f"Performer not matched: {performer}")
               import sys
               sys.exit(1)
-            name = mp.group('name')
-            perf_is_gig = is_gig
-            perf_is_minigig = is_minigig
+            name = mp.group('name').strip()
+            perf_is_gig = perf_base_is_gig
+            perf_is_minigig = perf_base_is_minigig
             if name.endswith(' [C]'):
               perf_is_gig = True
               perf_is_minigig = False
