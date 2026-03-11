@@ -46,7 +46,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
   - [ ] Highlight matched performers in the event list (bold/colour matching names within each event title row)
   - [ ] Search mode indicator near the search box showing how the query was interpreted (performer / venue / year / mixed — e.g. "Maija 2006" matched both performer and year)
   - [ ] Emphasise the relevant summary block row based on search mode (Performances row for performer searches, Events row for others)
-- [ ] Add a favicon (currently causes a 404 in the browser console)
+- [x] Add a favicon (currently causes a 404 in the browser console)
 - [ ] Sort order toggle (newest/oldest first)
 - [ ] Evaluate listing + stats as dual/split view vs toggle
 - [ ] MC indicator in event listing — mini-concerts should be visually indicated (full concert is implied); avoid showing raw [C]/[MC] tags; consider inline badge/label rather than a separate column. Add a legend for the stats table headers too.
