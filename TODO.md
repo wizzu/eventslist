@@ -40,6 +40,8 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Debounce search input (~200ms) to avoid recomputing all reactive getters on every keystroke; consider deferring only the stats panel (option 3) if the event list alone is fast enough. If the debounce delay is perceptible, add a visual in-progress indicator on the search box or stats panel (e.g. subtle animation or dimming) so the user knows results are updating.
 
 ## Future / Nice-to-have
+- [ ] Show per-performer detail comment (e.g. "acoustic" from "Fish (acoustic)") in the event listing, one line per performer. Display it in muted colour similar to the event name prefix, before the mini badge if present.
+- [ ] Add a toggle to show/hide mini performances — hides MC-tagged performers/performances from the listing and excludes them from stats (not the whole event, just the MC performances within it). Consider a checkbox or small toggle button near the search box or stats panel.
 - [ ] Add a small, non-prominent "Generated with [eventslist](github repo url)" link, e.g. top-right corner, very small text
 - [x] Column sorting for stats tables (By Year, By Location, Performers) — click column header to sort; counts always desc, location/name always asc, year toggles asc/desc
 - [ ] Revisit stats table sort UI — experiment with static column header text and separate sort controls (current button-in-header approach works but aesthetics are uncertain)
@@ -50,7 +52,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Add a favicon (currently causes a 404 in the browser console)
 - [x] Sort order toggle (newest/oldest first)
 - [ ] Evaluate listing + stats as dual/split view vs toggle
-- [ ] MC indicator in event listing — mini-concerts should be visually indicated (full concert is implied); avoid showing raw [C]/[MC] tags; consider inline badge/label rather than a separate column. Add a legend for the stats table headers too.
+- [x] MC indicator in event listing — mini-concerts should be visually indicated (full concert is implied); avoid showing raw [C]/[MC] tags; consider inline badge/label rather than a separate column. Add a legend for the stats table headers too.
 - [ ] Rich statistics visualizations (bar charts, graphs, etc.)
 - [ ] Responsive design
 - [ ] Configurable events.txt path

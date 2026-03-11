@@ -13,7 +13,10 @@
 <body x-data="app">
   <header>
     <h1>Events</h1>
-    <span class="header-counts" x-text="counts"></span>
+    <div class="header-info">
+      <span class="header-counts" x-text="counts"></span>
+      <span class="header-legend">mini: 5 or fewer songs, under 30 min</span>
+    </div>
   </header>
   <main>
     <div class="left-col">
@@ -32,11 +35,19 @@
         <template x-for="(event, index) in filteredEvents" :key="index">
           <div class="event-row">
             <span class="event-date" x-text="event.date"></span>
-            <span class="event-title" x-text="eventTitle(event)"></span>
+            <span class="event-title">
+              <template x-if="event.eventName">
+                <span class="event-name-prefix" x-text="event.eventName + ':'"></span>
+              </template>
+              <template x-for="(p, pi) in event.performers" :key="pi">
+                <span class="event-performer">
+                  <span x-text="p.name"></span><span class="mini-badge" x-show="p.type === 'MC'">mini</span>
+                </span>
+              </template>
+            </span>
             <span class="event-location">
               <span x-text="event.location"></span><span class="event-comment" x-show="event.comment" x-text="event.comment ? ' · ' + event.comment : ''"></span>
             </span>
-            <span class="event-type" x-show="event.type" x-text="event.type ? '[' + event.type + ']' : ''"></span>
           </div>
         </template>
       </div>
@@ -45,11 +56,11 @@
       <dl class="stats-summary">
         <div class="stats-summary-row">
           <dt>Events</dt>
-          <dd x-text="fmtCounts(filteredEvents)"></dd>
+          <dd x-html="fmtCountsHtml(filteredEvents)"></dd>
         </div>
         <div class="stats-summary-row">
           <dt>Performances</dt>
-          <dd x-text="performanceCountsStr"></dd>
+          <dd x-html="fmtCountHtml(performanceCounts.c, performanceCounts.mc)"></dd>
         </div>
         <div class="stats-summary-row">
           <dt>Performers</dt>
@@ -66,19 +77,13 @@
         <thead>
           <tr class="sort-row">
             <th><button class="sort-btn" :class="yearSort.col === 'year' && 'sort-active'" @click="setSort('yearSort', 'year')">Year<span x-show="yearSort.col === 'year'" x-text="yearSort.dir === 'asc' ? ' ↑' : ' ↓'"></span></button></th>
-            <th colspan="2"><button class="sort-btn" :class="yearSort.col === 'c' && 'sort-active'" @click="setSort('yearSort', 'c')">Counts</button></th>
-          </tr>
-          <tr class="col-labels">
-            <th></th>
-            <th title="Full concerts">[C]</th>
-            <th title="Mini-concerts">[MC]</th>
+            <th><button class="sort-btn" :class="yearSort.col === 'c' && 'sort-active'" @click="setSort('yearSort', 'c')">Count</button></th>
           </tr>
         </thead>
         <template x-for="y in yearStats" :key="y.year">
           <tr>
             <td x-text="y.year"></td>
-            <td x-text="y.c"></td>
-            <td x-text="y.mc"></td>
+            <td x-html="fmtCountHtml(y.c, y.mc)"></td>
           </tr>
         </template>
       </table>
@@ -90,19 +95,13 @@
         <thead>
           <tr class="sort-row">
             <th><button class="sort-btn" :class="locationSort.col === 'location' && 'sort-active'" @click="setSort('locationSort', 'location')">Location</button></th>
-            <th colspan="2"><button class="sort-btn" :class="locationSort.col === 'c' && 'sort-active'" @click="setSort('locationSort', 'c')">Counts</button></th>
-          </tr>
-          <tr class="col-labels">
-            <th></th>
-            <th title="Full concerts">[C]</th>
-            <th title="Mini-concerts">[MC]</th>
+            <th><button class="sort-btn" :class="locationSort.col === 'c' && 'sort-active'" @click="setSort('locationSort', 'c')">Count</button></th>
           </tr>
         </thead>
         <template x-for="l in locationStats" :key="l.location">
           <tr>
             <td x-text="l.location"></td>
-            <td x-text="l.c"></td>
-            <td x-text="l.mc"></td>
+            <td x-html="fmtCountHtml(l.c, l.mc)"></td>
           </tr>
         </template>
       </table>
@@ -113,19 +112,13 @@
         <thead>
           <tr class="sort-row">
             <th><button class="sort-btn" :class="performerSort.col === 'name' && 'sort-active'" @click="setSort('performerSort', 'name')">Name</button></th>
-            <th colspan="2"><button class="sort-btn" :class="performerSort.col === 'c' && 'sort-active'" @click="setSort('performerSort', 'c')">Counts</button></th>
-          </tr>
-          <tr class="col-labels">
-            <th></th>
-            <th title="Full concerts">[C]</th>
-            <th title="Mini-concerts">[MC]</th>
+            <th><button class="sort-btn" :class="performerSort.col === 'c' && 'sort-active'" @click="setSort('performerSort', 'c')">Count</button></th>
           </tr>
         </thead>
         <template x-for="p in performerStats" :key="p.name">
           <tr>
             <td x-text="p.name"></td>
-            <td x-text="p.c"></td>
-            <td x-text="p.mc"></td>
+            <td x-html="fmtCountHtml(p.c, p.mc)"></td>
           </tr>
         </template>
       </table>

@@ -108,7 +108,7 @@ document.addEventListener('alpine:init', () => {
     searching: false,  // true while debounce is pending
     _debounceTimer: null,
     sortAsc: false,           // event listing: false = newest first (default), true = oldest first
-    yearSort:      { col: 'year', dir: 'desc' },
+    yearSort:      { col: 'year', dir: 'desc', yearDir: 'desc' }, // yearDir remembered independently
     locationSort:  { col: 'c',    dir: 'desc' },
     performerSort: { col: 'c',    dir: 'desc' },
 
@@ -139,26 +139,48 @@ document.addEventListener('alpine:init', () => {
     // Set the active sort column for a stats table.
     // Year column toggles asc/desc when clicked again; all other columns have
     // a fixed direction (counts always desc, name/location always asc).
+    // yearDir is maintained separately so the year direction is remembered even
+    // when sorting by count — it's used as the tiebreaker in that case.
     setSort(stateKey, col) {
       const s = this[stateKey];
       if (s.col === col && col === 'year') {
-        s.dir = s.dir === 'asc' ? 'desc' : 'asc';
+        s.dir = s.dir === 'asc' ? 'desc' : 'asc'; // toggle
       } else {
         s.col = col;
-        s.dir = (col === 'name' || col === 'location') ? 'asc' : 'desc';
+        s.dir = col === 'year' ? s.yearDir  // restore remembered year direction
+              : (col === 'name' || col === 'location') ? 'asc' : 'desc';
       }
+      if (col === 'year') s.yearDir = s.dir;
     },
 
-    // Format a list of events as "C (MC)".
+    // Format C and MC counts as "N" (when MC=0) or "N (M)".
+    fmtCount(c, mc) {
+      return mc ? `${c} (${mc})` : `${c}`;
+    },
+
+    // Like fmtCount but renders the mini label as a badge (HTML string).
+    fmtCountHtml(c, mc) {
+      if (!mc) return String(c);
+      return `${c} (${mc} <span class="mini-badge">mini</span>)`;
+    },
+
+    // Format a list of events using fmtCount / fmtCountHtml.
     fmtCounts(events) {
       const c = events.filter(e => e.type === 'C').length;
       const mc = events.filter(e => e.type === 'MC').length;
-      return `${c} (${mc})`;
+      return this.fmtCount(c, mc);
+    },
+    fmtCountsHtml(events) {
+      const c = events.filter(e => e.type === 'C').length;
+      const mc = events.filter(e => e.type === 'MC').length;
+      return this.fmtCountHtml(c, mc);
     },
 
-    // Total event counts, always unfiltered — shown in the header.
+    // Total event counts for the header — always labeled, always shows both.
     get counts() {
-      return this.fmtCounts(this.events);
+      const c = this.events.filter(e => e.type === 'C').length;
+      const mc = this.events.filter(e => e.type === 'MC').length;
+      return `${c} full (${mc} mini)`;
     },
 
     // 'performer' if every filtered event has at least one performer matching the query.
@@ -179,7 +201,7 @@ document.addEventListener('alpine:init', () => {
     // Formatted performance counts string for the summary block.
     get performanceCountsStr() {
       const { c, mc } = this.performanceCounts;
-      return `${c} (${mc})`;
+      return this.fmtCount(c, mc);
     },
 
 
@@ -206,12 +228,11 @@ document.addEventListener('alpine:init', () => {
         if (event.type === 'C') entry.c++;
         else if (event.type === 'MC') entry.mc++;
       }
-      const { col, dir } = this.locationSort;
+      const { col } = this.locationSort;
       return [...map.values()].sort((a, b) => {
-        let cmp = col === 'location' ? a.location.localeCompare(b.location)
-                : (a.c - b.c) || (a.mc - b.mc); // count sort: C first, MC as tiebreaker
-        if (cmp === 0) cmp = a.location.localeCompare(b.location); // final tiebreak
-        return dir === 'asc' ? cmp : -cmp;
+        if (col === 'location') return a.location.localeCompare(b.location); // always asc
+        const cmp = (a.c - b.c) || (a.mc - b.mc);
+        return cmp !== 0 ? -cmp : a.location.localeCompare(b.location); // count desc, tiebreak asc
       });
     },
 
@@ -224,12 +245,11 @@ document.addEventListener('alpine:init', () => {
         if (event.type === 'C') entry.c++;
         else if (event.type === 'MC') entry.mc++;
       }
-      const { col, dir } = this.yearSort;
+      const { col, dir, yearDir } = this.yearSort;
       return [...map.values()].sort((a, b) => {
-        let cmp = col === 'year' ? a.year - b.year
-                : (a.c - b.c) || (a.mc - b.mc); // count sort: C first, MC as tiebreaker
-        if (cmp === 0 && col !== 'year') cmp = a.year - b.year; // final tiebreak
-        return dir === 'asc' ? cmp : -cmp;
+        if (col === 'year') return (a.year - b.year) * (dir === 'asc' ? 1 : -1);
+        const cmp = (a.c - b.c) || (a.mc - b.mc);
+        return cmp !== 0 ? -cmp : (a.year - b.year) * (yearDir === 'asc' ? 1 : -1); // count desc, tiebreak uses remembered year dir
       });
     },
 
@@ -256,12 +276,11 @@ document.addEventListener('alpine:init', () => {
         }
       }
 
-      const { col, dir } = this.performerSort;
+      const { col } = this.performerSort;
       return [...map.values()].sort((a, b) => {
-        let cmp = col === 'name' ? a.name.localeCompare(b.name)
-                : (a.c - b.c) || (a.mc - b.mc); // count sort: C first, MC as tiebreaker
-        if (cmp === 0) cmp = a.name.localeCompare(b.name); // final tiebreak
-        return dir === 'asc' ? cmp : -cmp;
+        if (col === 'name') return a.name.localeCompare(b.name); // always asc
+        const cmp = (a.c - b.c) || (a.mc - b.mc);
+        return cmp !== 0 ? -cmp : a.name.localeCompare(b.name); // count desc, tiebreak asc
       });
     },
 
