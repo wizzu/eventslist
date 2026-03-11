@@ -25,7 +25,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Two-column layout — left: search + scrollable listing (65%), right: sticky stats panel (35%)
 - [x] Statistics view — performer counts table, by-year table, by-location table; all react to search filter
 - [x] Per-year counts table
-- [ ] Confirm stats match gigcount.py output (validation step)
+- [x] Confirm stats match gigcount.py output (validation step)
 
 ## Data / Format Issues
 - [ ] "Britannia (Espoontori)" and "Britannia (Kannelmäki)" are the same pub chain in different districts — currently parsed as one venue due to comment-stripping. Need to decide how to represent chain venues with district in the data format without conflicting with the trailing (comment) syntax. Address together with the "Cafe Segeli (1), Kotka" case where a show-number comment appears mid-location rather than at the end — fix in the data file at the same time.
