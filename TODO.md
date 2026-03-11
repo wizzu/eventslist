@@ -36,6 +36,9 @@ Steps are intentionally small to facilitate incremental learning alongside build
 ## Code Quality
 - [ ] Review JS and CSS for missing comments — add concise explanations for non-obvious patterns (Alpine directives, flex/layout tricks, regex, reactive getters). Skip obvious things. Aimed at someone learning the stack.
 
+## Performance
+- [ ] Debounce search input (~200ms) to avoid recomputing all reactive getters on every keystroke; consider deferring only the stats panel (option 3) if the event list alone is fast enough. If the debounce delay is perceptible, add a visual in-progress indicator on the search box or stats panel (e.g. subtle animation or dimming) so the user knows results are updating.
+
 ## Future / Nice-to-have
 - [ ] Add a small, non-prominent "Generated with [eventslist](github repo url)" link, e.g. top-right corner, very small text
 - [ ] Column sorting for stats tables (By Year, By Location, Performers) — click column header to sort by name/count; count column sorts as a single value (C+MC combined or C-primary/MC-secondary as currently); ascending only is probably sufficient; event listing doesn't need alternate sort orders
