@@ -97,7 +97,10 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('app', () => ({
     status: 'Loading...',
     events: [],
-    query: '',
+    rawQuery: '',  // updates on every keystroke (bound to the input)
+    query: '',     // debounced copy used for filtering
+    searching: false,  // true while debounce is pending
+    _debounceTimer: null,
     sortAsc: false,           // event listing: false = newest first (default), true = oldest first
     yearSort:      { col: 'year', dir: 'desc' },
     locationSort:  { col: 'c',    dir: 'desc' },
@@ -110,6 +113,21 @@ document.addEventListener('alpine:init', () => {
       const concerts = parseEvents(text).filter(e => e.type !== null);
       this.events = concerts.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date)); // newest first
       this.status = `Loaded ${this.events.length} events.`;
+
+      // Debounce rawQuery → query. Clearing always fires instantly.
+      this.$watch('rawQuery', val => {
+        clearTimeout(this._debounceTimer);
+        if (!val) {
+          this.query = '';
+          this.searching = false;
+          return;
+        }
+        this.searching = true;
+        this._debounceTimer = setTimeout(() => {
+          this.query = val;
+          this.searching = false;
+        }, 400);
+      });
     },
 
     // Set the active sort column for a stats table.

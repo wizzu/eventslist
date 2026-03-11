@@ -19,8 +19,8 @@
     <div class="left-col">
       <p x-show="!events.length" x-text="status"></p>
       <div class="search-wrap">
-        <input class="search-box" type="search" placeholder="Search events…" x-model="query" x-ref="search">
-        <button class="search-clear" x-show="query" @click="query = ''; $refs.search.focus()" aria-label="Clear search">✕</button>
+        <input class="search-box" type="search" placeholder="Search events…" x-model="rawQuery" :class="searching && 'search-pending'" x-ref="search">
+        <button class="search-clear" x-show="rawQuery" @click="rawQuery = ''; query = ''; searching = false; clearTimeout(_debounceTimer); $refs.search.focus()" aria-label="Clear search">✕</button>
       </div>
       <div class="listing-toolbar">
         <span class="event-count" x-text="fmtCounts(filteredEvents) + ' events'"></span>

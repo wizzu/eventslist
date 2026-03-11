@@ -94,6 +94,18 @@ main {
   display: none;
 }
 
+/* Pulsing glow while search debounce is pending.
+   Animates box-shadow (not border) so it's visible even when the input is focused.
+   outline: none suppresses the browser focus ring so the glow isn't hidden under it. */
+@keyframes search-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px transparent; }
+  50%       { box-shadow: 0 0 0 3px #7a9cc0; }
+}
+.search-pending {
+  outline: none;
+  animation: search-pulse 0.7s ease-in-out infinite;
+}
+
 /* Clear button overlaid on the right side of the input. */
 .search-clear {
   position: absolute;
