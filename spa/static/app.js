@@ -98,6 +98,10 @@ document.addEventListener('alpine:init', () => {
     status: 'Loading...',
     events: [],
     query: '',
+    sortAsc: false,           // event listing: false = newest first (default), true = oldest first
+    yearSort:      { col: 'year', dir: 'desc' },
+    locationSort:  { col: 'c',    dir: 'desc' },
+    performerSort: { col: 'c',    dir: 'desc' },
 
     // Called automatically by Alpine when the component initializes.
     async init() {
@@ -106,6 +110,19 @@ document.addEventListener('alpine:init', () => {
       const concerts = parseEvents(text).filter(e => e.type !== null);
       this.events = concerts.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date)); // newest first
       this.status = `Loaded ${this.events.length} events.`;
+    },
+
+    // Set the active sort column for a stats table.
+    // Year column toggles asc/desc when clicked again; all other columns have
+    // a fixed direction (counts always desc, name/location always asc).
+    setSort(stateKey, col) {
+      const s = this[stateKey];
+      if (s.col === col && col === 'year') {
+        s.dir = s.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        s.col = col;
+        s.dir = (col === 'name' || col === 'location') ? 'asc' : 'desc';
+      }
     },
 
     // Format a list of events as "C (MC)".
@@ -142,14 +159,17 @@ document.addEventListener('alpine:init', () => {
     },
 
 
-    // Returns events matching the current search query.
+    // Returns events matching the current search query, in the current sort order.
     get filteredEvents() {
       const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-      if (!words.length) return this.events;
-      return this.events.filter(e => {
-        const haystack = [e.date, this.eventTitle(e), e.location].join(' ').toLowerCase();
-        return words.every(w => haystack.includes(w));
-      });
+      const matched = words.length
+        ? this.events.filter(e => {
+            const haystack = [e.date, this.eventTitle(e), e.location].join(' ').toLowerCase();
+            return words.every(w => haystack.includes(w));
+          })
+        : this.events;
+      // this.events is sorted newest-first; reverse a shallow copy for oldest-first.
+      return this.sortAsc ? [...matched].reverse() : matched;
     },
 
     // Aggregate per-location counts from the filtered event list.
@@ -163,12 +183,12 @@ document.addEventListener('alpine:init', () => {
         if (event.type === 'C') entry.c++;
         else if (event.type === 'MC') entry.mc++;
       }
+      const { col, dir } = this.locationSort;
       return [...map.values()].sort((a, b) => {
-        const cDiff = b.c - a.c;
-        if (cDiff !== 0) return cDiff;
-        const mcDiff = b.mc - a.mc;
-        if (mcDiff !== 0) return mcDiff;
-        return a.location.localeCompare(b.location);
+        let cmp = col === 'location' ? a.location.localeCompare(b.location)
+                : (a.c - b.c) || (a.mc - b.mc); // count sort: C first, MC as tiebreaker
+        if (cmp === 0) cmp = a.location.localeCompare(b.location); // final tiebreak
+        return dir === 'asc' ? cmp : -cmp;
       });
     },
 
@@ -181,7 +201,13 @@ document.addEventListener('alpine:init', () => {
         if (event.type === 'C') entry.c++;
         else if (event.type === 'MC') entry.mc++;
       }
-      return [...map.values()].sort((a, b) => b.year - a.year);
+      const { col, dir } = this.yearSort;
+      return [...map.values()].sort((a, b) => {
+        let cmp = col === 'year' ? a.year - b.year
+                : (a.c - b.c) || (a.mc - b.mc); // count sort: C first, MC as tiebreaker
+        if (cmp === 0 && col !== 'year') cmp = a.year - b.year; // final tiebreak
+        return dir === 'asc' ? cmp : -cmp;
+      });
     },
 
     // Aggregate per-performer counts from the filtered event list.
@@ -207,12 +233,12 @@ document.addEventListener('alpine:init', () => {
         }
       }
 
-return [...map.values()].sort((a, b) => {
-        const cDiff = b.c - a.c;
-        if (cDiff !== 0) return cDiff;
-        const mcDiff = b.mc - a.mc;
-        if (mcDiff !== 0) return mcDiff;
-        return a.name.localeCompare(b.name);
+      const { col, dir } = this.performerSort;
+      return [...map.values()].sort((a, b) => {
+        let cmp = col === 'name' ? a.name.localeCompare(b.name)
+                : (a.c - b.c) || (a.mc - b.mc); // count sort: C first, MC as tiebreaker
+        if (cmp === 0) cmp = a.name.localeCompare(b.name); // final tiebreak
+        return dir === 'asc' ? cmp : -cmp;
       });
     },
 

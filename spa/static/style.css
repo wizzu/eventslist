@@ -162,11 +162,48 @@ main {
 }
 
 .stats-table th {
-  text-align: left;
-  padding: 0.25rem 0.5rem;
-  border-bottom: 2px solid #ccc;
-  color: #666;
+  padding: 0;
   font-weight: normal;
+  border-bottom: none;
+}
+
+/* Sort button row: contains the clickable sort-btn elements. */
+.sort-row th {
+  padding-bottom: 0.25rem;
+  text-align: left;
+}
+
+.sort-btn {
+  font-size: 0.85rem;
+  color: #555;
+  background: #efefef;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.sort-btn:hover {
+  background: #e2e2e2;
+  border-color: #999;
+  color: #222;
+}
+
+.sort-btn.sort-active {
+  background: #d0d0d0;
+  border-color: #999;
+  color: #222;
+  font-weight: 500;
+}
+
+/* Column label sub-row: small muted labels under the sort buttons. */
+.col-labels th {
+  font-size: 0.8rem;
+  color: #888;
+  padding: 0.1rem 0.5rem 0.2rem;
+  border-bottom: 2px solid #ccc;
+  text-align: left;
 }
 
 .stats-table td {
@@ -174,9 +211,9 @@ main {
   border-bottom: 1px solid #eee;
 }
 
-/* C and MC count columns are narrow and right-aligned. */
-.stats-table th:nth-child(2),
-.stats-table th:nth-child(3),
+/* Count columns are narrow and right-aligned. */
+.col-labels th:nth-child(2),
+.col-labels th:nth-child(3),
 .stats-table td:nth-child(2),
 .stats-table td:nth-child(3) {
   text-align: right;
@@ -184,11 +221,33 @@ main {
 }
 
 
-/* Event count shown above the event list. */
+/* Toolbar above the event list: count on the left, sort toggle on the right. */
+.listing-toolbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
 .event-count {
   font-size: 0.85rem;
   color: #888;
-  margin-bottom: 0.5rem;
+}
+
+.sort-toggle {
+  font-size: 0.8rem;
+  color: #555;
+  background: #efefef;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 2px 8px;
+}
+
+.sort-toggle:hover {
+  background: #e2e2e2;
+  border-color: #999;
+  color: #222;
 }
 
 /* Each event is a horizontal row of fields. gap adds space between them. */

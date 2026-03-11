@@ -22,7 +22,12 @@
         <input class="search-box" type="search" placeholder="Search events…" x-model="query" x-ref="search">
         <button class="search-clear" x-show="query" @click="query = ''; $refs.search.focus()" aria-label="Clear search">✕</button>
       </div>
-      <div class="event-count" x-text="fmtCounts(filteredEvents) + ' events'"></div>
+      <div class="listing-toolbar">
+        <span class="event-count" x-text="fmtCounts(filteredEvents) + ' events'"></span>
+        <button class="sort-toggle" @click="sortAsc = !sortAsc" :title="sortAsc ? 'Sort: oldest first' : 'Sort: newest first'">
+          <span x-text="sortAsc ? '↑ Oldest first' : '↓ Newest first'"></span>
+        </button>
+      </div>
       <div class="event-list">
         <template x-for="(event, index) in filteredEvents" :key="index">
           <div class="event-row">
@@ -57,8 +62,12 @@
       <div class="stats-table-scroll">
       <table class="stats-table">
         <thead>
-          <tr>
-            <th>Year</th>
+          <tr class="sort-row">
+            <th><button class="sort-btn" :class="yearSort.col === 'year' && 'sort-active'" @click="setSort('yearSort', 'year')">Year<span x-show="yearSort.col === 'year'" x-text="yearSort.dir === 'asc' ? ' ↑' : ' ↓'"></span></button></th>
+            <th colspan="2"><button class="sort-btn" :class="yearSort.col === 'c' && 'sort-active'" @click="setSort('yearSort', 'c')">Counts</button></th>
+          </tr>
+          <tr class="col-labels">
+            <th></th>
             <th title="Full concerts">[C]</th>
             <th title="Mini-concerts">[MC]</th>
           </tr>
@@ -77,8 +86,12 @@
       <div class="stats-table-scroll">
       <table class="stats-table">
         <thead>
-          <tr>
-            <th>Location</th>
+          <tr class="sort-row">
+            <th><button class="sort-btn" :class="locationSort.col === 'location' && 'sort-active'" @click="setSort('locationSort', 'location')">Location</button></th>
+            <th colspan="2"><button class="sort-btn" :class="locationSort.col === 'c' && 'sort-active'" @click="setSort('locationSort', 'c')">Counts</button></th>
+          </tr>
+          <tr class="col-labels">
+            <th></th>
             <th title="Full concerts">[C]</th>
             <th title="Mini-concerts">[MC]</th>
           </tr>
@@ -96,8 +109,12 @@
       <h2 class="stats-heading" style="margin-top: 1.5rem">Performers</h2>
       <table class="stats-table">
         <thead>
-          <tr>
-            <th>Name</th>
+          <tr class="sort-row">
+            <th><button class="sort-btn" :class="performerSort.col === 'name' && 'sort-active'" @click="setSort('performerSort', 'name')">Name</button></th>
+            <th colspan="2"><button class="sort-btn" :class="performerSort.col === 'c' && 'sort-active'" @click="setSort('performerSort', 'c')">Counts</button></th>
+          </tr>
+          <tr class="col-labels">
+            <th></th>
             <th title="Full concerts">[C]</th>
             <th title="Mini-concerts">[MC]</th>
           </tr>
