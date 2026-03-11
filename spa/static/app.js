@@ -79,10 +79,12 @@ function parseLine(raw) {
       }
 
       // Strip trailing parenthesized detail for stats, matching gigcount.py.
-      // "Fish (acoustic)" → "Fish"
-      perfName = perfName.replace(/\s*\(.*\)$/, '').trim();
+      // "Fish (acoustic)" → name="Fish", detail="acoustic"
+      const detailMatch = perfName.match(/^(.*\S)\s*\(([^)]+)\)$/);
+      const detail = detailMatch ? detailMatch[2] : null;
+      perfName = detailMatch ? detailMatch[1].trim() : perfName;
 
-      performers.push({ name: perfName, type: perfType });
+      performers.push({ name: perfName, type: perfType, detail });
     }
   } else {
     // Non-concert event: the description is the event name, no performers.

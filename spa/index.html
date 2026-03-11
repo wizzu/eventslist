@@ -42,7 +42,7 @@
               </template>
               <template x-for="(p, pi) in event.performers" :key="pi">
                 <span class="event-performer">
-                  <span x-text="p.name"></span><span class="mini-badge" x-show="p.type === 'MC'">mini</span>
+                  <span x-text="p.name"></span><span class="performer-detail" x-show="p.detail" x-text="' (' + p.detail + ')'"></span> <span class="mini-badge" x-show="p.type === 'MC'">mini</span>
                 </span>
               </template>
             </span>

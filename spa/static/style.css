@@ -309,11 +309,14 @@ main {
   font-size: 0.85rem;
 }
 
-/* One performer per line, with optional mini badge. */
+/* Muted parenthetical detail after performer name, e.g. "acoustic". */
+.performer-detail {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+/* One performer per line, with optional inline mini badge. */
 .event-performer {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
 }
 
 /* Mini-concert badge: small, bordered, muted. */
@@ -324,7 +327,7 @@ main {
   border-radius: 3px;
   padding: 0 3px;
   line-height: 1.5;
-  flex-shrink: 0;
+  vertical-align: middle;
 }
 
 /* Location is muted, doesn't need to dominate. */
