@@ -53,5 +53,10 @@ Each change is followed by an explanation of what was added and why. This is a f
 
 See `DEVELOPMENT.md` for file structure, code conventions, browser caching notes, and known gotchas.
 
+## Workflow
+- **Propose before implementing** for anything opinionated: layout, design, UX decisions, non-trivial architectural choices. Present the approach and wait for confirmation.
+- **Just do it** for straightforward things: bug fixes, simple 1-liners, mechanical changes with an obvious correct answer.
+- When in doubt, lean toward proposing first.
+
 ## TODO Hygiene
 Mark completed tasks `[x]` in the same commit. Add new tasks to `TODO.md` immediately when they come up during a session.
