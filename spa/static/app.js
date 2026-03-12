@@ -9,6 +9,8 @@ const LINE_RE = /^([\d?]{1,3}\.[\d?]{1,2}\.(\d{4}))\s+(.+); ([^\[]+)( \[M?C\])?$
 
 // Split performers on comma or +, but NOT inside parentheses.
 // e.g. "Fish (with band), Opeth" splits into ["Fish (with band)", "Opeth"]
+// The negative lookahead (?![^()]*\)) reads: "not followed by any non-paren chars then a closing paren",
+// which means: don't split if the delimiter is inside an open parenthesis.
 const PERF_SPLIT_RE = /[,+]\s+(?![^()]*\))/;
 
 // Convert "D.M.YYYY" to a numeric sort key (YYYYMMDD). '?' treated as 0.
@@ -101,7 +103,10 @@ function parseLine(raw) {
 
 // ---- Alpine component ----
 
-// The main Alpine.js component. Alpine looks for this when it sees x-data="app".
+// Alpine fires 'alpine:init' before it processes the DOM, giving us a chance to
+// register components. Alpine.data('app', factory) registers a component named 'app';
+// when Alpine sees x-data="app" on an element, it calls the factory and uses the
+// returned object as the reactive state + methods for that element and all its children.
 document.addEventListener('alpine:init', () => {
   Alpine.data('app', () => ({
     status: 'Loading...',
@@ -126,7 +131,9 @@ document.addEventListener('alpine:init', () => {
         .map((e, i) => ({ ...e, id: i })); // stable integer ID for x-for keying
       this.status = `Loaded ${this.events.length} events.`;
 
-      // Debounce rawQuery → query. Clearing always fires instantly.
+      // $watch is an Alpine method that runs a callback whenever a reactive property changes.
+      // Debounce rawQuery → query: wait 400ms after the last keystroke before updating query.
+      // Clearing always fires instantly (no debounce) so the list resets without delay.
       this.$watch('rawQuery', val => {
         clearTimeout(this._debounceTimer);
         if (!val) {
@@ -165,6 +172,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     // Like fmtCount but renders the mini label as a badge (HTML string).
+    // Must be used with x-html in the template (not x-text) so the <span> is parsed as markup.
     fmtCountHtml(c, mc) {
       if (!mc) return String(c);
       return `${c} (${mc} <span class="mini-badge">mini</span>)`;
@@ -181,6 +189,9 @@ document.addEventListener('alpine:init', () => {
       const mc = events.filter(e => e.type === 'MC').length;
       return this.fmtCountHtml(c, mc);
     },
+
+    // Getters (get foo() {}) are Alpine's computed properties: Alpine tracks which reactive
+    // data they read, and automatically re-evaluates and re-renders whenever that data changes.
 
     // Total event counts for the header — always labeled, always shows both.
     get counts() {
@@ -257,6 +268,7 @@ document.addEventListener('alpine:init', () => {
 
     // Returns events matching the current search query, in the current sort order.
     // When showMinis is false, excludes MC events and C events where every performer is MC.
+    // Search requires ALL words to match somewhere in the event (date + title + location).
     get filteredEvents() {
       const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
       const matched = words.length

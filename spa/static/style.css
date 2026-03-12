@@ -25,7 +25,9 @@ header {
   padding: 1rem 2rem;     /* rem = relative to root font size (~16px) */
 }
 
-/* Lay out header contents horizontally, vertically centered. */
+/* Lay out header contents horizontally, bottoms aligned.
+   flex-end aligns all children to the bottom edge so the title and the
+   info block (counts + legend) share the same baseline floor. */
 header {
   position: relative; /* anchor for .home-link absolute positioning */
   display: flex;
@@ -81,7 +83,9 @@ main {
   margin: 0 auto;
 }
 
-/* Left column: search + scrollable event listing. */
+/* Left column: search + scrollable event listing.
+   flex: 65 and flex: 35 below are grow ratios — the columns split available space 65/35.
+   (flex shorthand with one value sets flex-grow; shrink defaults to 1, basis to 0.) */
 .left-col {
   flex: 65;
   display: flex;
@@ -263,7 +267,9 @@ main {
 }
 
 
-/* Toolbar above the event list: count on the left, sort toggle on the right. */
+/* Toolbar above the event list: count on the left, mini toggle centred, sort on the right.
+   1fr auto 1fr: the two outer columns share space equally; the middle column is exactly
+   as wide as its content, which keeps the mini toggle visually centred. */
 .listing-toolbar {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -335,7 +341,8 @@ main {
   align-items: flex-start; /* date/location sit at the top when title spans multiple lines */
 }
 
-/* Fixed-width date column so all titles align vertically. */
+/* Fixed-width date column so all titles align vertically.
+   flex: 0 0 7rem = don't grow, don't shrink, always exactly 7rem wide. */
 .event-date {
   flex: 0 0 7rem;
   color: #666;

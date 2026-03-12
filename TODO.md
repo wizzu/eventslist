@@ -34,7 +34,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Extract trailing `(comment)` after location as a separate `comment` field — currently swallowed into the location string. Used for show number disambiguation e.g. `(1)`, `(2)`, and possibly other notes. Needs regex care (performer parens are in description, not location). Update FORMAT.md and gigcount.py too.
 
 ## Code Quality
-- [ ] Review JS and CSS for missing comments — add concise explanations for non-obvious patterns (Alpine directives, flex/layout tricks, regex, reactive getters). Skip obvious things. Aimed at someone learning the stack.
+- [x] Review JS and CSS for missing comments — add concise explanations for non-obvious patterns (Alpine directives, flex/layout tricks, regex, reactive getters). Skip obvious things. Aimed at someone learning the stack.
 
 ## Performance
 - [x] Debounce search input (~200ms) to avoid recomputing all reactive getters on every keystroke; consider deferring only the stats panel (option 3) if the event list alone is fast enough. If the debounce delay is perceptible, add a visual in-progress indicator on the search box or stats panel (e.g. subtle animation or dimming) so the user knows results are updating.
@@ -62,4 +62,5 @@ Steps are intentionally small to facilitate incremental learning alongside build
 
 ## CLI
 - [x] gigcount.py in the repo
-- [ ] Ensure gigcount.py works standalone with current events.txt
+- [x] Ensure gigcount.py works standalone with current events.txt
+- [ ] Add a test suite — at minimum, compare gigcount.py output against the JS parser/stats to catch divergence between the two implementations
