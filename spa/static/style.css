@@ -223,34 +223,57 @@ main {
   border-bottom: none;
 }
 
-/* Sort button row: contains the clickable sort-btn elements. */
+/* Column header row: static label text + inline sort button. */
 .sort-row th {
   padding-bottom: 0.25rem;
   text-align: left;
-}
-
-.sort-btn {
   font-size: 0.85rem;
   color: #555;
-  background: #efefef;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  cursor: pointer;
-  padding: 2px 8px;
   white-space: nowrap;
 }
 
-.sort-btn:hover {
-  background: #e2e2e2;
-  border-color: #999;
-  color: #222;
+.sort-btn {
+  font-size: 0.75rem;
+  color: #888;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 0;
+  width: 1.4em;
+  height: 1.4em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
 }
 
-.sort-btn.sort-active {
-  background: #d0d0d0;
+.sort-btn:hover {
+  background: #e8e8e8;
   border-color: #999;
-  color: #222;
-  font-weight: 500;
+  color: #333;
+}
+
+/* Active sort: non-reversible columns — show state but don't invite interaction. */
+.sort-btn.sort-active.sort-locked {
+  background: #d8d8d8;
+  border-color: #aaa;
+  color: #444;
+  cursor: default;
+}
+
+.sort-btn.sort-active.sort-locked:hover {
+  background: #d8d8d8;
+  border-color: #aaa;
+  color: #444;
+}
+
+/* Active sort: reversible column — invite re-click to flip direction. */
+.sort-btn.sort-active:not(.sort-locked) {
+  background: #d8d8d8;
+  border-color: #aaa;
+  color: #444;
+  font-weight: 600;
 }
 
 

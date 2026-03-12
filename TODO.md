@@ -46,7 +46,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Add a toggle to show/hide mini performances — hides MC-tagged performers/performances from the listing and excludes them from stats (not the whole event, just the MC performances within it). Consider a checkbox or small toggle button near the search box or stats panel.
 - [x] Add a small, non-prominent "Generated with [eventslist](github repo url)" link, e.g. top-right corner, very small text
 - [x] Column sorting for stats tables (By Year, By Location, Performers) — click column header to sort; counts always desc, location/name always asc, year toggles asc/desc
-- [ ] Revisit stats table sort UI — experiment with static column header text and separate sort controls (current button-in-header approach works but aesthetics are uncertain)
+- [x] Revisit stats table sort UI — experiment with static column header text and separate sort controls (current button-in-header approach works but aesthetics are uncertain)
 - [ ] Search mode label (in toolbar, next to event count) — it's unclear to users that the label describes how the search words were classified. Consider a prefix like "match:" or a tooltip, or a different placement/presentation. Any solution must not cause the event list to jump when the label appears/disappears.
 - [x] Leverage searchMode to enrich the UI:
   - [x] Highlight matched performers in the event list (bold/colour matching names within each event title row)

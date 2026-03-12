@@ -79,8 +79,8 @@
       <table class="stats-table">
         <thead>
           <tr class="sort-row">
-            <th><button class="sort-btn" :class="yearSort.col === 'year' && 'sort-active'" @click="setSort('yearSort', 'year')">Year<span x-show="yearSort.col === 'year'" x-text="yearSort.dir === 'asc' ? ' ↑' : ' ↓'"></span></button></th>
-            <th><button class="sort-btn" :class="yearSort.col === 'c' && 'sort-active'" @click="setSort('yearSort', 'c')">Count</button></th>
+            <th>Year <button class="sort-btn" :class="yearSort.col === 'year' && 'sort-active'" @click="setSort('yearSort', 'year')" x-text="yearSort.col === 'year' ? (yearSort.dir === 'asc' ? '↑' : '↓') : '⇅'"></button></th>
+            <th>Count <button class="sort-btn" :class="[yearSort.col === 'c' && 'sort-active', yearSort.col === 'c' && 'sort-locked']" @click="setSort('yearSort', 'c')" x-text="yearSort.col === 'c' ? '●' : '⇅'"></button></th>
           </tr>
         </thead>
         <template x-for="y in yearStats" :key="y.year">
@@ -97,8 +97,8 @@
       <table class="stats-table">
         <thead>
           <tr class="sort-row">
-            <th><button class="sort-btn" :class="locationSort.col === 'location' && 'sort-active'" @click="setSort('locationSort', 'location')">Location</button></th>
-            <th><button class="sort-btn" :class="locationSort.col === 'c' && 'sort-active'" @click="setSort('locationSort', 'c')">Count</button></th>
+            <th>Location <button class="sort-btn" :class="[locationSort.col === 'location' && 'sort-active', locationSort.col === 'location' && 'sort-locked']" @click="setSort('locationSort', 'location')" x-text="locationSort.col === 'location' ? '●' : '⇅'"></button></th>
+            <th>Count <button class="sort-btn" :class="[locationSort.col === 'c' && 'sort-active', locationSort.col === 'c' && 'sort-locked']" @click="setSort('locationSort', 'c')" x-text="locationSort.col === 'c' ? '●' : '⇅'"></button></th>
           </tr>
         </thead>
         <template x-for="l in locationStats" :key="l.location">
@@ -114,8 +114,8 @@
       <table class="stats-table">
         <thead>
           <tr class="sort-row">
-            <th><button class="sort-btn" :class="performerSort.col === 'name' && 'sort-active'" @click="setSort('performerSort', 'name')">Name</button></th>
-            <th><button class="sort-btn" :class="performerSort.col === 'c' && 'sort-active'" @click="setSort('performerSort', 'c')">Count</button></th>
+            <th>Name <button class="sort-btn" :class="[performerSort.col === 'name' && 'sort-active', performerSort.col === 'name' && 'sort-locked']" @click="setSort('performerSort', 'name')" x-text="performerSort.col === 'name' ? '●' : '⇅'"></button></th>
+            <th>Count <button class="sort-btn" :class="[performerSort.col === 'c' && 'sort-active', performerSort.col === 'c' && 'sort-locked']" @click="setSort('performerSort', 'c')" x-text="performerSort.col === 'c' ? '●' : '⇅'"></button></th>
           </tr>
         </thead>
         <template x-for="p in performerStats" :key="p.name">
