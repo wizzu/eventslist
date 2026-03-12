@@ -124,7 +124,9 @@ document.addEventListener('alpine:init', () => {
 
     // Called automatically by Alpine when the component initializes.
     async init() {
-      const response = await fetch('events.txt');
+      // Try real data first; fall back to sample data if not found.
+      let response = await fetch('events.txt');
+      if (!response.ok) response = await fetch('events-sample.txt');
       const text = await response.text();
       const concerts = parseEvents(text).filter(e => e.type !== null);
       this.events = concerts.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date)) // newest first

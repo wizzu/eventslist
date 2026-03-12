@@ -12,3 +12,6 @@ venv/
 
 # OS
 .DS_Store
+
+# Real event data — deployed separately, not committed
+spa/events.txt
