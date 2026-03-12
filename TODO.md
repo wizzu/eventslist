@@ -47,10 +47,11 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Add a small, non-prominent "Generated with [eventslist](github repo url)" link, e.g. top-right corner, very small text
 - [x] Column sorting for stats tables (By Year, By Location, Performers) — click column header to sort; counts always desc, location/name always asc, year toggles asc/desc
 - [ ] Revisit stats table sort UI — experiment with static column header text and separate sort controls (current button-in-header approach works but aesthetics are uncertain)
-- [ ] Leverage searchMode to enrich the UI:
-  - [ ] Highlight matched performers in the event list (bold/colour matching names within each event title row)
-  - [ ] Search mode indicator near the search box showing how the query was interpreted (performer / venue / year / mixed — e.g. "Maija 2006" matched both performer and year)
-  - [ ] Emphasise the relevant summary block row based on search mode (Performances row for performer searches, Events row for others)
+- [ ] Search mode label (in toolbar, next to event count) — it's unclear to users that the label describes how the search words were classified. Consider a prefix like "match:" or a tooltip, or a different placement/presentation. Any solution must not cause the event list to jump when the label appears/disappears.
+- [x] Leverage searchMode to enrich the UI:
+  - [x] Highlight matched performers in the event list (bold/colour matching names within each event title row)
+  - [x] Search mode indicator near the search box showing how the query was interpreted (performer / venue / year / mixed — e.g. "Maija 2006" matched both performer and year)
+  - [x] Emphasise the relevant summary block row based on search mode (Performances row for performer searches, Events row for others)
 - [x] Add a favicon (currently causes a 404 in the browser console)
 - [x] Sort order toggle (newest/oldest first)
 - [ ] Evaluate listing + stats as dual/split view vs toggle

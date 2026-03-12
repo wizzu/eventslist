@@ -122,7 +122,8 @@ document.addEventListener('alpine:init', () => {
       const response = await fetch('events.txt');
       const text = await response.text();
       const concerts = parseEvents(text).filter(e => e.type !== null);
-      this.events = concerts.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date)); // newest first
+      this.events = concerts.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date)) // newest first
+        .map((e, i) => ({ ...e, id: i })); // stable integer ID for x-for keying
       this.status = `Loaded ${this.events.length} events.`;
 
       // Debounce rawQuery → query. Clearing always fires instantly.
@@ -196,6 +197,36 @@ document.addEventListener('alpine:init', () => {
       return this.filteredEvents.every(event =>
         event.performers.some(p => words.some(w => p.name.toLowerCase().includes(w)))
       ) ? 'performer' : 'other';
+    },
+
+    // Human-readable label describing how the query was interpreted, e.g. "performer",
+    // "year", "performer · year", "venue". Each word is classified independently:
+    // 4-digit number → year; matches a performer name → performer;
+    // matches a location → venue; otherwise → event.
+    get searchModeLabel() {
+      if (!this.query.trim() || !this.filteredEvents.length) return null;
+      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      const types = new Set();
+      for (const word of words) {
+        if (/^\d{4}$/.test(word)) {
+          types.add('year');
+        } else if (this.filteredEvents.some(e => e.performers.some(p => p.name.toLowerCase().includes(word)))) {
+          types.add('performer');
+        } else if (this.filteredEvents.some(e => e.location.toLowerCase().includes(word))) {
+          types.add('venue');
+        } else {
+          types.add('event');
+        }
+      }
+      return types.size ? [...types].join(' · ') : null;
+    },
+
+    // True if the given performer name matches any word in the current query.
+    // Used to highlight matched performers in the event listing.
+    performerMatchesQuery(name) {
+      if (!this.query.trim()) return false;
+      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      return words.some(w => name.toLowerCase().includes(w));
     },
 
     // Split performers into full-concert and mini-only buckets.

@@ -160,6 +160,12 @@ main {
 }
 
 
+/* Inline label appended to the event count in the toolbar: how the query was interpreted. */
+.search-mode-label {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
 /* Summary block at the top of the stats panel. Always visible, reacts to search. */
 .stats-summary {
   margin: 0 0 1.5rem 0;
@@ -184,6 +190,13 @@ main {
   margin: 0;
   text-align: right;
   font-variant-numeric: tabular-nums; /* keep numbers from shifting width as they change */
+}
+
+/* Emphasised summary row: active when search mode matches (Events or Performances). */
+.stats-summary dt.stat-active,
+.stats-summary dd.stat-active {
+  color: #222;
+  font-weight: 600;
 }
 
 /* Wrapper for year table — limits height so performer table stays visible. */
@@ -351,6 +364,11 @@ main {
 
 /* One performer per line, with optional inline mini badge. */
 .event-performer {
+}
+
+/* Performer name that matches the current search query. */
+.performer-match {
+  font-weight: 600;
 }
 
 /* Mini-concert badge: small, bordered, muted. */
