@@ -64,6 +64,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [ ] Rich statistics visualizations (bar charts, graphs, etc.)
 - [ ] Responsive design
 - [x] Configurable events.txt path — fetch `events.txt` first, fall back to `events-sample.txt` if not found (404); add `events.txt` to `.gitignore` so real data can be deployed separately from code; rename `spa/events.txt` → `spa/events-sample.txt` in the repo
+- [ ] Allow configuring the events data URL — e.g. via a query parameter or config file, so the data file can be loaded from an arbitrary URL rather than only the local directory
 
 ## CLI
 - [x] gigcount.py in the repo
