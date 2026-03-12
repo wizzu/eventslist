@@ -266,6 +266,19 @@ document.addEventListener('alpine:init', () => {
       return this.events.some(e => e.type === 'MC' || e.performers.some(p => p.type === 'MC'));
     },
 
+    // True if the current query matches any mini-concerts (ignoring showMinis).
+    // Used to grey out the toggle when it would have no effect.
+    get filteredHasMinis() {
+      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      const matched = words.length
+        ? this.events.filter(e => {
+            const haystack = [e.date, this.eventTitle(e), e.location].join(' ').toLowerCase();
+            return words.every(w => haystack.includes(w));
+          })
+        : this.events;
+      return matched.some(e => e.type === 'MC' || e.performers.some(p => p.type === 'MC'));
+    },
+
     // Returns events matching the current search query, in the current sort order.
     // When showMinis is false, excludes MC events and C events where every performer is MC.
     // Search requires ALL words to match somewhere in the event (date + title + location).
