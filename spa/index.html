@@ -28,7 +28,7 @@
       </div>
       <div class="listing-toolbar">
         <span class="event-count"><span x-html="fmtCountsHtml(filteredEvents) + (query && searchModeLabel ? ' matching' : '') + (filteredEvents.length === 1 ? ' event' : ' events')"></span><span class="search-mode-label" x-show="query && searchModeLabel" x-text="' (' + searchModeLabel + ')'"></span></span>
-        <label class="mini-toggle" x-show="hasMinis" :class="!filteredHasMinis && 'mini-toggle-disabled'"><input type="checkbox" x-model="showMinis" :disabled="!filteredHasMinis"> mini-concerts</label>
+        <label class="mini-toggle" x-show="hasMinis" :class="!filteredHasMinis && 'mini-toggle-disabled'"><input type="checkbox" x-model="showMinis" :disabled="!filteredHasMinis"> mini-concerts<span :style="!(filteredHasMinis && showMinis) && 'visibility:hidden'" x-text="' (' + (filteredMiniCounts.mc + filteredMiniCounts.miniOnlyC) + ')'"></span></label>
         <button class="sort-toggle" @click="sortAsc = !sortAsc" :title="sortAsc ? 'Sort: oldest first' : 'Sort: newest first'">
           <span x-text="sortAsc ? '↑ Oldest first' : '↓ Newest first'"></span>
         </button>

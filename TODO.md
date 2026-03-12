@@ -54,8 +54,8 @@ Steps are intentionally small to facilitate incremental learning alongside build
   - [x] Emphasise the relevant summary block row based on search mode (Performances row for performer searches, Events row for others)
 - [x] Add a favicon (currently causes a 404 in the browser console)
 - [x] Sort order toggle (newest/oldest first)
-- [ ] Event count in listing toolbar shows e.g. "1864 (41) events" — add the "mini" pill badge to the (41) part, consistent with how mini counts appear in the stats panel and summary block.
-- [ ] Mini-concert checkbox should appear visually greyed out (disabled-looking) when the current search results contain no mini-concerts, since the toggle has no effect in that case.
+- [x] Event count in listing toolbar shows e.g. "1864 (41) events" — add the "mini" pill badge to the (41) part, consistent with how mini counts appear in the stats panel and summary block.
+- [x] Mini-concert checkbox should appear visually greyed out (disabled-looking) when the current search results contain no mini-concerts, since the toggle has no effect in that case.
 - [ ] "mini" pill badge and sort buttons look too similar — both have a border and small text, making the badge look clickable. Differentiate them visually; one direction is giving the sort buttons a subtle tint/colour so buttons look interactive and the badge looks like a label.
 - [ ] Evaluate listing + stats as dual/split view vs toggle
 - [x] MC indicator in event listing — mini-concerts should be visually indicated (full concert is implied); avoid showing raw [C]/[MC] tags; consider inline badge/label rather than a separate column. Add a legend for the stats table headers too.

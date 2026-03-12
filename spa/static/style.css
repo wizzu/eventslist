@@ -417,6 +417,36 @@ main {
   vertical-align: middle;
 }
 
+/* Custom tooltip for the mini-badge when a data-tooltip attribute is present.
+   Using CSS ::after instead of the native title attribute because the browser's
+   built-in tooltip delay (~1s) is too slow for comfortable discoverability. */
+.mini-badge[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+.mini-badge[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 260px;
+  white-space: normal;
+  background: #333;
+  color: #fff;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  padding: 5px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  transition-delay: 0.25s;
+  z-index: 10;
+}
+.mini-badge[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
 /* Location is muted, doesn't need to dominate. */
 .event-location {
   color: #666;

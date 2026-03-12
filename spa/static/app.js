@@ -184,10 +184,31 @@ document.addEventListener('alpine:init', () => {
       const mc = events.filter(e => e.type === 'MC').length;
       return this.fmtCount(c, mc);
     },
+    // Like fmtCounts but returns HTML, and accounts for C-type events where every performer is MC.
+    // Those events are subtracted from the main count and rolled into the mini badge as "+N",
+    // because they disappear when mini-concerts are hidden — keeping the displayed count stable.
+    // A tooltip is always shown on the badge to explain what the count means.
     fmtCountsHtml(events) {
-      const c = events.filter(e => e.type === 'C').length;
+      const cEvents = events.filter(e => e.type === 'C');
       const mc = events.filter(e => e.type === 'MC').length;
-      return this.fmtCountHtml(c, mc);
+      const miniOnlyC = cEvents.filter(e =>
+        e.performers.length > 0 && e.performers.every(p => p.type === 'MC')
+      ).length;
+      const c = cEvents.length - miniOnlyC;
+      const total = mc + miniOnlyC;
+      if (!total) return String(c);
+
+      // Badge text: show N+M split only when both types are present.
+      const badgeText = (mc > 0 && miniOnlyC > 0) ? `${mc}+${miniOnlyC}` : `${total}`;
+
+      // Tooltip: describe each component, then note that all are hidden together.
+      const parts = [];
+      if (mc > 0) parts.push(`${mc} mini-concert event${mc !== 1 ? 's' : ''}`);
+      if (miniOnlyC > 0) parts.push(`${miniOnlyC} full event${miniOnlyC !== 1 ? 's' : ''} where every performance was a mini-concert`);
+      const hiddenNote = total === 1 ? 'hidden' : total === 2 ? 'both are hidden' : `all ${total} are hidden`;
+      const tooltip = parts.join(', ') + ` — ${hiddenNote} when mini-concerts are turned off`;
+
+      return `${c} (<span class="mini-badge" data-tooltip="${tooltip}">${badgeText} mini</span>)`;
     },
 
     // Getters (get foo() {}) are Alpine's computed properties: Alpine tracks which reactive
@@ -266,9 +287,10 @@ document.addEventListener('alpine:init', () => {
       return this.events.some(e => e.type === 'MC' || e.performers.some(p => p.type === 'MC'));
     },
 
-    // True if the current query matches any mini-concerts (ignoring showMinis).
-    // Used to grey out the toggle when it would have no effect.
-    get filteredHasMinis() {
+    // Counts of mini-related events in the current query results, independent of showMinis.
+    // mc: MC-type events; miniOnlyC: C-type events where every performer is MC.
+    // Used to drive the mini-concerts toggle state, its count label, and fmtCountsHtml.
+    get filteredMiniCounts() {
       const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
       const matched = words.length
         ? this.events.filter(e => {
@@ -276,7 +298,18 @@ document.addEventListener('alpine:init', () => {
             return words.every(w => haystack.includes(w));
           })
         : this.events;
-      return matched.some(e => e.type === 'MC' || e.performers.some(p => p.type === 'MC'));
+      const mc = matched.filter(e => e.type === 'MC').length;
+      const miniOnlyC = matched.filter(e =>
+        e.type === 'C' && e.performers.length > 0 && e.performers.every(p => p.type === 'MC')
+      ).length;
+      return { mc, miniOnlyC };
+    },
+
+    // True if the current query matches any mini-concerts (ignoring showMinis).
+    // Used to grey out the toggle when toggling it would have no effect.
+    get filteredHasMinis() {
+      const { mc, miniOnlyC } = this.filteredMiniCounts;
+      return mc > 0 || miniOnlyC > 0;
     },
 
     // Returns events matching the current search query, in the current sort order.
