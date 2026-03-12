@@ -186,7 +186,7 @@ document.addEventListener('alpine:init', () => {
     get counts() {
       const c = this.events.filter(e => e.type === 'C').length;
       const mc = this.events.filter(e => e.type === 'MC').length;
-      return `${c} full (${mc} mini)`;
+      return `${c} concerts (+ ${mc} mini-concerts)`;
     },
 
     // 'performer' if every filtered event has at least one performer matching the query.

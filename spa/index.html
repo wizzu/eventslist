@@ -15,7 +15,7 @@
     <h1>Events</h1>
     <div class="header-info">
       <span class="header-counts" x-text="counts"></span>
-      <span class="header-legend">mini: 5 or fewer songs, under 30 min</span>
+      <span class="header-legend">mini-concert: 5 or fewer songs, under 30 min</span>
     </div>
     <span class="home-link">Generated with <a href="https://github.com/wizzu/eventslist" target="_blank" rel="noopener">eventslist</a></span>
   </header>
@@ -28,7 +28,7 @@
       </div>
       <div class="listing-toolbar">
         <span class="event-count"><span x-text="fmtCounts(filteredEvents) + ' events'"></span><span class="search-mode-label" x-show="query && searchModeLabel" x-text="' · ' + searchModeLabel"></span></span>
-        <label class="mini-toggle" x-show="hasMinis"><input type="checkbox" x-model="showMinis"> Minis</label>
+        <label class="mini-toggle" x-show="hasMinis"><input type="checkbox" x-model="showMinis"> mini-concerts</label>
         <button class="sort-toggle" @click="sortAsc = !sortAsc" :title="sortAsc ? 'Sort: oldest first' : 'Sort: newest first'">
           <span x-text="sortAsc ? '↑ Oldest first' : '↓ Newest first'"></span>
         </button>

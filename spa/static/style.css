@@ -29,7 +29,7 @@ header {
 header {
   position: relative; /* anchor for .home-link absolute positioning */
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   gap: 1.5rem;
 }
 
