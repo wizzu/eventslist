@@ -154,13 +154,30 @@ main {
   color: #333;
 }
 
-/* Stats panel heading. */
+/* Stats panel heading — clickable to collapse/expand its section. */
 .stats-heading {
   margin: 0 0 0.75rem 0;
   font-size: 1rem;
   color: #444;
   padding-top: 1.5rem;
   border-top: 1px solid #bbb;
+  cursor: pointer;
+  user-select: none;
+}
+
+.stats-heading:hover {
+  color: #222;
+}
+
+/* Collapse chevron inside the heading. */
+.stats-chevron {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Space between sections; the heading already has padding-top. */
+.stats-section {
+  margin-bottom: 0.5rem;
 }
 
 

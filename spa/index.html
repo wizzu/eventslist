@@ -74,57 +74,69 @@
           <dd x-text="yearStats.length"></dd>
         </div>
       </dl>
-      <h2 class="stats-heading">Events by year</h2>
-      <div class="stats-table-scroll">
-      <table class="stats-table">
-        <thead>
-          <tr class="sort-row">
-            <th>Year <button class="sort-btn" :class="yearSort.col === 'year' && 'sort-active'" @click="setSort('yearSort', 'year')" x-text="yearSort.col === 'year' ? (yearSort.dir === 'asc' ? '↑' : '↓') : '⇅'"></button></th>
-            <th>Count <button class="sort-btn" :class="[yearSort.col === 'c' && 'sort-active', yearSort.col === 'c' && 'sort-locked']" @click="setSort('yearSort', 'c')" x-text="yearSort.col === 'c' ? '●' : '⇅'"></button></th>
-          </tr>
-        </thead>
-        <template x-for="y in yearStats" :key="y.year">
-          <tr>
-            <td x-text="y.year"></td>
-            <td x-html="fmtCountHtml(y.c, y.mc)"></td>
-          </tr>
-        </template>
-      </table>
+      <div class="stats-section" x-data="{ open: true }">
+        <h2 class="stats-heading" @click="open = !open">Events by year <span class="stats-chevron" x-text="open ? '▾' : '▸'"></span></h2>
+        <div x-show="open">
+          <div class="stats-table-scroll">
+          <table class="stats-table">
+            <thead>
+              <tr class="sort-row">
+                <th>Year <button class="sort-btn" :class="yearSort.col === 'year' && 'sort-active'" @click.stop="setSort('yearSort', 'year')" x-text="yearSort.col === 'year' ? (yearSort.dir === 'asc' ? '↑' : '↓') : '⇅'"></button></th>
+                <th>Count <button class="sort-btn" :class="[yearSort.col === 'c' && 'sort-active', yearSort.col === 'c' && 'sort-locked']" @click.stop="setSort('yearSort', 'c')" x-text="yearSort.col === 'c' ? '●' : '⇅'"></button></th>
+              </tr>
+            </thead>
+            <template x-for="y in yearStats" :key="y.year">
+              <tr>
+                <td x-text="y.year"></td>
+                <td x-html="fmtCountHtml(y.c, y.mc)"></td>
+              </tr>
+            </template>
+          </table>
+          </div>
+        </div>
       </div>
 
-      <h2 class="stats-heading" style="margin-top: 1.5rem">Events by location</h2>
-      <div class="stats-table-scroll">
-      <table class="stats-table">
-        <thead>
-          <tr class="sort-row">
-            <th>Location <button class="sort-btn" :class="[locationSort.col === 'location' && 'sort-active', locationSort.col === 'location' && 'sort-locked']" @click="setSort('locationSort', 'location')" x-text="locationSort.col === 'location' ? '●' : '⇅'"></button></th>
-            <th>Count <button class="sort-btn" :class="[locationSort.col === 'c' && 'sort-active', locationSort.col === 'c' && 'sort-locked']" @click="setSort('locationSort', 'c')" x-text="locationSort.col === 'c' ? '●' : '⇅'"></button></th>
-          </tr>
-        </thead>
-        <template x-for="l in locationStats" :key="l.location">
-          <tr>
-            <td x-text="l.location"></td>
-            <td x-html="fmtCountHtml(l.c, l.mc)"></td>
-          </tr>
-        </template>
-      </table>
+      <div class="stats-section" x-data="{ open: true }">
+        <h2 class="stats-heading" @click="open = !open">Events by location <span class="stats-chevron" x-text="open ? '▾' : '▸'"></span></h2>
+        <div x-show="open">
+          <div class="stats-table-scroll">
+          <table class="stats-table">
+            <thead>
+              <tr class="sort-row">
+                <th>Location <button class="sort-btn" :class="[locationSort.col === 'location' && 'sort-active', locationSort.col === 'location' && 'sort-locked']" @click.stop="setSort('locationSort', 'location')" x-text="locationSort.col === 'location' ? '●' : '⇅'"></button></th>
+                <th>Count <button class="sort-btn" :class="[locationSort.col === 'c' && 'sort-active', locationSort.col === 'c' && 'sort-locked']" @click.stop="setSort('locationSort', 'c')" x-text="locationSort.col === 'c' ? '●' : '⇅'"></button></th>
+              </tr>
+            </thead>
+            <template x-for="l in locationStats" :key="l.location">
+              <tr>
+                <td x-text="l.location"></td>
+                <td x-html="fmtCountHtml(l.c, l.mc)"></td>
+              </tr>
+            </template>
+          </table>
+          </div>
+        </div>
       </div>
 
-      <h2 class="stats-heading" style="margin-top: 1.5rem">Performers</h2>
-      <table class="stats-table">
-        <thead>
-          <tr class="sort-row">
-            <th>Name <button class="sort-btn" :class="[performerSort.col === 'name' && 'sort-active', performerSort.col === 'name' && 'sort-locked']" @click="setSort('performerSort', 'name')" x-text="performerSort.col === 'name' ? '●' : '⇅'"></button></th>
-            <th>Count <button class="sort-btn" :class="[performerSort.col === 'c' && 'sort-active', performerSort.col === 'c' && 'sort-locked']" @click="setSort('performerSort', 'c')" x-text="performerSort.col === 'c' ? '●' : '⇅'"></button></th>
-          </tr>
-        </thead>
-        <template x-for="p in performerStats" :key="p.name">
-          <tr>
-            <td x-text="p.name"></td>
-            <td x-html="fmtCountHtml(p.c, p.mc)"></td>
-          </tr>
-        </template>
-      </table>
+      <div class="stats-section" x-data="{ open: true }">
+        <h2 class="stats-heading" @click="open = !open">Performers <span class="stats-chevron" x-text="open ? '▾' : '▸'"></span></h2>
+        <div x-show="open">
+          <table class="stats-table">
+            <thead>
+              <tr class="sort-row">
+                <th>Name <button class="sort-btn" :class="[performerSort.col === 'name' && 'sort-active', performerSort.col === 'name' && 'sort-locked']" @click.stop="setSort('performerSort', 'name')" x-text="performerSort.col === 'name' ? '●' : '⇅'"></button></th>
+                <th>Count <button class="sort-btn" :class="[performerSort.col === 'c' && 'sort-active', performerSort.col === 'c' && 'sort-locked']" @click.stop="setSort('performerSort', 'c')" x-text="performerSort.col === 'c' ? '●' : '⇅'"></button></th>
+              </tr>
+            </thead>
+            <template x-for="p in performerStats" :key="p.name">
+              <tr>
+                <td x-text="p.name"></td>
+                <td x-html="fmtCountHtml(p.c, p.mc)"></td>
+              </tr>
+            </template>
+          </table>
+        </div>
+      </div>
     </div>
   </main>
 </body>
