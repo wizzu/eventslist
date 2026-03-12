@@ -63,7 +63,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] MC indicator in event listing — mini-concerts should be visually indicated (full concert is implied); avoid showing raw [C]/[MC] tags; consider inline badge/label rather than a separate column. Add a legend for the stats table headers too.
 - [ ] Rich statistics visualizations (bar charts, graphs, etc.)
 - [ ] Responsive design
-- [ ] Configurable events.txt path
+- [ ] Configurable events.txt path — fetch `events.txt` first, fall back to `events-sample.txt` if not found (404); add `events.txt` to `.gitignore` so real data can be deployed separately from code; rename `spa/events.txt` → `spa/events-sample.txt` in the repo
 
 ## CLI
 - [x] gigcount.py in the repo
