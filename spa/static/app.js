@@ -208,7 +208,7 @@ document.addEventListener('alpine:init', () => {
       const hiddenNote = total === 1 ? 'hidden' : total === 2 ? 'both are hidden' : `all ${total} are hidden`;
       const tooltip = parts.join(', ') + ` — ${hiddenNote} when mini-concerts are turned off`;
 
-      return `${c} (<span class="mini-badge" data-tooltip="${tooltip}">${badgeText} mini</span>)`;
+      return `${c} (${badgeText} <span class="mini-badge" data-tooltip="${tooltip}">mini</span>)`;
     },
 
     // Getters (get foo() {}) are Alpine's computed properties: Alpine tracks which reactive
