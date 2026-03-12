@@ -20,7 +20,7 @@
     <span class="home-link">Generated with <a href="https://github.com/wizzu/eventslist" target="_blank" rel="noopener">eventslist</a></span>
   </header>
   <main>
-    <div class="left-col">
+    <div class="left-col" x-ref="listCol" @scroll="scrolled = $el.scrollTop > 50">
       <p x-show="!events.length" x-text="status"></p>
       <div class="search-wrap">
         <input class="search-box" type="search" placeholder="Search events…" x-model="rawQuery" :class="searching && 'search-pending'" x-ref="search">
@@ -52,6 +52,7 @@
           </div>
         </template>
       </div>
+      <button class="scroll-top-btn" x-show="scrolled" x-transition.opacity.duration.300ms @click="$refs.listCol.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Scroll to top">↑ Top</button>
     </div>
     <div class="right-col">
       <dl class="stats-summary">

@@ -111,6 +111,7 @@ document.addEventListener('alpine:init', () => {
     searching: false,  // true while debounce is pending
     _debounceTimer: null,
     sortAsc: false,           // event listing: false = newest first (default), true = oldest first
+    scrolled: false,          // true when left column has scrolled down enough to show scroll-to-top button
     yearSort:      { col: 'year', dir: 'desc', yearDir: 'desc' }, // yearDir remembered independently
     locationSort:  { col: 'c',    dir: 'desc' },
     performerSort: { col: 'c',    dir: 'desc' },

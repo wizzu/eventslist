@@ -40,8 +40,8 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Debounce search input (~200ms) to avoid recomputing all reactive getters on every keystroke; consider deferring only the stats panel (option 3) if the event list alone is fast enough. If the debounce delay is perceptible, add a visual in-progress indicator on the search box or stats panel (e.g. subtle animation or dimming) so the user knows results are updating.
 
 ## Future / Nice-to-have
-- [ ] Evaluate making the search box sticky at the top of the left column when scrolling the event list.
-- [ ] Add a "scroll to top" button on the left column — always visible, scrolls the event list back to the top; disabled (or hidden) when already at the top / list fits in view.
+- [x] Evaluate making the search box sticky at the top of the left column when scrolling the event list.
+- [x] Add a "scroll to top" button on the left column — always visible, scrolls the event list back to the top; disabled (or hidden) when already at the top / list fits in view.
 - [x] Show per-performer detail comment (e.g. "acoustic" from "Fish (acoustic)") in the event listing, one line per performer. Display it in muted colour similar to the event name prefix, before the mini badge if present.
 - [ ] Add a toggle to show/hide mini performances — hides MC-tagged performers/performances from the listing and excludes them from stats (not the whole event, just the MC performances within it). Consider a checkbox or small toggle button near the search box or stats panel.
 - [x] Add a small, non-prominent "Generated with [eventslist](github repo url)" link, e.g. top-right corner, very small text

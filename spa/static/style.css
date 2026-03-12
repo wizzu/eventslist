@@ -279,6 +279,29 @@ main {
   color: #222;
 }
 
+/* Scroll-to-top button: sticky in the bottom-right corner of the left column.
+   align-self: flex-end pushes it to the right edge within the flex column. */
+.scroll-top-btn {
+  position: sticky;
+  bottom: 0.1rem;
+  align-self: flex-end;
+  margin-right: -1.5rem;
+  font-size: 0.85rem;
+  color: #555;
+  background: #efefef;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.scroll-top-btn:hover {
+  background: #e2e2e2;
+  border-color: #999;
+  color: #222;
+}
+
 /* Each event is a horizontal row of fields. gap adds space between them. */
 .event-row {
   display: flex;
