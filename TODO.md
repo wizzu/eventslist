@@ -57,6 +57,8 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Event count in listing toolbar shows e.g. "1864 (41) events" — add the "mini" pill badge to the (41) part, consistent with how mini counts appear in the stats panel and summary block.
 - [x] Mini-concert checkbox should appear visually greyed out (disabled-looking) when the current search results contain no mini-concerts, since the toggle has no effect in that case.
 - [x] "mini" pill badge and sort buttons look too similar — both have a border and small text, making the badge look clickable. Differentiate them visually; one direction is giving the sort buttons a subtle tint/colour so buttons look interactive and the badge looks like a label.
+- [ ] Make stats sections (by year, by location, performers) individually collapsible — minimal UI clutter but clearly signalled. Relevant for mobile where vertical space is scarce.
+- [ ] Consider making the event listing collapsible too (needs a heading or other affordance first, since there is none currently). Related to stats collapsibility but a bigger change.
 - [ ] Evaluate listing + stats as dual/split view vs toggle
 - [x] MC indicator in event listing — mini-concerts should be visually indicated (full concert is implied); avoid showing raw [C]/[MC] tags; consider inline badge/label rather than a separate column. Add a legend for the stats table headers too.
 - [ ] Rich statistics visualizations (bar charts, graphs, etc.)
