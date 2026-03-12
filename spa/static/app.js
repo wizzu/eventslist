@@ -112,6 +112,7 @@ document.addEventListener('alpine:init', () => {
     _debounceTimer: null,
     sortAsc: false,           // event listing: false = newest first (default), true = oldest first
     scrolled: false,          // true when left column has scrolled down enough to show scroll-to-top button
+    showMinis: true,          // whether to include mini-concerts in the listing and stats
     yearSort:      { col: 'year', dir: 'desc', yearDir: 'desc' }, // yearDir remembered independently
     locationSort:  { col: 'c',    dir: 'desc' },
     performerSort: { col: 'c',    dir: 'desc' },
@@ -197,6 +198,14 @@ document.addEventListener('alpine:init', () => {
       ) ? 'performer' : 'other';
     },
 
+    // Split performers into full-concert and mini-only buckets.
+    // c = performers with at least one full concert; mc = performers seen only in minis.
+    get performerCounts() {
+      const c  = this.performerStats.filter(p => p.c > 0).length;
+      const mc = this.performerStats.filter(p => p.c === 0 && p.mc > 0).length;
+      return { c, mc };
+    },
+
     // Sum of all performer counts in the current filtered view — i.e. total performances.
     get performanceCounts() {
       return this.performerStats.reduce((s, p) => ({ c: s.c + p.c, mc: s.mc + p.mc }), { c: 0, mc: 0 });
@@ -209,7 +218,14 @@ document.addEventListener('alpine:init', () => {
     },
 
 
+    // True if any event in the full dataset has a mini-concert (MC) tag.
+    // Used to conditionally show the showMinis toggle.
+    get hasMinis() {
+      return this.events.some(e => e.type === 'MC' || e.performers.some(p => p.type === 'MC'));
+    },
+
     // Returns events matching the current search query, in the current sort order.
+    // When showMinis is false, excludes MC events and C events where every performer is MC.
     get filteredEvents() {
       const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
       const matched = words.length
@@ -218,8 +234,11 @@ document.addEventListener('alpine:init', () => {
             return words.every(w => haystack.includes(w));
           })
         : this.events;
+      const visible = this.showMinis
+        ? matched
+        : matched.filter(e => e.type !== 'MC' && e.performers.some(p => p.type !== 'MC'));
       // this.events is sorted newest-first; reverse a shallow copy for oldest-first.
-      return this.sortAsc ? [...matched].reverse() : matched;
+      return this.sortAsc ? [...visible].reverse() : visible;
     },
 
     // Aggregate per-location counts from the filtered event list.
@@ -273,6 +292,7 @@ document.addEventListener('alpine:init', () => {
         const toCount = matched.length ? matched : event.performers;
 
         for (const p of toCount) {
+          if (!this.showMinis && p.type === 'MC') continue;
           if (!map.has(p.name)) map.set(p.name, { name: p.name, c: 0, mc: 0 });
           const entry = map.get(p.name);
           if (p.type === 'C') entry.c++;

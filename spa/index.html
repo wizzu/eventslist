@@ -28,6 +28,7 @@
       </div>
       <div class="listing-toolbar">
         <span class="event-count" x-text="fmtCounts(filteredEvents) + ' events'"></span>
+        <label class="mini-toggle" x-show="hasMinis"><input type="checkbox" x-model="showMinis"> Minis</label>
         <button class="sort-toggle" @click="sortAsc = !sortAsc" :title="sortAsc ? 'Sort: oldest first' : 'Sort: newest first'">
           <span x-text="sortAsc ? '↑ Oldest first' : '↓ Newest first'"></span>
         </button>
@@ -41,7 +42,7 @@
                 <span class="event-name-prefix" x-text="event.eventName + ':'"></span>
               </template>
               <template x-for="(p, pi) in event.performers" :key="pi">
-                <span class="event-performer">
+                <span class="event-performer" x-show="showMinis || p.type !== 'MC'">
                   <span x-text="p.name"></span><span class="performer-detail" x-show="p.detail" x-text="' (' + p.detail + ')'"></span> <span class="mini-badge" x-show="p.type === 'MC'">mini</span>
                 </span>
               </template>
@@ -66,7 +67,7 @@
         </div>
         <div class="stats-summary-row">
           <dt>Performers</dt>
-          <dd x-text="performerStats.length"></dd>
+          <dd x-html="fmtCountHtml(performerCounts.c, performerCounts.mc)"></dd>
         </div>
         <div class="stats-summary-row">
           <dt>Years</dt>
