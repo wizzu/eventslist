@@ -59,11 +59,14 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] "mini" pill badge and sort buttons look too similar — both have a border and small text, making the badge look clickable. Differentiate them visually; one direction is giving the sort buttons a subtle tint/colour so buttons look interactive and the badge looks like a label.
 - [x] Make stats sections (by year, by location, performers) individually collapsible — minimal UI clutter but clearly signalled. Relevant for mobile where vertical space is scarce.
 - [ ] Consider moving event comments like "(1)", "(2)" to display after the performer name rather than after the venue/location (currently shown at end of location line, after any mini badge) — it may read more naturally as disambiguation of the performer context.
-- [ ] Consider making the event listing collapsible too (needs a heading or other affordance first, since there is none currently). Related to stats collapsibility but a bigger change.
 - [ ] Evaluate listing + stats as dual/split view vs toggle
 - [x] MC indicator in event listing — mini-concerts should be visually indicated (full concert is implied); avoid showing raw [C]/[MC] tags; consider inline badge/label rather than a separate column. Add a legend for the stats table headers too.
 - [ ] Rich statistics visualizations (bar charts, graphs, etc.)
-- [ ] Responsive design
+- [ ] Responsive design — primary goal is single-column mobile layout, where the two columns stack vertically. In that context the user would have to scroll past the entire event list to reach the stats panel, so the event listing needs to be collapsible. On desktop this is less useful (both panels visible side by side), so implement collapsing as part of responsive work rather than as a standalone desktop feature.
+  - Collapse control: add a chevron (▾/▸) directly after the "N events" / "N event" text in the toolbar; clicking the count+chevron toggles the list. Style the event count more like a section heading (closer to stats heading: larger, darker, less muted) so it reads as a header with a toggle affordance.
+  - What collapses: only `div.event-list` (and the scroll-to-top button); search box and toolbar always stay visible so the user can still search while the list is hidden.
+  - Column width: should stay fixed when the list collapses — on desktop the flex ratio (65/35) already handles this since width is grow-ratio-based not content-based, but verify visually. On mobile (single column) the question doesn't apply.
+  - The Alpine toggle state and HTML collapse mechanism are straightforward and reusable; the main work is the CSS layout changes for mobile breakpoints.
 - [x] Configurable events.txt path — fetch `events.txt` first, fall back to `events-sample.txt` if not found (404); add `events.txt` to `.gitignore` so real data can be deployed separately from code; rename `spa/events.txt` → `spa/events-sample.txt` in the repo
 - [ ] Allow configuring the events data URL — e.g. via a query parameter or config file, so the data file can be loaded from an arbitrary URL rather than only the local directory
 
