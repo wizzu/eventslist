@@ -58,6 +58,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Mini-concert checkbox should appear visually greyed out (disabled-looking) when the current search results contain no mini-concerts, since the toggle has no effect in that case.
 - [x] "mini" pill badge and sort buttons look too similar — both have a border and small text, making the badge look clickable. Differentiate them visually; one direction is giving the sort buttons a subtle tint/colour so buttons look interactive and the badge looks like a label.
 - [ ] Make stats sections (by year, by location, performers) individually collapsible — minimal UI clutter but clearly signalled. Relevant for mobile where vertical space is scarce.
+- [ ] Consider moving event comments like "(1)", "(2)" to display after the performer name rather than after the venue/location (currently shown at end of location line, after any mini badge) — it may read more naturally as disambiguation of the performer context.
 - [ ] Consider making the event listing collapsible too (needs a heading or other affordance first, since there is none currently). Related to stats collapsibility but a bigger change.
 - [ ] Evaluate listing + stats as dual/split view vs toggle
 - [x] MC indicator in event listing — mini-concerts should be visually indicated (full concert is implied); avoid showing raw [C]/[MC] tags; consider inline badge/label rather than a separate column. Add a legend for the stats table headers too.
