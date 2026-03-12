@@ -12,7 +12,10 @@ spa/
     app.js                # Alpine component + JS parser
     style.css             # All styles
     vendor/
-      alpine-3.15.8.min.js
+      alpine-3.15.8.min.js  # versioned file
+      alpine.min.js         # symlink -> alpine-x.y.z.min.js (stable name used in index.html)
+scripts/
+  update-alpine.sh          # check and update vendored Alpine.js
 sample/
   events.txt              # Sample data, may be outdated
 gigcount.py               # CLI stats tool (standalone, predates the web app)

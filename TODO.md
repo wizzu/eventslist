@@ -11,7 +11,7 @@
 Steps are intentionally small to facilitate incremental learning alongside building.
 
 - [x] Vendor Alpine.js locally (spa/vendor/alpine-3.15.8.min.js)
-- [ ] Add a command/script to update vendored Alpine.js to the latest release
+- [x] Add a command/script to update vendored Alpine.js to the latest release
 - [x] Minimal `index.html` shell — boilerplate, load Alpine.js + CSS + JS, static placeholder content
 - [x] Base CSS — page layout structure (header, main area), basic visual skeleton
 - [x] Wire up Alpine.js — `x-data` on the app root, confirm reactivity works with a simple test
