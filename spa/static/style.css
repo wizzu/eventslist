@@ -93,6 +93,7 @@ main {
   min-height: 0;
   padding: 2rem;
   overflow-y: auto;
+  overflow-x: hidden; /* overflow-y:auto implicitly enables overflow-x:auto; suppress it */
 }
 
 /* Right column: sticky stats panel. */
@@ -101,6 +102,7 @@ main {
   padding: 2rem;
   border-left: 1px solid #bbb;
   overflow-y: auto;
+  overflow-x: hidden; /* overflow-y:auto implicitly enables overflow-x:auto; suppress it */
 }
 
 /* Wrapper positions the clear button relative to the input. */
@@ -321,6 +323,7 @@ main {
   justify-self: end;
 }
 
+
 .event-count {
   font-size: 0.85rem;
   color: #888;
@@ -464,6 +467,14 @@ main {
   opacity: 1;
 }
 
+/* Collapse chevron on the event count — mobile only, hidden on desktop.
+   No explicit font-size so it inherits from .event-count (looks right on both). */
+.listing-chevron {
+  display: none;
+  color: #888;
+  margin-left: 0.3rem;
+}
+
 /* Location is muted, doesn't need to dominate. */
 .event-location {
   color: #666;
@@ -477,3 +488,78 @@ main {
   font-size: 0.85rem;
 }
 
+
+/* ---- Mobile layout (max-width: 768px) ----
+   Everything above this point is the desktop layout — unchanged.
+   The rules below override only what needs to change on narrow screens. */
+@media (max-width: 768px) {
+  /* Unlock the viewport so the whole page scrolls naturally.
+     Desktop locks it (height: 100vh; overflow: hidden) so each column
+     scrolls independently; on mobile we want one unified scroll. */
+  body {
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Stack the two columns vertically instead of side by side. */
+  main {
+    flex-direction: column;
+  }
+
+  /* Each column becomes full-width and stops scrolling on its own. */
+  .left-col {
+    overflow-y: visible;
+    padding: 1rem;
+  }
+
+  .right-col {
+    flex: none;
+    overflow-y: visible;
+    border-left: none;
+    border-top: 1px solid #bbb;
+    padding: 1rem;
+  }
+
+  /* Stats tables: remove the fixed-height scroll cap — let them expand fully
+     so the page scroll (not a nested scrollbar) handles long tables. */
+  .stats-table-scroll {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  /* Show the collapse chevron. */
+  .listing-chevron {
+    display: inline;
+  }
+
+  /* Style the event count as a section heading so it reads as a collapsible
+     section header rather than just a count. */
+  .event-count {
+    font-size: 1rem;
+    color: #333;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  /* Toolbar: two rows via flex-wrap.
+     Event count fills row 1 (flex-basis: 100%). Mini-toggle and sort button
+     share row 2: mini-toggle sits left (natural), sort button pushed right.
+     The checkbox never moves — only the count text to its right changes width. */
+  .listing-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0;
+  }
+
+  .event-count {
+    flex: 0 0 100%;
+    order: 1; /* visually below mini-toggle + sort (which default to order: 0) */
+  }
+
+  .listing-toolbar .sort-toggle {
+    margin-left: auto;
+    justify-self: unset; /* clear grid-specific rule from desktop */
+  }
+}

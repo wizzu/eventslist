@@ -15,3 +15,6 @@ venv/
 
 # Real event data — deployed separately, not committed
 spa/events.txt
+
+# Local planning notes — not for the repo
+PLAN-*.md

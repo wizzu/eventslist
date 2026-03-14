@@ -118,6 +118,8 @@ document.addEventListener('alpine:init', () => {
     sortAsc: false,           // event listing: false = newest first (default), true = oldest first
     scrolled: false,          // true when left column has scrolled down enough to show scroll-to-top button
     showMinis: true,          // whether to include mini-concerts in the listing and stats
+    listingOpen: true,        // whether the event list is expanded (collapsible on mobile)
+    isMobile: false,          // true when viewport is at mobile breakpoint (≤768px)
     yearSort:      { col: 'year', dir: 'desc', yearDir: 'desc' }, // yearDir remembered independently
     locationSort:  { col: 'c',    dir: 'desc' },
     performerSort: { col: 'c',    dir: 'desc' },
@@ -132,6 +134,15 @@ document.addEventListener('alpine:init', () => {
       this.events = concerts.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date)) // newest first
         .map((e, i) => ({ ...e, id: i })); // stable integer ID for x-for keying
       this.status = `Loaded ${this.events.length} events.`;
+
+      // When the window grows past the mobile breakpoint, uncollapse the listing.
+      // On desktop the chevron is hidden so the user has no way to reopen a collapsed list.
+      const mq = window.matchMedia('(max-width: 768px)');
+      this.isMobile = mq.matches;
+      mq.addEventListener('change', e => {
+        this.isMobile = e.matches;
+        if (!e.matches) this.listingOpen = true; // uncollapse when switching to desktop
+      });
 
       // $watch is an Alpine method that runs a callback whenever a reactive property changes.
       // Debounce rawQuery → query: wait 400ms after the last keystroke before updating query.
@@ -244,13 +255,15 @@ document.addEventListener('alpine:init', () => {
       for (const word of words) {
         if (/^\d{4}$/.test(word)) {
           types.add('year');
-        } else if (this.filteredEvents.some(e => e.performers.some(p => p.name.toLowerCase().includes(word)))) {
-          types.add('performer');
-        } else if (this.filteredEvents.some(e => e.location.toLowerCase().includes(word))) {
-          types.add('venue');
-        } else {
-          types.add('event');
+          continue;
         }
+        // A word can match multiple categories (e.g. "awa" matches performer AWA
+        // and venue Awalon), so check all independently rather than else-if.
+        const matchesPerformer = this.filteredEvents.some(e => e.performers.some(p => p.name.toLowerCase().includes(word)));
+        const matchesVenue     = this.filteredEvents.some(e => e.location.toLowerCase().includes(word));
+        if (matchesPerformer) types.add('performer');
+        if (matchesVenue)     types.add('venue');
+        if (!matchesPerformer && !matchesVenue) types.add('event');
       }
       return types.size ? [...types].join(' · ') : null;
     },
