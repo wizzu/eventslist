@@ -57,6 +57,9 @@ See `DEVELOPMENT.md` for file structure, code conventions, browser caching notes
 - **Propose before implementing** for anything opinionated: layout, design, UX decisions, non-trivial architectural choices. Present the approach and wait for confirmation.
 - **Just do it** for straightforward things: bug fixes, simple 1-liners, mechanical changes with an obvious correct answer.
 - When in doubt, lean toward proposing first.
+- **Do not commit** after making changes — wait for the user to verify and explicitly approve first.
 
 ## TODO Hygiene
-Mark completed tasks `[x]` in the same commit. Add new tasks to `TODO.md` immediately when they come up during a session.
+- Add new tasks to `TODO.md` immediately when they come up during a session.
+- **Do not mark a task `[x]`** without verification: for UI/browser changes, ask the user to confirm it works; for non-UI changes, verify automatically (e.g. run the CLI) if possible, otherwise ask.
+- Mark completed tasks `[x]` in the same commit as the change, once verified.

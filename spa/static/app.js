@@ -16,6 +16,34 @@ const COMMA_SPLIT_RE = /,\s+(?![^()]*\))/;
 // "A + B" means they performed together — shown as one listing entry, counted separately in stats.
 const JOINT_SPLIT_RE = /\+\s+(?![^()]*\))/;
 
+// Parse a search query into term tokens, respecting double-quoted phrases.
+// Returns an array of { text, exact, re }:
+//   exact: true  → quoted term, matched as a whole word/phrase (word-boundary regex)
+//   exact: false → plain word, matched as a case-insensitive substring
+// Regex uses lookbehind/lookahead instead of \b so non-ASCII letters (ä, ö, …) work.
+function parseQuery(query) {
+  const terms = [];
+  const re = /"([^"]+)"|(\S+)/g;
+  let m;
+  while ((m = re.exec(query)) !== null) {
+    const exact = m[1] !== undefined;
+    // Strip stray quotes from plain tokens (e.g. mid-typing "abc or abc") so they
+    // fall back to plain substring matching rather than silently matching nothing.
+    const text = (exact ? m[1] : m[2].replace(/^"|"$/g, '')).toLowerCase();
+    if (!text) continue;
+    const regex = exact
+      ? new RegExp('(?<![a-zA-Z0-9\u00C0-\u024F])' + text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![a-zA-Z0-9\u00C0-\u024F])', 'i')
+      : null;
+    terms.push({ text, exact, regex });
+  }
+  return terms;
+}
+
+// Returns true if haystack (lowercase) contains the given parsed term.
+function termMatches(haystack, term) {
+  return term.exact ? term.regex.test(haystack) : haystack.includes(term.text);
+}
+
 // Convert "D.M.YYYY" to a numeric sort key (YYYYMMDD). '?' treated as 0.
 function dateSortKey(dateStr) {
   const [d, m, y] = dateStr.split('.').map(p => parseInt(p) || 0);
@@ -253,9 +281,9 @@ document.addEventListener('alpine:init', () => {
     // 'other' if events matched on event name, venue, or date instead.
     get searchMode() {
       if (!this.query.trim() || !this.filteredEvents.length) return 'other';
-      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      const terms = parseQuery(this.query);
       return this.filteredEvents.every(event =>
-        event.performers.some(p => words.some(w => p.name.toLowerCase().includes(w)))
+        event.performers.some(p => terms.some(t => termMatches(p.name.toLowerCase(), t)))
       ) ? 'performer' : 'other';
     },
 
@@ -265,17 +293,17 @@ document.addEventListener('alpine:init', () => {
     // matches a venue → venue; otherwise → event.
     get searchModeLabel() {
       if (!this.query.trim() || !this.filteredEvents.length) return null;
-      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      const terms = parseQuery(this.query);
       const types = new Set();
-      for (const word of words) {
-        if (/^\d{4}$/.test(word)) {
+      for (const term of terms) {
+        if (!term.exact && /^\d{4}$/.test(term.text)) {
           types.add('year');
           continue;
         }
-        // A word can match multiple categories (e.g. "awa" matches performer AWA
+        // A term can match multiple categories (e.g. "awa" matches performer AWA
         // and venue Awalon), so check all independently rather than else-if.
-        const matchesPerformer = this.filteredEvents.some(e => e.performers.some(p => p.name.toLowerCase().includes(word)));
-        const matchesVenue     = this.filteredEvents.some(e => e.venue.toLowerCase().includes(word));
+        const matchesPerformer = this.filteredEvents.some(e => e.performers.some(p => termMatches(p.name.toLowerCase(), term)));
+        const matchesVenue     = this.filteredEvents.some(e => termMatches(e.venue.toLowerCase(), term));
         if (matchesPerformer) types.add('performer');
         if (matchesVenue)     types.add('venue');
         if (!matchesPerformer && !matchesVenue) types.add('event');
@@ -287,8 +315,8 @@ document.addEventListener('alpine:init', () => {
     // Used to highlight matched performers in the event listing.
     performerMatchesQuery(name) {
       if (!this.query.trim()) return false;
-      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-      return words.some(w => name.toLowerCase().includes(w));
+      const terms = parseQuery(this.query);
+      return terms.some(t => termMatches(name.toLowerCase(), t));
     },
 
     // Split performers into full-concert and mini-only buckets.
@@ -321,11 +349,11 @@ document.addEventListener('alpine:init', () => {
     // mc: MC-type events; miniOnlyC: C-type events where every performer is MC.
     // Used to drive the mini-concerts toggle state, its count label, and fmtCountsHtml.
     get filteredMiniCounts() {
-      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-      const matched = words.length
+      const terms = parseQuery(this.query);
+      const matched = terms.length
         ? this.events.filter(e => {
             const haystack = [e.date, this.eventTitle(e), e.venue].join(' ').toLowerCase();
-            return words.every(w => haystack.includes(w));
+            return terms.every(t => termMatches(haystack, t));
           })
         : this.events;
       const mc = matched.filter(e => e.type === 'MC').length;
@@ -346,11 +374,11 @@ document.addEventListener('alpine:init', () => {
     // When showMinis is false, excludes MC events and C events where every performer is MC.
     // Search requires ALL words to match somewhere in the event (date + title + venue).
     get filteredEvents() {
-      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-      const matched = words.length
+      const terms = parseQuery(this.query);
+      const matched = terms.length
         ? this.events.filter(e => {
             const haystack = [e.date, this.eventTitle(e), e.venue].join(' ').toLowerCase();
-            return words.every(w => haystack.includes(w));
+            return terms.every(t => termMatches(haystack, t));
           })
         : this.events;
       const visible = this.showMinis
@@ -399,13 +427,13 @@ document.addEventListener('alpine:init', () => {
     // If a search word matches performer names, only those performers are counted.
     // If the event matched on venue/date (no performers match), all are counted.
     get performerStats() {
-      const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      const terms = parseQuery(this.query);
       const map = new Map();
 
       for (const event of this.filteredEvents) {
-        // Which performers in this event match at least one search word?
-        const matched = words.length
-          ? event.performers.filter(p => words.some(w => p.name.toLowerCase().includes(w)))
+        // Which performers in this event match at least one search term?
+        const matched = terms.length
+          ? event.performers.filter(p => terms.some(t => termMatches(p.name.toLowerCase(), t)))
           : event.performers;
         // If none matched by name, the event matched on another field — include all.
         const toCount = matched.length ? matched : event.performers;
