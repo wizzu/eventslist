@@ -403,7 +403,7 @@ main {
 /* Each event is a horizontal row of fields. gap adds space between them. */
 .event-row {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   padding: 0.4rem 0;
   border-bottom: 1px solid #ddd;
   align-items: flex-start; /* date/venue sit at the top when title spans multiple lines */
@@ -412,7 +412,7 @@ main {
 /* Fixed-width date column so all titles align vertically.
    flex: 0 0 7rem = don't grow, don't shrink, always exactly 7rem wide. */
 .event-date {
-  flex: 0 0 7rem;
+  flex: 0 0 6rem;
   color: #666;
   font-size: 0.9rem;
 }
