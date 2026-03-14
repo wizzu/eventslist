@@ -532,6 +532,11 @@ main {
     display: inline;
   }
 
+  /* Match stats chevrons to the listing chevron size on mobile. */
+  .stats-chevron {
+    font-size: 1rem;
+  }
+
   /* Style the event count as a section heading so it reads as a collapsible
      section header rather than just a count. */
   .event-count {
