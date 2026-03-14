@@ -64,11 +64,51 @@ header h1 {
   display: none;
 }
 
-/* Small unobtrusive home link pinned to the top-right corner of the header. */
-.home-link {
+/* Top-right corner of the header: lang switcher pinned to top, home link pinned to bottom. */
+.header-end {
   position: absolute;
-  top: 0.35rem;
+  top: 0;
+  bottom: 0;
   right: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0.35rem 0;
+}
+
+.lang-switcher {
+  display: flex;
+}
+.lang-switcher button {
+  font-size: 0.7rem;
+  color: #777;
+  background: #2a2a4e;
+  border: 1px solid #555;
+  padding: 1px 0;
+  width: 1.8rem;
+  text-align: center;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.lang-switcher button:first-child {
+  border-radius: 3px 0 0 3px;
+}
+.lang-switcher button:last-child {
+  border-radius: 0 3px 3px 0;
+  border-left: none;
+}
+.lang-switcher button:hover {
+  background: #3a3a6e;
+  color: #ccc;
+}
+.lang-switcher button.lang-active {
+  color: #eee;
+  background: #3a3a6e;
+  font-weight: bold;
+}
+
+.home-link {
   font-size: 0.7rem;
   color: #666;
 }
@@ -566,6 +606,7 @@ main {
   .home-link-text {
     display: none;
   }
+
 
   .site-footer {
     display: block;

@@ -77,6 +77,16 @@ Computed from the (filtered) event list:
 
 The underlying data should match gigcount.py, but the presentation should take advantage of the web UI — initially as formatted text/tables, with richer visualizations (charts, graphs, etc.) as a future direction.
 
+## Localisation
+
+English and Finnish are supported. All UI strings are in `spa/static/strings.js`.
+
+- Language defaults to Finnish if `navigator.language` starts with `'fi'`, otherwise English.
+- The user can toggle between languages via a button in the header.
+- The choice is persisted in `localStorage`.
+- The `t` computed property on the Alpine component returns the current language's strings object, so templates and JS code always use `t.key` without branching on language.
+- Dynamic strings (those containing counts) are functions; static strings are plain values.
+
 ## CLI Tool (gigcount.py)
 
 Standalone Python script for generating concert statistics from events.txt. Predates the web app and serves as the reference implementation for parsing and stats logic.

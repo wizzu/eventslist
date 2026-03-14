@@ -148,7 +148,8 @@ function parseLine(raw) {
 // returned object as the reactive state + methods for that element and all its children.
 document.addEventListener('alpine:init', () => {
   Alpine.data('app', () => ({
-    status: 'Loading...',
+    status: '',
+    lang: localStorage.getItem('lang') || (navigator.language.startsWith('fi') ? 'fi' : 'en'),
     events: [],
     rawQuery: '',  // updates on every keystroke (bound to the input)
     query: '',     // debounced copy used for filtering
@@ -164,10 +165,15 @@ document.addEventListener('alpine:init', () => {
     venueSort:     { col: 'c',    dir: 'desc' },
     performerSort: { col: 'c',    dir: 'desc' },
 
+    // t is the active language's string table. Use t.key in JS; x-text="t.key" in templates.
+    get t() { return STRINGS[this.lang]; },
+
     // Called automatically by Alpine when the component initializes.
     async init() {
       // Pick up the version string set by version.js for display in the header.
       this.version = window.__appVersion || '';
+
+      this.status = this.t.loading;
 
       // Try real data first; fall back to sample data if not found.
       let response = await fetch('events.txt');
@@ -176,7 +182,7 @@ document.addEventListener('alpine:init', () => {
       const concerts = parseEvents(text).filter(e => e.type !== null);
       this.events = concerts.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date)) // newest first
         .map((e, i) => ({ ...e, id: i })); // stable integer ID for x-for keying
-      this.status = `Loaded ${this.events.length} events.`;
+      this.status = this.t.loaded(this.events.length);
 
       // When the window grows past the mobile breakpoint, uncollapse the listing.
       // On desktop the chevron is hidden so the user has no way to reopen a collapsed list.
@@ -190,6 +196,8 @@ document.addEventListener('alpine:init', () => {
       // $watch is an Alpine method that runs a callback whenever a reactive property changes.
       // Debounce rawQuery → query: wait 400ms after the last keystroke before updating query.
       // Clearing always fires instantly (no debounce) so the list resets without delay.
+      this.$watch('lang', val => localStorage.setItem('lang', val));
+
       this.$watch('rawQuery', val => {
         clearTimeout(this._debounceTimer);
         if (!val) {
@@ -259,10 +267,10 @@ document.addEventListener('alpine:init', () => {
 
       // Tooltip: describe each component, then note that all are hidden together.
       const parts = [];
-      if (mc > 0) parts.push(`${mc} mini-concert event${mc !== 1 ? 's' : ''}`);
-      if (miniOnlyC > 0) parts.push(`${miniOnlyC} full event${miniOnlyC !== 1 ? 's' : ''} where every performance was a mini-concert`);
-      const hiddenNote = total === 1 ? 'hidden' : total === 2 ? 'both are hidden' : `all ${total} are hidden`;
-      const tooltip = parts.join(', ') + ` — ${hiddenNote} when mini-concerts are turned off`;
+      if (mc > 0) parts.push(this.t.tooltipMiniEvents(mc));
+      if (miniOnlyC > 0) parts.push(this.t.tooltipMiniOnlyC(miniOnlyC));
+      const hiddenNote = total === 1 ? this.t.tooltipHidden1 : total === 2 ? this.t.tooltipHidden2 : this.t.tooltipHiddenN(total);
+      const tooltip = parts.join(', ') + ` — ${hiddenNote} ${this.t.tooltipWhenOff}`;
 
       return `${c} (${badgeText} <span class="mini-badge" data-tooltip="${tooltip}">mini</span>)`;
     },
@@ -274,7 +282,7 @@ document.addEventListener('alpine:init', () => {
     get counts() {
       const c = this.events.filter(e => e.type === 'C').length;
       const mc = this.events.filter(e => e.type === 'MC').length;
-      return `${c} concerts (+ ${mc} mini-concerts)`;
+      return this.t.headerCounts(c, mc);
     },
 
     // 'performer' if every filtered event has at least one performer matching the query.
@@ -297,16 +305,16 @@ document.addEventListener('alpine:init', () => {
       const types = new Set();
       for (const term of terms) {
         if (!term.exact && /^\d{4}$/.test(term.text)) {
-          types.add('year');
+          types.add(this.t.modeYear);
           continue;
         }
         // A term can match multiple categories (e.g. "awa" matches performer AWA
         // and venue Awalon), so check all independently rather than else-if.
         const matchesPerformer = this.filteredEvents.some(e => e.performers.some(p => termMatches(p.name.toLowerCase(), term)));
         const matchesVenue     = this.filteredEvents.some(e => termMatches(e.venue.toLowerCase(), term));
-        if (matchesPerformer) types.add('performer');
-        if (matchesVenue)     types.add('venue');
-        if (!matchesPerformer && !matchesVenue) types.add('event');
+        if (matchesPerformer) types.add(this.t.modePerformer);
+        if (matchesVenue)     types.add(this.t.modeVenue);
+        if (!matchesPerformer && !matchesVenue) types.add(this.t.modeEvent);
       }
       return types.size ? [...types].join(' · ') : null;
     },
