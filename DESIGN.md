@@ -28,7 +28,7 @@ spa/
 
 Single page with:
 - **Header** — title, summary counts
-- **Search box** — single input, filters as you type (matches performer/event names, location, year)
+- **Search box** — single input, filters as you type (matches performer/event names, venue, year)
 - **Search box** — planned in the left column, associated with the listing (stats update reactively as a side effect); may move to span both columns if that feels more natural
 - **Listing view** — left column (≈65% width), scrollable independently, events newest first
 - **Statistics view** — right column (≈35% width), sticky, visible alongside the listing at all times; starting point, layout may be adjusted through experimentation
@@ -52,8 +52,8 @@ Single page with:
     { name: "Performer A", type: "C" },
     { name: "Performer B", type: "MC" }
   ],
-  location: "Venue, City, Country",
-  comment: "2 days" | "(1)" | null,  // trailing parenthesized note after location (not yet parsed)
+  venue: "Venue, City, Country",
+  comment: "2 days" | "(1)" | null,  // trailing parenthesized note after venue (not yet parsed)
   type: "C" | "MC" | null,
   raw: "original line text"
 }
@@ -63,7 +63,7 @@ Single page with:
 
 Single search box with broad matching across:
 - Performer/event names
-- Location/venue
+- Venue
 - Year (e.g. typing "2005" matches events from 2005)
 
 Case-insensitive substring match. More structured filtering can be added later.

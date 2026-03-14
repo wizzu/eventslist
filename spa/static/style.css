@@ -406,7 +406,7 @@ main {
   gap: 1rem;
   padding: 0.4rem 0;
   border-bottom: 1px solid #ddd;
-  align-items: flex-start; /* date/location sit at the top when title spans multiple lines */
+  align-items: flex-start; /* date/venue sit at the top when title spans multiple lines */
 }
 
 /* Fixed-width date column so all titles align vertically.
@@ -495,14 +495,14 @@ main {
   margin-left: 0.3rem;
 }
 
-/* Location is muted, doesn't need to dominate. */
-.event-location {
+/* Venue is muted, doesn't need to dominate. */
+.event-venue {
   color: #666;
   font-size: 0.9rem;
   text-align: right;
 }
 
-/* Muted event comment appended after location, e.g. " · 2". */
+/* Muted event comment appended after venue, e.g. " · 2". */
 .event-comment {
   color: #aaa;
   font-size: 0.85rem;

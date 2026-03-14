@@ -38,6 +38,11 @@ TODO.md                   # Task list
 **Commits:**
 - Small and focused — one logical change per commit
 
+**Version:**
+- `window.__appVersion` in `spa/index.html` (e.g. `'v7'`)
+- Bump when changes are substantial enough to constitute a release
+- At the end of a session with notable changes, ask the user whether to bump the version
+
 ## Browser Caching
 
 `python3 -m http.server` does not disable caching. After JS or CSS changes, **hard refresh** (Cmd+Shift+R) to avoid serving stale files. Check the browser console for Alpine expression errors after HTML/JS changes.

@@ -72,7 +72,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Collapsed section visual hint — when a stats section (by year, by location, performers) or the event listing is collapsed, show a subtle indicator in place of the hidden content to signal there's more. Could be a faint text hint like "· · ·", a muted row count ("42 rows hidden"), a thin dotted/dashed line, or a low-contrast placeholder block. Goal: immediately obvious that content is hidden, without taking much space or drawing too much attention.
 - [ ] Allow configuring the events data URL — e.g. via a query parameter or config file, so the data file can be loaded from an arbitrary URL rather than only the local directory
 - [x] "A + B" performer display bug — fixed: comma separates independent performers, + means joint billing (one listing entry, counted separately in stats)
-- [ ] Decide on "venue" vs "location" terminology — "location" is used in code and data, "venue" appears in the search mode label UI. Currently consistent within each context, but decide if both are intentional or if one should win everywhere.
+- [x] Decide on "venue" vs "location" terminology — standardized on "venue" everywhere.
 
 ## Responsive Design
 See `PLAN-responsive.md` for detailed implementation plan and progress tracking.

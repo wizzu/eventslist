@@ -18,7 +18,7 @@ DATE  DESCRIPTION; LOCATION [TAG]
 - **DATE** — `D.M.YYYY` format (day and month may be 1-2 digits, year is 4 digits). A `?` can appear in day/month to indicate uncertainty (e.g. `10?.7.1994`).
 - One or more spaces separate the date from the description (columns are space-aligned).
 - **DESCRIPTION** — the event content (see below).
-- **LOCATION** — venue and optionally city/country, after the semicolon.
+- **VENUE** — name and optionally city/country, after the semicolon.
 - **TAG** — optional, at the end of the line:
   - `[C]` — concert (gig)
   - `[MC]` — mini-concert: fewer than 6 songs and under 30 minutes. Applied per performer — a multi-act event can have individual performers tagged `[MC]` if their slot was short, even if the overall event was long.
@@ -63,7 +63,7 @@ Performer A, Performer B, Performer C [MC]; Example Location [C]
 Here A and B are full concerts, C is a mini-concert.
 
 ### Event comment
-An optional parenthesized comment can appear after the location (and before the tag):
+An optional parenthesized comment can appear after the venue (and before the tag):
 ```
 6.8.1994   Ropecon 1994; Paasitorni (2 days)
 24.4.2004  Nerdee; Ylä-Pirkanmaan Messut, Mänttä (1) [C]
@@ -71,7 +71,7 @@ An optional parenthesized comment can appear after the location (and before the 
 ```
 The comment applies to the whole event. Common uses: event duration (`2 days`), show number disambiguation when the same performer played multiple shows at the same venue on the same date (`(1)`, `(2)`).
 
-The comment is parsed out as a separate `comment` field; `location` contains only the venue name.
+The comment is parsed out as a separate `comment` field; `venue` contains only the venue name.
 
 ## Statistics
 

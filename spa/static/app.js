@@ -3,8 +3,8 @@
 
 // Matches a full event line. Permissive about text content to support Unicode.
 // Groups: (1) full date, (2) year, (3) description (performers or event desc),
-//         (4) location, (5) " [C]" or " [MC]" (optional).
-// Location explicitly excludes "[" so it can't accidentally consume the type tag.
+//         (4) venue, (5) " [C]" or " [MC]" (optional).
+// Venue explicitly excludes "[" so it can't accidentally consume the type tag.
 const LINE_RE = /^([\d?]{1,3}\.[\d?]{1,2}\.(\d{4}))\s+(.+); ([^\[]+)( \[M?C\])?$/;
 
 // Split performers on comma, but NOT inside parentheses.
@@ -44,13 +44,13 @@ function parseLine(raw) {
   const date = m[1];
   const year = parseInt(m[2]);
   const desc = m[3];
-  const rawLocation = m[4].trim();
+  const rawVenue = m[4].trim();
   const typeStr = m[5] ? m[5].trim() : null;
 
-  // Extract trailing (comment) from location, e.g. "Tavastia (2)" → location="Tavastia", comment="2".
+  // Extract trailing (comment) from venue, e.g. "Tavastia (2)" → venue="Tavastia", comment="2".
   // Greedy first group ensures we match the *last* parenthesized group.
-  const locMatch = rawLocation.match(/^(.*\S)\s*\(([^)]+)\)$/);
-  const location = locMatch ? locMatch[1].trim() : rawLocation;
+  const locMatch = rawVenue.match(/^(.*\S)\s*\(([^)]+)\)$/);
+  const venue = locMatch ? locMatch[1].trim() : rawVenue;
   const comment  = locMatch ? locMatch[2] : null;
   const type = typeStr ? (typeStr.includes('MC') ? 'MC' : 'C') : null;
 
@@ -108,7 +108,7 @@ function parseLine(raw) {
   // mini-concert, only the individual sets were. Single-performer [MC] stays MC.
   const eventType = (type === 'MC' && performers.length > 1) ? 'C' : type;
 
-  return { date, year, eventName, performers, location, comment, type: eventType, raw };
+  return { date, year, eventName, performers, venue, comment, type: eventType, raw };
 }
 
 
@@ -133,7 +133,7 @@ document.addEventListener('alpine:init', () => {
     isMobile: false,          // true when viewport is at mobile breakpoint (≤768px)
     version: '',              // set from window.__appVersion (version.js); shown in header
     yearSort:      { col: 'year', dir: 'desc', yearDir: 'desc' }, // yearDir remembered independently
-    locationSort:  { col: 'c',    dir: 'desc' },
+    venueSort:     { col: 'c',    dir: 'desc' },
     performerSort: { col: 'c',    dir: 'desc' },
 
     // Called automatically by Alpine when the component initializes.
@@ -179,7 +179,7 @@ document.addEventListener('alpine:init', () => {
 
     // Set the active sort column for a stats table.
     // Year column toggles asc/desc when clicked again; all other columns have
-    // a fixed direction (counts always desc, name/location always asc).
+    // a fixed direction (counts always desc, name/venue always asc).
     // yearDir is maintained separately so the year direction is remembered even
     // when sorting by count — it's used as the tiebreaker in that case.
     setSort(stateKey, col) {
@@ -189,7 +189,7 @@ document.addEventListener('alpine:init', () => {
       } else {
         s.col = col;
         s.dir = col === 'year' ? s.yearDir  // restore remembered year direction
-              : (col === 'name' || col === 'location') ? 'asc' : 'desc';
+              : (col === 'name' || col === 'venue') ? 'asc' : 'desc';
       }
       if (col === 'year') s.yearDir = s.dir;
     },
@@ -250,7 +250,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     // 'performer' if every filtered event has at least one performer matching the query.
-    // 'other' if events matched on event name, location, or date instead.
+    // 'other' if events matched on event name, venue, or date instead.
     get searchMode() {
       if (!this.query.trim() || !this.filteredEvents.length) return 'other';
       const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
@@ -262,7 +262,7 @@ document.addEventListener('alpine:init', () => {
     // Human-readable label describing how the query was interpreted, e.g. "performer",
     // "year", "performer · year", "venue". Each word is classified independently:
     // 4-digit number → year; matches a performer name → performer;
-    // matches a location → venue; otherwise → event.
+    // matches a venue → venue; otherwise → event.
     get searchModeLabel() {
       if (!this.query.trim() || !this.filteredEvents.length) return null;
       const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
@@ -275,7 +275,7 @@ document.addEventListener('alpine:init', () => {
         // A word can match multiple categories (e.g. "awa" matches performer AWA
         // and venue Awalon), so check all independently rather than else-if.
         const matchesPerformer = this.filteredEvents.some(e => e.performers.some(p => p.name.toLowerCase().includes(word)));
-        const matchesVenue     = this.filteredEvents.some(e => e.location.toLowerCase().includes(word));
+        const matchesVenue     = this.filteredEvents.some(e => e.venue.toLowerCase().includes(word));
         if (matchesPerformer) types.add('performer');
         if (matchesVenue)     types.add('venue');
         if (!matchesPerformer && !matchesVenue) types.add('event');
@@ -324,7 +324,7 @@ document.addEventListener('alpine:init', () => {
       const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
       const matched = words.length
         ? this.events.filter(e => {
-            const haystack = [e.date, this.eventTitle(e), e.location].join(' ').toLowerCase();
+            const haystack = [e.date, this.eventTitle(e), e.venue].join(' ').toLowerCase();
             return words.every(w => haystack.includes(w));
           })
         : this.events;
@@ -344,12 +344,12 @@ document.addEventListener('alpine:init', () => {
 
     // Returns events matching the current search query, in the current sort order.
     // When showMinis is false, excludes MC events and C events where every performer is MC.
-    // Search requires ALL words to match somewhere in the event (date + title + location).
+    // Search requires ALL words to match somewhere in the event (date + title + venue).
     get filteredEvents() {
       const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
       const matched = words.length
         ? this.events.filter(e => {
-            const haystack = [e.date, this.eventTitle(e), e.location].join(' ').toLowerCase();
+            const haystack = [e.date, this.eventTitle(e), e.venue].join(' ').toLowerCase();
             return words.every(w => haystack.includes(w));
           })
         : this.events;
@@ -360,21 +360,21 @@ document.addEventListener('alpine:init', () => {
       return this.sortAsc ? [...visible].reverse() : visible;
     },
 
-    // Aggregate per-location counts from the filtered event list.
-    get locationStats() {
+    // Aggregate per-venue counts from the filtered event list.
+    get venueStats() {
       const map = new Map();
       for (const event of this.filteredEvents) {
-        const loc = event.location;
-        if (!map.has(loc)) map.set(loc, { location: loc, c: 0, mc: 0 });
+        const loc = event.venue;
+        if (!map.has(loc)) map.set(loc, { venue: loc, c: 0, mc: 0 });
         const entry = map.get(loc);
         if (event.type === 'C') entry.c++;
         else if (event.type === 'MC') entry.mc++;
       }
-      const { col } = this.locationSort;
+      const { col } = this.venueSort;
       return [...map.values()].sort((a, b) => {
-        if (col === 'location') return a.location.localeCompare(b.location); // always asc
+        if (col === 'venue') return a.venue.localeCompare(b.venue); // always asc
         const cmp = (a.c - b.c) || (a.mc - b.mc);
-        return cmp !== 0 ? -cmp : a.location.localeCompare(b.location); // count desc, tiebreak asc
+        return cmp !== 0 ? -cmp : a.venue.localeCompare(b.venue); // count desc, tiebreak asc
       });
     },
 
@@ -397,7 +397,7 @@ document.addEventListener('alpine:init', () => {
 
     // Aggregate per-performer counts from the filtered event list.
     // If a search word matches performer names, only those performers are counted.
-    // If the event matched on location/date (no performers match), all are counted.
+    // If the event matched on venue/date (no performers match), all are counted.
     get performerStats() {
       const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
       const map = new Map();

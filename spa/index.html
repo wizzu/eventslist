@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
     /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
-    window.__appVersion = 'v6';
+    window.__appVersion = 'v7';
   </script>
   <link rel="stylesheet" href="static/style.css">
   <script src="static/app.js" defer></script>
@@ -71,8 +71,8 @@
                 </span>
               </template>
             </span>
-            <span class="event-location">
-              <span x-text="event.location"></span><span class="event-comment" x-show="event.comment" x-text="event.comment ? ' · ' + event.comment : ''"></span>
+            <span class="event-venue">
+              <span x-text="event.venue"></span><span class="event-comment" x-show="event.comment" x-text="event.comment ? ' · ' + event.comment : ''"></span>
             </span>
           </div>
         </template>
@@ -124,20 +124,20 @@
       </div>
 
       <div class="stats-section" x-data="{ open: true }">
-        <h2 class="stats-heading" @click="open = !open">Events by location <span class="stats-chevron" x-text="open ? '▾' : '▸'"></span></h2>
-        <p class="collapsed-hint" x-show="!open" x-text="'· · · ' + locationStats.length + ' hidden · · ·'"></p>
+        <h2 class="stats-heading" @click="open = !open">Events by venue <span class="stats-chevron" x-text="open ? '▾' : '▸'"></span></h2>
+        <p class="collapsed-hint" x-show="!open" x-text="'· · · ' + venueStats.length + ' hidden · · ·'"></p>
         <div x-show="open">
           <div class="stats-table-scroll">
           <table class="stats-table">
             <thead>
               <tr class="sort-row">
-                <th>Location <button class="sort-btn" :class="[locationSort.col === 'location' && 'sort-active', locationSort.col === 'location' && 'sort-locked']" @click.stop="setSort('locationSort', 'location')" x-text="locationSort.col === 'location' ? '●' : '⇅'"></button></th>
-                <th>Count <button class="sort-btn" :class="[locationSort.col === 'c' && 'sort-active', locationSort.col === 'c' && 'sort-locked']" @click.stop="setSort('locationSort', 'c')" x-text="locationSort.col === 'c' ? '●' : '⇅'"></button></th>
+                <th>Venue <button class="sort-btn" :class="[venueSort.col === 'venue' && 'sort-active', venueSort.col === 'venue' && 'sort-locked']" @click.stop="setSort('venueSort', 'venue')" x-text="venueSort.col === 'venue' ? '●' : '⇅'"></button></th>
+                <th>Count <button class="sort-btn" :class="[venueSort.col === 'c' && 'sort-active', venueSort.col === 'c' && 'sort-locked']" @click.stop="setSort('venueSort', 'c')" x-text="venueSort.col === 'c' ? '●' : '⇅'"></button></th>
               </tr>
             </thead>
-            <template x-for="l in locationStats" :key="l.location">
+            <template x-for="l in venueStats" :key="l.venue">
               <tr>
-                <td x-text="l.location"></td>
+                <td x-text="l.venue"></td>
                 <td x-html="fmtCountHtml(l.c, l.mc)"></td>
               </tr>
             </template>

@@ -11,13 +11,13 @@ import datetime
 
 # Matches a full event line.
 # Named groups: year, event (optional festival/event name prefix ending in ": "),
-#               performers, location, count (optional trailing comment e.g. "(1)"),
+#               performers, venue, count (optional trailing comment e.g. "(1)"),
 #               type (optional " [C]" or " [MC]").
 LINE_PAT = re.compile(
     r"^[\d?]{1,3}\.[\d?]{1,2}\.(?P<year>\d{4})\s+"
     r"(?P<event>[\w '!?,:&+\-]+: )?"
     r"(?P<performers>.+); "
-    r"(?P<location>[\w, '\.:()&-]+)"
+    r"(?P<venue>[\w, '\.:()&-]+)"
     r"(?P<count>\(\d+[ \w]*\))?"
     r"(?P<type>( \[M?C\])?)$"
 )
@@ -41,7 +41,7 @@ def parse_line(raw):
     event_raw = m.group('event')
     event_name = event_raw.removesuffix(': ').strip() if event_raw else None
     performers_str = m.group('performers')
-    location = m.group('location').strip()
+    venue = m.group('venue').strip()
     count_raw = m.group('count')
     comment = count_raw.strip('()').strip() if count_raw else None
     type_str = m.group('type').strip() if m.group('type') else None
@@ -79,7 +79,7 @@ def parse_line(raw):
         'year': year,
         'event_name': event_name,
         'performers': performers,
-        'location': location,
+        'venue': venue,
         'comment': comment,
         'type': event_type,
         'raw': raw,
