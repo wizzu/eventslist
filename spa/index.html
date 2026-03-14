@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
     /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
-    window.__appVersion = 'v5';
+    window.__appVersion = 'v6';
   </script>
   <link rel="stylesheet" href="static/style.css">
   <script src="static/app.js" defer></script>
@@ -21,7 +21,7 @@
       <span class="header-counts" x-text="counts"></span>
       <span class="header-legend">mini-concert: 5 or fewer songs, under 30 min</span>
     </div>
-    <span class="home-link">Generated with <a href="https://github.com/wizzu/eventslist" target="_blank" rel="noopener">eventslist</a><span x-show="version" x-text="' · ' + version"></span></span>
+    <span class="home-link"><span class="home-link-text">Generated with <a href="https://github.com/wizzu/eventslist" target="_blank" rel="noopener">eventslist</a> · </span><span x-show="version" x-text="version"></span></span>
   </header>
   <main>
     <div class="left-col" x-ref="listCol" @scroll="scrolled = $el.scrollTop > 50">

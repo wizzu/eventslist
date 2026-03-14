@@ -542,22 +542,25 @@ main {
     display: grid;
   }
 
-  /* Hide the header home-link; footer is used instead on mobile. */
-  .home-link {
+
+  /* Hide the "Generated with eventslist" text in the header on mobile;
+     keep only the version tag. The full link is in the footer instead. */
+  .home-link-text {
     display: none;
   }
 
   .site-footer {
     display: block;
     padding: 0.75rem 1rem;
-    text-align: center;
+    text-align: right;
     font-size: 0.7rem;
-    color: #666;
-    border-top: 1px solid #bbb;
+    background: #1a1a2e;
+    color: #aaa;
+    border-top: none;
   }
 
   .site-footer a {
-    color: #777;
+    color: #bbb;
   }
 
   /* Stats tables: remove the fixed-height scroll cap — let them expand fully
