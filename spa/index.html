@@ -56,6 +56,7 @@
           <span x-text="sortAsc ? '↑ Oldest first' : '↓ Newest first'"></span>
         </button>
       </div>
+      <p class="collapsed-hint" x-show="!listingOpen" x-text="'· · · ' + filteredEvents.length + ' hidden · · ·'"></p>
       <div class="event-list" x-show="listingOpen">
         <template x-for="event in filteredEvents" :key="event.id">
           <div class="event-row">
@@ -101,6 +102,7 @@
       <div class="stats-sections">
       <div class="stats-section" x-data="{ open: true }">
         <h2 class="stats-heading" @click="open = !open">Events by year <span class="stats-chevron" x-text="open ? '▾' : '▸'"></span></h2>
+        <p class="collapsed-hint" x-show="!open" x-text="'· · · ' + yearStats.length + ' hidden · · ·'"></p>
         <div x-show="open">
           <div class="stats-table-scroll">
           <table class="stats-table">
@@ -123,6 +125,7 @@
 
       <div class="stats-section" x-data="{ open: true }">
         <h2 class="stats-heading" @click="open = !open">Events by location <span class="stats-chevron" x-text="open ? '▾' : '▸'"></span></h2>
+        <p class="collapsed-hint" x-show="!open" x-text="'· · · ' + locationStats.length + ' hidden · · ·'"></p>
         <div x-show="open">
           <div class="stats-table-scroll">
           <table class="stats-table">
@@ -145,6 +148,7 @@
 
       <div class="stats-section" x-data="{ open: true }">
         <h2 class="stats-heading" @click="open = !open">Performers <span class="stats-chevron" x-text="open ? '▾' : '▸'"></span></h2>
+        <p class="collapsed-hint" x-show="!open" x-text="'· · · ' + performerStats.length + ' hidden · · ·'"></p>
         <div x-show="open">
           <table class="stats-table">
             <thead>

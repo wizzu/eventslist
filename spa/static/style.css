@@ -162,6 +162,14 @@ main {
   color: #333;
 }
 
+/* Hint shown in place of collapsed content: "· · · 42 hidden · · ·" */
+.collapsed-hint {
+  margin: 0 0 0.75rem 0;
+  text-align: center;
+  color: #bbb;
+  font-size: 0.8rem;
+}
+
 /* Stats panel heading — clickable to collapse/expand its section. */
 .stats-heading {
   margin: 0 0 0.75rem 0;
