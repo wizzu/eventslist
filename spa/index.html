@@ -7,18 +7,10 @@
   <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
-    /* Version string for cache-busting CSS/JS and header display.
-       Increment on each deploy: v1, v2, v3, ...
-       Inlined here so it's always fresh with index.html (which is served no-cache). */
-    window.__appVersion = 'v2';
+    /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
+    window.__appVersion = 'v4';
   </script>
-  <script>
-    /* Load CSS with version query string for cache-busting. */
-    var v = window.__appVersion ? '?v=' + window.__appVersion : '';
-    var link = document.createElement('link');
-    link.rel = 'stylesheet'; link.href = 'static/style.css' + v;
-    document.head.appendChild(link);
-  </script>
+  <link rel="stylesheet" href="static/style.css">
   <script src="static/app.js" defer></script>
   <script src="static/vendor/alpine.min.js" defer></script>
 </head>
