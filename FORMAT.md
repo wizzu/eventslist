@@ -36,7 +36,9 @@ DATE  DESCRIPTION; LOCATION [TAG]
 ```
 
 ### Concert with multiple performers
-Performers are separated by commas (or `+`):
+Performers are separated by commas. `+` is used for joint billing — two acts billed
+together as one unit. Joint performers are displayed as a single entry ("A + B") in
+the listing but counted separately in statistics.
 ```
 24.5.1992  U2, Soundgarden; Donauinsel, Vienna, Austria [C]
 ```

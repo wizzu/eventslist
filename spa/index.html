@@ -65,7 +65,7 @@
               <template x-if="event.eventName">
                 <span class="event-name-prefix" x-text="event.eventName + ':'"></span>
               </template>
-              <template x-for="(p, pi) in event.performers" :key="pi">
+              <template x-for="(p, pi) in displayPerformers(event)" :key="pi">
                 <span class="event-performer" x-show="showMinis || p.type !== 'MC'">
                   <span x-text="p.name" :class="performerMatchesQuery(p.name) && 'performer-match'"></span><span class="performer-detail" x-show="p.detail" x-text="' (' + p.detail + ')'"></span> <span class="mini-badge" x-show="p.type === 'MC'">mini</span>
                 </span>

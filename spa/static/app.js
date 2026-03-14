@@ -7,11 +7,14 @@
 // Location explicitly excludes "[" so it can't accidentally consume the type tag.
 const LINE_RE = /^([\d?]{1,3}\.[\d?]{1,2}\.(\d{4}))\s+(.+); ([^\[]+)( \[M?C\])?$/;
 
-// Split performers on comma or +, but NOT inside parentheses.
-// e.g. "Fish (with band), Opeth" splits into ["Fish (with band)", "Opeth"]
-// The negative lookahead (?![^()]*\)) reads: "not followed by any non-paren chars then a closing paren",
-// which means: don't split if the delimiter is inside an open parenthesis.
-const PERF_SPLIT_RE = /[,+]\s+(?![^()]*\))/;
+// Split performers on comma, but NOT inside parentheses.
+// e.g. "Fish (with band), Opeth" → ["Fish (with band)", "Opeth"]
+// The negative lookahead (?![^()]*\)) means: don't split if inside parentheses.
+const COMMA_SPLIT_RE = /,\s+(?![^()]*\))/;
+
+// Split joint-billed performers on +, but NOT inside parentheses.
+// "A + B" means they performed together — shown as one listing entry, counted separately in stats.
+const JOINT_SPLIT_RE = /\+\s+(?![^()]*\))/;
 
 // Convert "D.M.YYYY" to a numeric sort key (YYYYMMDD). '?' treated as 0.
 function dateSortKey(dateStr) {
@@ -64,29 +67,37 @@ function parseLine(raw) {
   const performers = [];
   if (type !== null) {
     // Concert or mini-concert: parse individual performers from descPart.
-    for (let p of descPart.split(PERF_SPLIT_RE)) {
-      p = p.trim();
-      if (!p) continue;
+    // Comma separates independent performers; + separates jointly-billed performers
+    // (displayed as one entry in the listing, counted individually in stats).
+    let jointGroupId = 0;
+    for (const group of descPart.split(COMMA_SPLIT_RE)) {
+      const members = group.trim().split(JOINT_SPLIT_RE);
+      const jointGroup = members.length > 1 ? jointGroupId++ : null;
 
-      let perfType = type;
-      let perfName = p;
+      for (let p of members) {
+        p = p.trim();
+        if (!p) continue;
 
-      // Per-performer type override, e.g. "Opening Act [MC]" in a [C] event.
-      if (perfName.endsWith(' [C]')) {
-        perfType = 'C';
-        perfName = perfName.slice(0, -4).trim();
-      } else if (perfName.endsWith(' [MC]')) {
-        perfType = 'MC';
-        perfName = perfName.slice(0, -5).trim();
+        let perfType = type;
+        let perfName = p;
+
+        // Per-performer type override, e.g. "Opening Act [MC]" in a [C] event.
+        if (perfName.endsWith(' [C]')) {
+          perfType = 'C';
+          perfName = perfName.slice(0, -4).trim();
+        } else if (perfName.endsWith(' [MC]')) {
+          perfType = 'MC';
+          perfName = perfName.slice(0, -5).trim();
+        }
+
+        // Strip trailing parenthesized detail for stats, matching gigcount.py.
+        // "Fish (acoustic)" → name="Fish", detail="acoustic"
+        const detailMatch = perfName.match(/^(.*\S)\s*\(([^)]+)\)$/);
+        const detail = detailMatch ? detailMatch[2] : null;
+        perfName = detailMatch ? detailMatch[1].trim() : perfName;
+
+        performers.push({ name: perfName, type: perfType, detail, jointGroup });
       }
-
-      // Strip trailing parenthesized detail for stats, matching gigcount.py.
-      // "Fish (acoustic)" → name="Fish", detail="acoustic"
-      const detailMatch = perfName.match(/^(.*\S)\s*\(([^)]+)\)$/);
-      const detail = detailMatch ? detailMatch[2] : null;
-      perfName = detailMatch ? detailMatch[1].trim() : perfName;
-
-      performers.push({ name: perfName, type: perfType, detail });
     }
   } else {
     // Non-concert event: the description is the event name, no performers.
@@ -414,6 +425,28 @@ document.addEventListener('alpine:init', () => {
         const cmp = (a.c - b.c) || (a.mc - b.mc);
         return cmp !== 0 ? -cmp : a.name.localeCompare(b.name); // count desc, tiebreak asc
       });
+    },
+
+    // Merge jointly-billed performers (jointGroup !== null) into single display entries.
+    // "A + B, C" (joint A&B, solo C) → [{ name: "A + B", ... }, { name: "C", ... }]
+    // Stats still use event.performers (the flat list) so counting is unchanged.
+    displayPerformers(event) {
+      const result = [];
+      const seenGroups = new Set();
+      for (const p of event.performers) {
+        if (p.jointGroup !== null) {
+          if (!seenGroups.has(p.jointGroup)) {
+            seenGroups.add(p.jointGroup);
+            const members = event.performers.filter(m => m.jointGroup === p.jointGroup);
+            const details = members.map(m => m.detail).filter(Boolean);
+            const detail = details.length > 0 ? details.join(' / ') : null;
+            result.push({ name: members.map(m => m.name).join(' + '), type: p.type, detail });
+          }
+        } else {
+          result.push(p);
+        }
+      }
+      return result;
     },
 
     // Build a display title from the parsed event object.
