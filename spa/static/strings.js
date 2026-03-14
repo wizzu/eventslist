@@ -68,6 +68,9 @@ const STRINGS = {
     // Header bar summary: "42 concerts (+ 3 mini-concerts)"
     headerCounts: (c, mc) => `${c} concert${c !== 1 ? 's' : ''} (+ ${mc} mini-concert${mc !== 1 ? 's' : ''})`,
 
+    // Prefix inside the search mode brackets: "" → "(performer)", "hits: " → "(hits: performer)".
+    searchModePrefix: '',
+
     // Search mode labels shown in brackets after the event count, e.g. "(performer · venue)".
     // Multiple labels are joined with " · ".
     modePerformer: 'performer',
@@ -106,10 +109,9 @@ const STRINGS = {
     sortOldestLabel: '↑ Vanhin ensin',
     sortNewestLabel: '↓ Uusin ensin',
 
-    // Listing toolbar count line.
-    // Finnish note: word order differs — "matching" doesn't slot in naturally between count and noun.
-    // Suggestion below reads as "3 tapahtumaa (hakutuloksia)" — adjust freely.
-    matchingLabel: ' hakutulosta',
+    // Listing toolbar count line: "3 tapahtumaa (hakuosumat: artisti)"
+    // matchingLabel is empty — the search context is conveyed by searchModePrefix instead.
+    matchingLabel: '',
     eventLabel: n => n === 1 ? ' tapahtuma' : ' tapahtumaa',
 
     // Collapsed section hint
@@ -137,8 +139,11 @@ const STRINGS = {
     // Header bar summary: "42 keikkaa (+ 3 minikeikkaa)"
     headerCounts: (c, mc) => `${c} keikka${c !== 1 ? 'a' : ''} (+ ${mc} minikeikka${mc !== 1 ? 'a' : ''})`,
 
+    // Prefix inside the search mode brackets: "3 tapahtumaa (hakuosumat: artisti)"
+    searchModePrefix: 'hakuosumat: ',
+
     // Search mode labels
-    modePerformer: 'artisti',
+    modePerformer: 'esiintyjä',
     modeYear:      'vuosi',
     modeVenue:     'paikka',
     modeEvent:     'tapahtuma',

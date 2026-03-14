@@ -57,7 +57,7 @@
         </div>
       </dl>
       <div class="listing-toolbar">
-        <span class="event-count" @click="if (isMobile) listingOpen = !listingOpen"><span x-html="fmtCountsHtml(filteredEvents) + (query && searchModeLabel ? t.matchingLabel : '') + t.eventLabel(filteredEvents.length)"></span><span class="search-mode-label" x-show="query && searchModeLabel" x-text="' (' + searchModeLabel + ')'"></span><span class="listing-chevron" x-text="listingOpen ? '▾' : '▸'"></span></span>
+        <span class="event-count" :class="query && 'search-active'" @click="if (isMobile) listingOpen = !listingOpen"><span x-html="fmtCountsHtml(filteredEvents) + (query && searchModeLabel ? t.matchingLabel : '') + t.eventLabel(filteredEvents.length)"></span><span class="search-mode-label" x-show="query && searchModeLabel" x-text="' (' + t.searchModePrefix + searchModeLabel + ')'"></span><span class="listing-chevron" x-text="listingOpen ? '▾' : '▸'"></span></span>
         <label class="mini-toggle" x-show="hasMinis" :class="!filteredHasMinis && 'mini-toggle-disabled'"><input type="checkbox" x-model="showMinis" :disabled="!filteredHasMinis"> <span x-text="t.miniToggle"></span><span :style="!filteredHasMinis && 'visibility:hidden'" x-text="' (' + (filteredMiniCounts.mc + filteredMiniCounts.miniOnlyC) + ')'"></span></label>
         <button class="sort-toggle" @click="sortAsc = !sortAsc" :title="sortAsc ? t.sortOldestTitle : t.sortNewestTitle">
           <span x-text="sortAsc ? t.sortOldestLabel : t.sortNewestLabel"></span>
