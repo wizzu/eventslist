@@ -6,7 +6,17 @@
   <title>Events</title>
   <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
-  <link rel="stylesheet" href="static/style.css">
+  <script src="version.js"></script>
+  <script>
+    /* Load CSS with version query string for cache-busting.
+       version.js sets window.__appVersion synchronously before this runs.
+       Only CSS is loaded dynamically — app.js and Alpine stay as static defer
+       tags below so their execution order is preserved. */
+    var v = window.__appVersion ? '?v=' + window.__appVersion : '';
+    var link = document.createElement('link');
+    link.rel = 'stylesheet'; link.href = 'static/style.css' + v;
+    document.head.appendChild(link);
+  </script>
   <script src="static/app.js" defer></script>
   <script src="static/vendor/alpine.min.js" defer></script>
 </head>
@@ -17,7 +27,7 @@
       <span class="header-counts" x-text="counts"></span>
       <span class="header-legend">mini-concert: 5 or fewer songs, under 30 min</span>
     </div>
-    <span class="home-link">Generated with <a href="https://github.com/wizzu/eventslist" target="_blank" rel="noopener">eventslist</a></span>
+    <span class="home-link">Generated with <a href="https://github.com/wizzu/eventslist" target="_blank" rel="noopener">eventslist</a><span x-show="version" x-text="' · ' + version"></span></span>
   </header>
   <main>
     <div class="left-col" x-ref="listCol" @scroll="scrolled = $el.scrollTop > 50">

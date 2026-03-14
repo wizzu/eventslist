@@ -120,12 +120,16 @@ document.addEventListener('alpine:init', () => {
     showMinis: true,          // whether to include mini-concerts in the listing and stats
     listingOpen: true,        // whether the event list is expanded (collapsible on mobile)
     isMobile: false,          // true when viewport is at mobile breakpoint (≤768px)
+    version: '',              // set from window.__appVersion (version.js); shown in header
     yearSort:      { col: 'year', dir: 'desc', yearDir: 'desc' }, // yearDir remembered independently
     locationSort:  { col: 'c',    dir: 'desc' },
     performerSort: { col: 'c',    dir: 'desc' },
 
     // Called automatically by Alpine when the component initializes.
     async init() {
+      // Pick up the version string set by version.js for display in the header.
+      this.version = window.__appVersion || '';
+
       // Try real data first; fall back to sample data if not found.
       let response = await fetch('events.txt');
       if (!response.ok) response = await fetch('events-sample.txt');
