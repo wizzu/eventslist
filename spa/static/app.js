@@ -430,6 +430,19 @@ document.addEventListener('alpine:init', () => {
     // Merge jointly-billed performers (jointGroup !== null) into single display entries.
     // "A + B, C" (joint A&B, solo C) → [{ name: "A + B", ... }, { name: "C", ... }]
     // Stats still use event.performers (the flat list) so counting is unchanged.
+    // Split venue at first comma: "013 Poppodium, Tilburg" → "013 Poppodium," and " Tilburg"
+    venueMain(venue) {
+      const i = venue.indexOf(',');
+      return i === -1 ? venue : venue.slice(0, i + 1);
+    },
+    venueRest(venue) {
+      const i = venue.indexOf(',');
+      if (i === -1) return '';
+      // Replace plain spaces with non-breaking spaces so wrapping only happens at ", "
+      const rest = venue.slice(i + 1);
+      return rest.replaceAll(' ', '\u00A0').replaceAll(',\u00A0', ', ');
+    },
+
     displayPerformers(event) {
       const result = [];
       const seenGroups = new Set();

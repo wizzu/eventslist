@@ -403,7 +403,7 @@ main {
 /* Each event is a horizontal row of fields. gap adds space between them. */
 .event-row {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
   padding: 0.4rem 0;
   border-bottom: 1px solid #ddd;
   align-items: flex-start; /* date/venue sit at the top when title spans multiple lines */
@@ -435,10 +435,12 @@ main {
 .performer-detail {
   color: #888;
   font-size: 0.85rem;
+  white-space: normal;
 }
 
 /* One performer per line, with optional inline mini badge. */
 .event-performer {
+  white-space: nowrap;
 }
 
 /* Performer name that matches the current search query. */
@@ -495,11 +497,19 @@ main {
   margin-left: 0.3rem;
 }
 
+/* Venue name before first comma stays on one line. The rest uses non-breaking
+   spaces so wrapping only occurs at ", " boundaries (see venueRest in app.js). */
+.venue-main {
+  white-space: nowrap;
+}
+
 /* Venue is muted, doesn't need to dominate. */
 .event-venue {
   color: #666;
   font-size: 0.9rem;
   text-align: right;
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 /* Muted event comment appended after venue, e.g. " · 2". */
