@@ -70,6 +70,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [ ] Investigate search clear button debounce — the click handler sets `query` and `rawQuery` to empty directly and calls `clearTimeout`, so it should be instant. But Alpine's `$watch` fires asynchronously and there may be a visible rendering delay. Verify by testing; fix if needed.
 - [ ] Quoted/exact search — e.g. `"maija vilkkumaa"` or `"awa"` should match the exact phrase/word rather than substrings. Semantics to be decided: quoted phrases for multi-word exact match, or whole-word-only toggle, or both.
 - [ ] Allow configuring the events data URL — e.g. via a query parameter or config file, so the data file can be loaded from an arbitrary URL rather than only the local directory
+- [ ] "A + B" performer display bug — performers joined with `+` (e.g. `Artist A + Artist B`) are split into separate performers and shown on separate lines in the event listing, but they performed together and should display as a single "A + B" entry. Likely caused by the parser splitting on `+` without accounting for this joint-billing convention.
 
 ## Responsive Design
 See `PLAN-responsive.md` for detailed implementation plan and progress tracking.

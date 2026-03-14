@@ -58,6 +58,12 @@ header h1 {
   font-size: 0.75rem;
 }
 
+/* Site footer — shown on mobile only (hidden on desktop via display:none below).
+   Contains the same "Generated with" link as .home-link in the header. */
+.site-footer {
+  display: none;
+}
+
 /* Small unobtrusive home link pinned to the top-right corner of the header. */
 .home-link {
   position: absolute;
@@ -197,6 +203,12 @@ main {
   grid-template-columns: 1fr auto; /* label left, value right */
   gap: 0.2rem 1rem;
   font-size: 0.85rem;
+}
+
+/* Mobile duplicate of the summary — hidden on desktop (display:none must come after
+   .stats-summary { display:grid } above to win on equal specificity). */
+.stats-summary-mobile {
+  display: none;
 }
 
 /* Each row is itself a grid item spanning both columns via subgrid. */
@@ -518,6 +530,34 @@ main {
     border-left: none;
     border-top: 1px solid #bbb;
     padding: 1rem;
+  }
+
+  /* On mobile the summary is duplicated inside .left-col; hide the desktop copy. */
+  .stats-summary-desktop {
+    display: none;
+  }
+
+  /* Show the mobile copy (hidden by default on desktop). */
+  .stats-summary-mobile {
+    display: grid;
+  }
+
+  /* Hide the header home-link; footer is used instead on mobile. */
+  .home-link {
+    display: none;
+  }
+
+  .site-footer {
+    display: block;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #666;
+    border-top: 1px solid #bbb;
+  }
+
+  .site-footer a {
+    color: #777;
   }
 
   /* Stats tables: remove the fixed-height scroll cap — let them expand fully

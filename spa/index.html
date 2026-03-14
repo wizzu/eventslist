@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
     /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
-    window.__appVersion = 'v4';
+    window.__appVersion = 'v5';
   </script>
   <link rel="stylesheet" href="static/style.css">
   <script src="static/app.js" defer></script>
@@ -30,6 +30,25 @@
         <input class="search-box" type="search" placeholder="Search events…" x-model="rawQuery" :class="searching && 'search-pending'" x-ref="search">
         <button class="search-clear" x-show="rawQuery" @click="rawQuery = ''; query = ''; searching = false; clearTimeout(_debounceTimer); $refs.search.focus()" aria-label="Clear search">✕</button>
       </div>
+      <!-- Mobile duplicate of stats-summary-desktop in .right-col — keep both in sync. -->
+      <dl class="stats-summary stats-summary-mobile">
+        <div class="stats-summary-row">
+          <dt :class="query && searchMode !== 'performer' && 'stat-active'">Events</dt>
+          <dd :class="query && searchMode !== 'performer' && 'stat-active'" x-html="fmtCountsHtml(filteredEvents)"></dd>
+        </div>
+        <div class="stats-summary-row">
+          <dt :class="query && searchMode === 'performer' && 'stat-active'">Performances</dt>
+          <dd :class="query && searchMode === 'performer' && 'stat-active'" x-html="fmtCountHtml(performanceCounts.c, performanceCounts.mc)"></dd>
+        </div>
+        <div class="stats-summary-row">
+          <dt>Performers</dt>
+          <dd x-html="fmtCountHtml(performerCounts.c, performerCounts.mc)"></dd>
+        </div>
+        <div class="stats-summary-row">
+          <dt>Years</dt>
+          <dd x-text="yearStats.length"></dd>
+        </div>
+      </dl>
       <div class="listing-toolbar">
         <span class="event-count" @click="if (isMobile) listingOpen = !listingOpen"><span x-html="fmtCountsHtml(filteredEvents) + (query && searchModeLabel ? ' matching' : '') + (filteredEvents.length === 1 ? ' event' : ' events')"></span><span class="search-mode-label" x-show="query && searchModeLabel" x-text="' (' + searchModeLabel + ')'"></span><span class="listing-chevron" x-text="listingOpen ? '▾' : '▸'"></span></span>
         <label class="mini-toggle" x-show="hasMinis" :class="!filteredHasMinis && 'mini-toggle-disabled'"><input type="checkbox" x-model="showMinis" :disabled="!filteredHasMinis"> mini-concerts<span :style="!filteredHasMinis && 'visibility:hidden'" x-text="' (' + (filteredMiniCounts.mc + filteredMiniCounts.miniOnlyC) + ')'"></span></label>
@@ -60,7 +79,8 @@
       <button class="scroll-top-btn" x-show="scrolled && listingOpen" x-transition.opacity.duration.300ms @click="$refs.listCol.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Scroll to top">↑ Top</button>
     </div>
     <div class="right-col">
-      <dl class="stats-summary">
+      <!-- Desktop copy of stats-summary-mobile in .left-col — keep both in sync. -->
+      <dl class="stats-summary stats-summary-desktop">
         <div class="stats-summary-row">
           <dt :class="query && searchMode !== 'performer' && 'stat-active'">Events</dt>
           <dd :class="query && searchMode !== 'performer' && 'stat-active'" x-html="fmtCountsHtml(filteredEvents)"></dd>
@@ -78,6 +98,7 @@
           <dd x-text="yearStats.length"></dd>
         </div>
       </dl>
+      <div class="stats-sections">
       <div class="stats-section" x-data="{ open: true }">
         <h2 class="stats-heading" @click="open = !open">Events by year <span class="stats-chevron" x-text="open ? '▾' : '▸'"></span></h2>
         <div x-show="open">
@@ -141,7 +162,9 @@
           </table>
         </div>
       </div>
+      </div><!-- .stats-sections -->
     </div>
   </main>
+  <footer class="site-footer">Generated with <a href="https://github.com/wizzu/eventslist" target="_blank" rel="noopener">eventslist</a><span x-show="version" x-text="' · ' + version"></span></footer>
 </body>
 </html>
