@@ -203,7 +203,11 @@ document.addEventListener('alpine:init', () => {
       // $watch is an Alpine method that runs a callback whenever a reactive property changes.
       // Debounce rawQuery → query: wait 400ms after the last keystroke before updating query.
       // Clearing always fires instantly (no debounce) so the list resets without delay.
-      this.$watch('lang', val => localStorage.setItem('lang', val));
+      this.$watch('lang', val => {
+        localStorage.setItem('lang', val);
+        document.title = this.t.pageTitle;
+      });
+      document.title = this.t.pageTitle;
 
       this.$watch('rawQuery', val => {
         clearTimeout(this._debounceTimer);

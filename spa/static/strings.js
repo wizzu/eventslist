@@ -101,7 +101,7 @@ const STRINGS = {
 
     // Stats summary labels
     statEvents:       'Tapahtumat',
-    statPerformances: 'Esiintymiset',
+    statPerformances: 'Esiintymiset (keikat)',
     statPerformers:   'Esiintyjät',
     statYears:        'Vuodet',
 
