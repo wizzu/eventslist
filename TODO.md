@@ -2,7 +2,7 @@
 
 ## Open — Priority
 
-- [ ] **Britannia data issue**: "Britannia (Espoontori)" and "Britannia (Kannelmäki)" are the same pub chain in different districts — currently parsed as one venue due to comment-stripping. Need to decide how to represent chain venues with district in the data format without conflicting with the trailing (comment) syntax. Address together with the "Cafe Segeli (1), Kotka" case where a show-number comment appears mid-location rather than at the end — fix in the data file at the same time.
+- [x] **Britannia data issue**: fixed in data — `Britannia (Kannelmäki)` → `Britannia Kannelmäki`, `Britannia (Espoontori)` → `Britannia Espoontori` (district as part of compound name, no parens); `Cafe Segeli (1), Kotka` → `Cafe Segeli, Kotka (1)` (comment moved to end per format spec).
 
 - [ ] **Try mini toggle off by default**: currently `showMinis` initialises to `true` in `app.js`; flip it to `false` so the first-load view shows full concerts only, with minis opt-in. The "missing data" concern is weak: a visitor wouldn't know about minis, wouldn't necessarily care, and the primary message is full concerts anyway — all three factors point the same way. Also update the toggle label from the current bare noun (`'mini-concerts'` / `'minikeikat'`) to something that reads naturally when the checkbox is unchecked: EN → `'include mini-concerts'`; FI → something like `'myös minikeikat'` ("mini-concerts too") — `'sisällytä minikeikat'` is semantically exact but awkward; needs native-feel phrasing. Try `'myös minikeikat'` and see how it reads in context.
 
