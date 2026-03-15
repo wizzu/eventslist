@@ -20,7 +20,7 @@ DATE  DESCRIPTION; LOCATION [TAG]
 - **DESCRIPTION** — the event content (see below).
 - **VENUE** — name and optionally city/country, after the semicolon.
 - **TAG** — optional, at the end of the line:
-  - `[C]` — concert (gig)
+  - `[C]` — full concert: at least 6 songs or at least 30 minutes
   - `[MC]` — mini-concert: fewer than 6 songs and under 30 minutes. Applied per performer — a multi-act event can have individual performers tagged `[MC]` if their slot was short, even if the overall event was long.
 
 ## Description Variants

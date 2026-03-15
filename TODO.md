@@ -1,15 +1,55 @@
 # TODO
 
-## Setup
+## Open — Priority
+
+- [ ] **Britannia data issue**: "Britannia (Espoontori)" and "Britannia (Kannelmäki)" are the same pub chain in different districts — currently parsed as one venue due to comment-stripping. Need to decide how to represent chain venues with district in the data format without conflicting with the trailing (comment) syntax. Address together with the "Cafe Segeli (1), Kotka" case where a show-number comment appears mid-location rather than at the end — fix in the data file at the same time.
+
+- [ ] **Try mini toggle off by default**: currently `showMinis` initialises to `true` in `app.js`; flip it to `false` so the first-load view shows full concerts only, with minis opt-in. The "missing data" concern is weak: a visitor wouldn't know about minis, wouldn't necessarily care, and the primary message is full concerts anyway — all three factors point the same way. Also update the toggle label from the current bare noun (`'mini-concerts'` / `'minikeikat'`) to something that reads naturally when the checkbox is unchecked: EN → `'include mini-concerts'`; FI → something like `'myös minikeikat'` ("mini-concerts too") — `'sisällytä minikeikat'` is semantically exact but awkward; needs native-feel phrasing. Try `'myös minikeikat'` and see how it reads in context.
+
+- [ ] **Mini-concert checkbox placement** (holistic rethink): The checkbox filters events the same way the search bar does — they're functionally siblings and should live near each other visually. Current placement (right edge of toolbar on mobile, elsewhere on desktop) creates visual glitches when the checkbox label text length varies. Needs a layout approach that: (a) groups checkbox and search box logically, (b) doesn't cause reflow/jump when toggled, (c) works cleanly at all mobile breakpoints.
+
+- [ ] **Count/numbers confusion on mobile** (new — important): When the app loads on mobile with no search active, a user can read three different numbers that each plausibly answer "how many concerts have you been to?" — and they give different answers. Concretely:
+  - **Header** (`counts` getter): grand total, unfiltered, uses raw `event.type === 'C'` count. Always reflects all data, ignores current search.
+  - **Summary block "Events" row + toolbar** (both use `fmtCountsHtml(filteredEvents)`): C-type events *minus* "miniOnlyC" events — i.e. C-typed events where every single performer is [MC]. Those are rolled into the mini badge count because they vanish when the mini toggle is off. So this number equals "events visible when mini is hidden."
+  - **Summary block "Performances" row** (`performanceCounts`): sum of individual performer [C]/[MC] counts across all events. A 2-performer event contributes 2 to this total. Can substantially exceed event count.
+  - Result: even with no search active, header and summary Events row can show different numbers for "full concerts" (miniOnlyC edge case), and the Performances row is a third answer entirely.
+
+  **The root definitional problem:** the app has never resolved whether a "concert/keikka" is (a) an *event* — one row in events.txt regardless of how many performers, or (b) a *performance* — one performer's set, so a 2-act event yields 2 "concerts." This ambiguity exists in both languages: English "concert" and Finnish "keikka" are both fluid and can refer to either. The more event-centric words ("event" in English, "tapahtuma" in Finnish) are clearer but feel overly clinical for a gig list. There may also be language-specific nuances beyond the shared ambiguity. The stats and listing currently mix both framings silently.
+
+  **The MC complication:** A [C]-typed event where every performer is [MC] sits in a grey zone — it's typed as a concert at event level, but the fmtCountsHtml logic treats it like a mini for display purposes. An event with one [C] and one [MC] performer is another grey case: event is [C], but performer counts would be "1 full + 1 mini".
+
+  **What a confused user sees on mobile on first load:** the header says one number, the summary block says a smaller number (minus miniOnlyC) just below the search box, and the toolbar repeats that second number with the word "events/tapahtumaa." Someone not familiar with the data model would reasonably ask: "why are there two different totals before I've done anything?"
+
+  **Audience context:** Primary user is the owner — knows the data, knows the definitions, will learn UI conventions. Secondary user is a curious visitor — no prior knowledge of the data or [C]/[MC] definitions, reads only from general language and what the UI says. Optimise for the owner; don't actively confuse the visitor. This means rich detail is fine, but labels and hierarchy must be legible enough that a visitor isn't left baffled.
+
+  **User intent (important design constraint):** The owner is a "number nerd" — a single number won't do. The [C]/[MC] distinction is intentional and meaningful: full concerts are "real concerts" with a clear definition, minis are worth remembering and tracking but don't count the same way. So the goal is NOT to collapse everything into one number, but to present the breakdown in a way that is immediately readable and doesn't create confusion about what each number means. The primary headline number should be full [C] concerts; minis are secondary/supplementary. Note: the event-vs-performance question (is one event with 2 performers 1 concert or 2?) is still unresolved — that tension remains open alongside the display issue.
+
+  Options to explore:
+  - **Mini toggle off by default**: the app currently starts with minis shown; flipping the default would mean the first number a user sees is already the "full concerts only" count — simple, no UI changes needed, and aligns with the primary use case
+  - **Clear visual hierarchy**: full concert count is the primary/prominent number; mini count is secondary (smaller, muted, labeled) — not hidden, but clearly subordinate
+  - **Consistent labeling throughout**: every count display uses the same label conventions so the user learns them once and they apply everywhere
+  - **Consolidate display roles** — header = grand totals (unfiltered, labeled); toolbar = current filter result count; summary block = the authoritative breakdown with clear labels; no location shows the same number unlabeled twice
+  - **Progressive disclosure** — leads with the clear headline count, secondary breakdown available but not in the way on first glance
+  - Whatever the solution: must stay compact on mobile, must not require inline explanations, and must not change the underlying data model (only presentation).
+
+## Open — Nice to have
+
+- [ ] Flesh out CLAUDE.md: project structure, conventions, verification steps (interview user and/or propose defaults once web app work begins)
+- [ ] Dark mode — design and implement a dark theme (CSS custom properties are a natural fit), then add a manual toggle; optionally respect `prefers-color-scheme` as the default
+- [ ] Consider moving event comments like "(1)", "(2)" to display after the performer name rather than after the venue/location (currently shown at end of location line, after any mini badge) — it may read more naturally as disambiguation of the performer context. Explored but unresolved: `event-title` uses `flex-direction: column` to stack performers vertically, so a comment span added as a sibling ends up on its own line. Could be placed inside the last performer's span (using `pi === event.performers.length - 1`) to appear inline — works cleanly for the common single-performer case, but feels semantically off for multi-performer events since the comment is event-level, not tied to a specific performer.
+- [ ] Rich statistics visualizations (bar charts, graphs, etc.)
+- [ ] Mobile toolbar: retry right-aligning the mini-toggle checkbox so it shares the same right edge as the sort button. Multiple CSS approaches (flex column with align-items, grid with justify-self, display: block on label) all failed silently in Chrome narrow-window testing. Use devtools to inspect what display/justify-self values are actually computed on the label element before attempting another fix. *(superseded by the holistic rethink above — keep for reference)*
+- [ ] Stats count column alignment — the summary block (dl) right-aligns its count column, but the stats tables (by year, by location, performers) have a fixed-width count column where numbers are left-aligned within it. These should match visually. Low priority, cosmetic only.
+- [ ] Allow configuring the events data URL — e.g. via a query parameter or config file, so the data file can be loaded from an arbitrary URL rather than only the local directory
+- [ ] Show notice when using sample data: when the app falls back to `events-sample.txt` (because `events.txt` was not found), show a prominent notice so it's clear the data shown is not real. The notice should be invisible in normal use — ideally a banner element that exists in the HTML but is hidden by default and only shown when sample data is active. Requires adding a boolean `usingSample` state variable in `app.js` (set to `true` on the fallback fetch path) and an `x-show="usingSample"` banner element near or below the header. Minimal extra logic and markup.
+- [ ] Add a test suite for gigcount.py — at minimum, compare gigcount.py output against the JS parser/stats to catch divergence between the two implementations
+
+## Completed
+
 - [x] Project scaffolding (CLAUDE.md, README, .gitignore, TODO)
 - [x] Define and document the event line format (FORMAT.md)
 - [x] Design document (DESIGN.md)
 - [x] Get gigcount.py into the repo
-- [ ] Flesh out CLAUDE.md: project structure, conventions, verification steps (interview user and/or propose defaults once web app work begins)
-
-## Web App — Implementation
-Steps are intentionally small to facilitate incremental learning alongside building.
-
 - [x] Vendor Alpine.js locally (spa/vendor/alpine-3.15.8.min.js)
 - [x] Add a command/script to update vendored Alpine.js to the latest release
 - [x] Minimal `index.html` shell — boilerplate, load Alpine.js + CSS + JS, static placeholder content
@@ -26,24 +66,12 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Statistics view — performer counts table, by-year table, by-location table; all react to search filter
 - [x] Per-year counts table
 - [x] Confirm stats match gigcount.py output (validation step)
-
-## Data / Format Issues
-- [ ] "Britannia (Espoontori)" and "Britannia (Kannelmäki)" are the same pub chain in different districts — currently parsed as one venue due to comment-stripping. Need to decide how to represent chain venues with district in the data format without conflicting with the trailing (comment) syntax. Address together with the "Cafe Segeli (1), Kotka" case where a show-number comment appears mid-location rather than at the end — fix in the data file at the same time.
-
-## Parser / Format
 - [x] Extract trailing `(comment)` after location as a separate `comment` field — currently swallowed into the location string. Used for show number disambiguation e.g. `(1)`, `(2)`, and possibly other notes. Needs regex care (performer parens are in description, not location). Update FORMAT.md and gigcount.py too.
-
-## Code Quality
 - [x] Review JS and CSS for missing comments — add concise explanations for non-obvious patterns (Alpine directives, flex/layout tricks, regex, reactive getters). Skip obvious things. Aimed at someone learning the stack.
-
-## Performance
 - [x] Debounce search input (~200ms) to avoid recomputing all reactive getters on every keystroke; consider deferring only the stats panel (option 3) if the event list alone is fast enough. If the debounce delay is perceptible, add a visual in-progress indicator on the search box or stats panel (e.g. subtle animation or dimming) so the user knows results are updating.
-
-## Future / Nice-to-have
 - [x] Localisation support — English/Finnish UI strings
 - [x] Listing toolbar alignment: when the count line wraps to multiple lines (common in Finnish with search active), the sort button loses its bottom-alignment and a gap appears. Fix vertical alignment of toolbar items (desktop + mobile).
 - [x] Mixed-type search results: when a query matches across multiple categories (performer + venue, or performer + year, etc.), the current mode label just lists all types (e.g. "esiintyjä · paikka") but this isn't very prominent. Consider a clearer UI signal that results are mixed — the user may not have intended this.
-- [ ] Dark mode — design and implement a dark theme (CSS custom properties are a natural fit), then add a manual toggle; optionally respect `prefers-color-scheme` as the default
 - [x] Evaluate making the search box sticky at the top of the left column when scrolling the event list.
 - [x] Add a "scroll to top" button on the left column — always visible, scrolls the event list back to the top; disabled (or hidden) when already at the top / list fits in view.
 - [x] Show per-performer detail comment (e.g. "acoustic" from "Fish (acoustic)") in the event listing, one line per performer. Display it in muted colour similar to the event name prefix, before the mini badge if present.
@@ -52,37 +80,22 @@ Steps are intentionally small to facilitate incremental learning alongside build
 - [x] Column sorting for stats tables (By Year, By Location, Performers) — click column header to sort; counts always desc, location/name always asc, year toggles asc/desc
 - [x] Revisit stats table sort UI — experiment with static column header text and separate sort controls (current button-in-header approach works but aesthetics are uncertain)
 - [x] Search mode label (in toolbar, next to event count) — it's unclear to users that the label describes how the search words were classified. Consider a prefix like "match:" or a tooltip, or a different placement/presentation. Any solution must not cause the event list to jump when the label appears/disappears.
-- [x] Leverage searchMode to enrich the UI:
-  - [x] Highlight matched performers in the event list (bold/colour matching names within each event title row)
-  - [x] Search mode indicator near the search box showing how the query was interpreted (performer / venue / year / mixed — e.g. "Maija 2006" matched both performer and year)
-  - [x] Emphasise the relevant summary block row based on search mode (Performances row for performer searches, Events row for others)
+- [x] Leverage searchMode to enrich the UI: highlight matched performers, search mode indicator near the search box, emphasise the relevant summary block row based on search mode
 - [x] Add a favicon (currently causes a 404 in the browser console)
 - [x] Sort order toggle (newest/oldest first)
 - [x] Event count in listing toolbar shows e.g. "1864 (41) events" — add the "mini" pill badge to the (41) part, consistent with how mini counts appear in the stats panel and summary block.
 - [x] Mini-concert checkbox should appear visually greyed out (disabled-looking) when the current search results contain no mini-concerts, since the toggle has no effect in that case.
 - [x] "mini" pill badge and sort buttons look too similar — both have a border and small text, making the badge look clickable. Differentiate them visually; one direction is giving the sort buttons a subtle tint/colour so buttons look interactive and the badge looks like a label.
 - [x] Make stats sections (by year, by location, performers) individually collapsible — minimal UI clutter but clearly signalled. Relevant for mobile where vertical space is scarce.
-- [ ] Consider moving event comments like "(1)", "(2)" to display after the performer name rather than after the venue/location (currently shown at end of location line, after any mini badge) — it may read more naturally as disambiguation of the performer context. Explored but unresolved: `event-title` uses `flex-direction: column` to stack performers vertically, so a comment span added as a sibling ends up on its own line. Could be placed inside the last performer's span (using `pi === event.performers.length - 1`) to appear inline — works cleanly for the common single-performer case, but feels semantically off for multi-performer events since the comment is event-level, not tied to a specific performer.
 - [x] MC indicator in event listing — mini-concerts should be visually indicated (full concert is implied); avoid showing raw [C]/[MC] tags; consider inline badge/label rather than a separate column. Add a legend for the stats table headers too.
 - [x] Scroll-to-top on mobile — fixed: window scroll listener sets `scrolled`; button uses `position:fixed` on mobile so it stays visible across both columns; click scrolls `window` on mobile vs `.left-col` on desktop.
-- [ ] Rich statistics visualizations (bar charts, graphs, etc.)
 - [x] Configurable events.txt path — fetch `events.txt` first, fall back to `events-sample.txt` if not found (404); add `events.txt` to `.gitignore` so real data can be deployed separately from code; rename `spa/events.txt` → `spa/events-sample.txt` in the repo
-- [ ] Mobile toolbar: retry right-aligning the mini-toggle checkbox so it shares the same right edge as the sort button. Multiple CSS approaches (flex column with align-items, grid with justify-self, display: block on label) all failed silently in Chrome narrow-window testing. Use devtools to inspect what display/justify-self values are actually computed on the label element before attempting another fix.
-- [ ] Stats count column alignment — the summary block (dl) right-aligns its count column, but the stats tables (by year, by location, performers) have a fixed-width count column where numbers are left-aligned within it. These should match visually. Low priority, cosmetic only.
-- [x] Investigate search clear button debounce — investigated: no debounce bug. The clear path bypasses debounce correctly. Any visible delay after clearing is Alpine re-rendering the full event list (~1800+ rows), not a debounce issue. No fix needed.
-- [x] Quoted/exact search — e.g. `"maija vilkkumaa"` or `"awa"` should match the exact phrase/word rather than substrings. Semantics to be decided: quoted phrases for multi-word exact match, or whole-word-only toggle, or both.
-- [x] Collapsed section visual hint — when a stats section (by year, by location, performers) or the event listing is collapsed, show a subtle indicator in place of the hidden content to signal there's more. Could be a faint text hint like "· · ·", a muted row count ("42 rows hidden"), a thin dotted/dashed line, or a low-contrast placeholder block. Goal: immediately obvious that content is hidden, without taking much space or drawing too much attention.
-- [ ] Allow configuring the events data URL — e.g. via a query parameter or config file, so the data file can be loaded from an arbitrary URL rather than only the local directory
+- [x] Investigate search clear button debounce — no bug found; the clear path bypasses debounce correctly.
+- [x] Quoted/exact search — e.g. `"maija vilkkumaa"` or `"awa"` should match the exact phrase/word rather than substrings.
+- [x] Collapsed section visual hint — when a stats section or the event listing is collapsed, show a subtle indicator (e.g. "· · ·", muted row count, dotted line) to signal hidden content.
 - [x] "A + B" performer display bug — fixed: comma separates independent performers, + means joint billing (one listing entry, counted separately in stats)
 - [x] Decide on "venue" vs "location" terminology — standardized on "venue" everywhere.
-
-## Responsive Design
-See `PLAN-responsive.md` for detailed implementation plan and progress tracking.
-
-- [x] "Events" header vertical alignment — on mobile when the second half of the header wraps to 4 lines, the header sits flush at the bottom. Prefer vertically centered or top-aligned. On desktop it looks good but the same alignment tweak could be applied there too for a subtle improvement.
-- [x] Single-column mobile layout — breakpoint at 768px; page scrolls naturally; stats panel stacks below listing. Collapsible event listing with chevron (mobile only); event count styled as section heading on mobile. Collapse only active on mobile (`isMobile` state); widens back to desktop uncolllapses automatically.
-
-## CLI
+- [x] "Events" header vertical alignment — on mobile when the second half of the header wraps to 4 lines, the header sits flush at the bottom. Prefer vertically centered or top-aligned.
+- [x] Single-column mobile layout — breakpoint at 768px; page scrolls naturally; stats panel stacks below listing. Collapsible event listing with chevron (mobile only); event count styled as section heading on mobile.
 - [x] gigcount.py in the repo
 - [x] Ensure gigcount.py works standalone with current events.txt
-- [ ] Add a test suite — at minimum, compare gigcount.py output against the JS parser/stats to catch divergence between the two implementations
