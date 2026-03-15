@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
     /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
-    window.__appVersion = 'v10';
+    window.__appVersion = 'v11';
   </script>
   <link rel="stylesheet" href="static/style.css">
   <script src="static/strings.js" defer></script>
@@ -63,6 +63,7 @@
           <span x-text="sortAsc ? t.sortOldestLabel : t.sortNewestLabel"></span>
         </button>
       </div>
+      <p class="mixed-search-note" x-show="query && searchModeMixed" x-text="t.mixedSearchNote"></p>
       <p class="collapsed-hint" x-show="!listingOpen" x-text="t.hiddenHint(filteredEvents.length)"></p>
       <div class="event-list" x-show="listingOpen">
         <template x-for="event in filteredEvents" :key="event.id">

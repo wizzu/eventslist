@@ -41,8 +41,8 @@ Steps are intentionally small to facilitate incremental learning alongside build
 
 ## Future / Nice-to-have
 - [x] Localisation support — English/Finnish UI strings
-- [ ] Listing toolbar alignment: when the count line wraps to multiple lines (common in Finnish with search active), the sort button loses its bottom-alignment and a gap appears. Fix vertical alignment of toolbar items.
-- [ ] Mixed-type search results: when a query matches across multiple categories (performer + venue, or performer + year, etc.), the current mode label just lists all types (e.g. "esiintyjä · paikka") but this isn't very prominent. Consider a clearer UI signal that results are mixed — the user may not have intended this.
+- [x] Listing toolbar alignment: when the count line wraps to multiple lines (common in Finnish with search active), the sort button loses its bottom-alignment and a gap appears. Fix vertical alignment of toolbar items (desktop + mobile).
+- [x] Mixed-type search results: when a query matches across multiple categories (performer + venue, or performer + year, etc.), the current mode label just lists all types (e.g. "esiintyjä · paikka") but this isn't very prominent. Consider a clearer UI signal that results are mixed — the user may not have intended this.
 - [ ] Dark mode — design and implement a dark theme (CSS custom properties are a natural fit), then add a manual toggle; optionally respect `prefers-color-scheme` as the default
 - [x] Evaluate making the search box sticky at the top of the left column when scrolling the event list.
 - [x] Add a "scroll to top" button on the left column — always visible, scrolls the event list back to the top; disabled (or hidden) when already at the top / list fits in view.

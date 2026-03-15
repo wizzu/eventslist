@@ -78,6 +78,9 @@ const STRINGS = {
     modeVenue:     'venue',
     modeEvent:     'event',
 
+    // Shown below the toolbar when a search matches multiple categories (performer + venue, etc.)
+    mixedSearchNote: 'Results span multiple categories — if you only meant one, try a more specific search term.',
+
     // Mini-concert count badge tooltip (in fmtCountsHtml)
     tooltipMiniEvents: n => `${n} mini-concert event${n !== 1 ? 's' : ''}`,
     tooltipMiniOnlyC:  n => `${n} full event${n !== 1 ? 's' : ''} where every performance was a mini-concert`,
@@ -147,6 +150,9 @@ const STRINGS = {
     modeYear:      'vuosi',
     modeVenue:     'paikka',
     modeEvent:     'tapahtuma',
+
+    // Shown below the toolbar when a search matches multiple categories
+    mixedSearchNote: 'Hakutulokset kattavat useita kategorioita — jos etsit vain yhtä, tarkenna hakua.',
 
     // Mini-concert count badge tooltip
     tooltipMiniEvents: n => `${n} minikeikka${n !== 1 ? 'a' : ''}`,

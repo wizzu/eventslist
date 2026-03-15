@@ -202,6 +202,13 @@ main {
   color: #333;
 }
 
+/* Note shown below the toolbar when a search matches multiple categories (e.g. performer + venue). */
+.mixed-search-note {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.8rem;
+  color: #9a5000;  /* warm amber-brown — warm enough to stand out, not alarming */
+}
+
 /* Hint shown in place of collapsed content: "· · · 42 hidden · · ·" */
 .collapsed-hint {
   margin: 0 0 0.75rem 0;
@@ -379,11 +386,13 @@ main {
 
 /* Toolbar above the event list: count on the left, mini toggle centred, sort on the right.
    1fr auto 1fr: the two outer columns share space equally; the middle column is exactly
-   as wide as its content, which keeps the mini toggle visually centred. */
+   as wide as its content, which keeps the mini toggle visually centred.
+   align-items: end keeps the sort button pinned to the bottom of the row even when the
+   count text wraps to multiple lines (common in Finnish with a search active). */
 .listing-toolbar {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  align-items: baseline;
+  align-items: end;
   margin-bottom: 0.5rem;
 }
 
@@ -658,22 +667,27 @@ main {
   }
 
   /* Toolbar: two rows via flex-wrap.
-     Event count fills row 1 (flex-basis: 100%). Mini-toggle and sort button
-     share row 2: mini-toggle sits left (natural), sort button pushed right.
-     The checkbox never moves — only the count text to its right changes width. */
+     Row 1: mini-toggle alone (flex-basis: 100% forces its own line).
+     Row 2: event count (left) + sort button (right, margin-left: auto).
+     Both row-2 items share order: 1; align-items: flex-end keeps them
+     bottom-aligned when the count text wraps to multiple lines. */
   .listing-toolbar {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-end;
     gap: 0.25rem 0;
   }
 
+  .listing-toolbar .mini-toggle {
+    flex: 0 0 100%; /* own row */
+  }
+
   .event-count {
-    flex: 0 0 100%;
-    order: 1; /* visually below mini-toggle + sort (which default to order: 0) */
+    order: 1;
   }
 
   .listing-toolbar .sort-toggle {
+    order: 1;
     margin-left: auto;
     justify-self: unset; /* clear grid-specific rule from desktop */
   }

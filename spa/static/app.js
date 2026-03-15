@@ -319,6 +319,12 @@ document.addEventListener('alpine:init', () => {
       return types.size ? [...types].join(' · ') : null;
     },
 
+    // True when searchModeLabel spans more than one category (e.g. "performer · venue").
+    // Used to show an explanatory note below the toolbar.
+    get searchModeMixed() {
+      return !!(this.searchModeLabel && this.searchModeLabel.includes(' · '));
+    },
+
     // True if the given performer name matches any word in the current query.
     // Used to highlight matched performers in the event listing.
     performerMatchesQuery(name) {
