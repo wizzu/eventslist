@@ -79,7 +79,7 @@ Steps are intentionally small to facilitate incremental learning alongside build
 ## Responsive Design
 See `PLAN-responsive.md` for detailed implementation plan and progress tracking.
 
-- [ ] "Events" header vertical alignment — on mobile when the second half of the header wraps to 4 lines, the header sits flush at the bottom. Prefer vertically centered or top-aligned. On desktop it looks good but the same alignment tweak could be applied there too for a subtle improvement.
+- [x] "Events" header vertical alignment — on mobile when the second half of the header wraps to 4 lines, the header sits flush at the bottom. Prefer vertically centered or top-aligned. On desktop it looks good but the same alignment tweak could be applied there too for a subtle improvement.
 - [x] Single-column mobile layout — breakpoint at 768px; page scrolls naturally; stats panel stacks below listing. Collapsible event listing with chevron (mobile only); event count styled as section heading on mobile. Collapse only active on mobile (`isMobile` state); widens back to desktop uncolllapses automatically.
 
 ## CLI

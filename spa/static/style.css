@@ -629,6 +629,27 @@ main {
   }
 
 
+  /* Two-row header on mobile: h1 + lang buttons on row 1 (sharing the full
+     width), counts + legend on row 2 (full width, no overlap risk).
+     flex-wrap: wrap enables the two-row split; header-info flex-basis: 100%
+     forces it onto its own row. */
+  header {
+    flex-wrap: wrap;
+    align-items: center;
+    padding-right: 0.75rem;
+  }
+  .header-end {
+    position: static;
+    padding: 0;
+    align-self: flex-start;
+    margin-left: auto;
+    order: 2;
+  }
+  .header-info {
+    flex-basis: 100%;
+    order: 3;
+  }
+
   /* Hide the "Generated with eventslist" text in the header on mobile;
      keep only the version tag. The full link is in the footer instead. */
   .home-link-text {
