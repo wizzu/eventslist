@@ -193,6 +193,13 @@ document.addEventListener('alpine:init', () => {
         if (!e.matches) this.listingOpen = true; // uncollapse when switching to desktop
       });
 
+      // On mobile the whole page scrolls (not .left-col), so track window scroll for the
+      // scroll-to-top button. The .left-col @scroll handler covers desktop.
+      // On mobile the whole page scrolls (not .left-col), so track window scroll for the
+      // scroll-to-top button. Safe on desktop too: body has overflow:hidden there so window
+      // never scrolls and this listener never fires.
+      window.addEventListener('scroll', () => { this.scrolled = window.scrollY > 50; });
+
       // $watch is an Alpine method that runs a callback whenever a reactive property changes.
       // Debounce rawQuery → query: wait 400ms after the last keystroke before updating query.
       // Clearing always fires instantly (no debounce) so the list resets without delay.

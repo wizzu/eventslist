@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
     /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
-    window.__appVersion = 'v11';
+    window.__appVersion = 'v12';
   </script>
   <link rel="stylesheet" href="static/style.css">
   <script src="static/strings.js" defer></script>
@@ -85,7 +85,7 @@
           </div>
         </template>
       </div>
-      <button class="scroll-top-btn" x-show="scrolled && listingOpen" x-transition.opacity.duration.300ms @click="$refs.listCol.scrollTo({top: 0, behavior: 'smooth'})" :aria-label="t.scrollTopLabel" x-text="t.scrollTopText"></button>
+      <button class="scroll-top-btn" x-show="scrolled && (listingOpen || isMobile)" x-transition.opacity.duration.300ms @click="isMobile ? window.scrollTo({top: 0, behavior: 'smooth'}) : $refs.listCol.scrollTo({top: 0, behavior: 'smooth'})" :aria-label="t.scrollTopLabel" x-text="t.scrollTopText"></button>
     </div>
     <div class="right-col">
       <!-- Desktop copy of stats-summary-mobile in .left-col — keep both in sync. -->

@@ -442,19 +442,19 @@ main {
   align-self: flex-end;
   margin-right: -1.5rem;
   font-size: 0.85rem;
-  color: #555;
-  background: #efefef;
-  border: 1px solid #bbb;
+  color: #fff;
+  background: #333;
+  border: 1px solid #222;
   border-radius: 4px;
   cursor: pointer;
   padding: 4px 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
 }
 
 .scroll-top-btn:hover {
-  background: #e2e2e2;
-  border-color: #999;
-  color: #222;
+  background: #111;
+  border-color: #000;
+  color: #fff;
 }
 
 /* Each event is a horizontal row of fields. gap adds space between them. */
@@ -597,6 +597,16 @@ main {
   .left-col {
     overflow-y: visible;
     padding: 1rem;
+  }
+
+  /* On mobile, pin scroll-to-top to the bottom-right corner of the screen so it remains
+     visible as the user scrolls through both columns (not just while inside .left-col). */
+  .scroll-top-btn {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    align-self: unset;
+    margin-right: 0;
   }
 
   .right-col {
