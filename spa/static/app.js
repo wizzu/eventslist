@@ -243,14 +243,14 @@ document.addEventListener('alpine:init', () => {
 
     // Format C and MC counts as "N" (when MC=0) or "N (M)".
     fmtCount(c, mc) {
-      return mc ? `${c} (${mc})` : `${c}`;
+      return mc ? `${c} (+${mc})` : `${c}`;
     },
 
     // Like fmtCount but renders the mini label as a badge (HTML string).
     // Must be used with x-html in the template (not x-text) so the <span> is parsed as markup.
     fmtCountHtml(c, mc) {
       if (!mc) return String(c);
-      return `${c} (${mc} <span class="mini-badge">mini</span>)`;
+      return `${c} (+${mc} <span class="mini-badge">mini</span>)`;
     },
 
     // Format a list of events using fmtCount / fmtCountHtml.
@@ -283,7 +283,7 @@ document.addEventListener('alpine:init', () => {
       const hiddenNote = total === 1 ? this.t.tooltipHidden1 : total === 2 ? this.t.tooltipHidden2 : this.t.tooltipHiddenN(total);
       const tooltip = parts.join(', ') + ` — ${hiddenNote} ${this.t.tooltipWhenOff}`;
 
-      return `${c} (${badgeText} <span class="mini-badge" data-tooltip="${tooltip}">mini</span>)`;
+      return `${c} (+${badgeText} <span class="mini-badge" data-tooltip="${tooltip}">mini</span>)`;
     },
 
     // Getters (get foo() {}) are Alpine's computed properties: Alpine tracks which reactive
