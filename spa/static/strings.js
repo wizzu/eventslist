@@ -92,7 +92,7 @@ const STRINGS = {
 
   fi: {
     // Header
-    pageTitle: 'Tapahtumat',
+    pageTitle: 'Keikat',
     miniDef:   'minikeikka: enintään 5 biisiä, alle 30 min',
 
     // Search

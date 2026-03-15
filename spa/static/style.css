@@ -25,13 +25,14 @@ header {
   padding: 1rem 2rem;     /* rem = relative to root font size (~16px) */
 }
 
-/* Lay out header contents horizontally, bottoms aligned.
-   flex-end aligns all children to the bottom edge so the title and the
-   info block (counts + legend) share the same baseline floor. */
+/* Lay out header contents horizontally, vertically centered.
+   center keeps the title and info block vertically centered relative to each
+   other, which looks good on desktop and avoids the title sitting at the
+   bottom when the info block wraps to multiple lines on mobile. */
 header {
   position: relative; /* anchor for .home-link absolute positioning */
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 1.5rem;
 }
 
