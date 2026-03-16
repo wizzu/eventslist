@@ -515,10 +515,6 @@ main {
   user-select: none;
 }
 
-.mini-toggle.mini-toggle-disabled {
-  color: #bbb;
-  cursor: default;
-}
 
 /* Reserve fixed space for the mini count so the toggle width stays stable
    as the count changes with filtering. */

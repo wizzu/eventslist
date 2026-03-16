@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
     /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
-    window.__appVersion = 'v17';
+    window.__appVersion = 'v18';
   </script>
   <link rel="stylesheet" href="static/style.css">
   <script src="static/strings.js" defer></script>
@@ -40,7 +40,7 @@
             <input class="search-box" type="search" :placeholder="t.searchPlaceholder" x-model="rawQuery" :class="searching && 'search-pending'" x-ref="search">
             <button class="search-clear" x-show="rawQuery" @click="rawQuery = ''; query = ''; searching = false; clearTimeout(_debounceTimer); $refs.search.focus()" :aria-label="t.searchClearLabel">✕</button>
           </div>
-          <label class="mini-toggle" x-show="hasMinis" :class="!filteredHasMinis && 'mini-toggle-disabled'"><input type="checkbox" x-model="showMinis" :disabled="!filteredHasMinis"> <span x-text="isMobile ? t.miniToggleMobile : t.miniToggle"></span><span class="mini-toggle-count" :style="!filteredHasMinis && 'visibility:hidden'" x-text="'(' + filteredMiniCounts.mc + ')'"></span></label>
+          <label class="mini-toggle" x-show="hasMinis"><input type="checkbox" x-model="showMinis"> <span x-text="isMobile ? t.miniToggleMobile : t.miniToggle"></span><span class="mini-toggle-count" :style="!filteredHasMinis && 'visibility:hidden'" x-text="'(' + filteredMiniCounts.mc + ')'"></span></label>
         </div>
         <p class="search-mode-note" x-text="searchModeLabel ? t.searchMatches(searchModeLabel) : (query ? '\u00A0' : t.allConcertsLabel)"></p>
         <p class="mixed-search-note" x-show="query && searchModeMixed" x-text="t.mixedSearchNote"></p>

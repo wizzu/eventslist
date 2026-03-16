@@ -159,7 +159,7 @@ document.addEventListener('alpine:init', () => {
     _debounceTimer: null,
     sortAsc: false,           // event listing: false = newest first (default), true = oldest first
     scrolled: false,          // true when left column has scrolled down enough to show scroll-to-top button
-    showMinis: true,          // whether to include mini-concerts in the listing and stats
+    showMinis: false,         // whether to include mini-concerts in the listing and stats
     listingOpen: true,        // whether the event list is expanded (collapsible on mobile)
     isMobile: false,          // true when viewport is at mobile breakpoint (≤768px)
     version: '',              // set from window.__appVersion (version.js); shown in header
