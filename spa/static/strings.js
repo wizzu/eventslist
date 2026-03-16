@@ -18,30 +18,31 @@
 const STRINGS = {
   en: {
     // Header
-    pageTitle:       'Events',
+    pageTitle:       'Concerts',
     miniDef:         'mini-concert: 5 or fewer songs, under 30 min',
 
     // Search
-    searchPlaceholder: 'Search events…',
+    searchPlaceholder: 'Search concerts…',
     searchClearLabel:  'Clear search',      // aria-label on the ✕ button
 
     // Stats summary labels (both mobile and desktop panels)
-    statEvents:       'Events',
+    statConcerts:     'Concerts',
     statPerformances: 'Performances',
     statPerformers:   'Performers',
+    statVenues:       'Venues',
     statYears:        'Years',
 
     // Listing toolbar
-    miniToggle:      'mini-concerts',
+    miniToggle:      'include mini-concerts',
     sortOldestTitle: 'Sort: oldest first',  // title attribute (tooltip)
     sortNewestTitle: 'Sort: newest first',
     sortOldestLabel: '↑ Oldest first',      // visible button text
     sortNewestLabel: '↓ Newest first',
 
-    // Listing toolbar count line: "3 (1 mini) matching events"
-    // Note: 'matching' is inserted between the count and 'event/events' only when a search is active.
+    // Toolbar/collapse count line: "3 (1 mini) matching concerts"
+    // Note: 'matching' is inserted between the count and the label only when a search is active.
     matchingLabel: ' matching',
-    eventLabel: n => n === 1 ? ' event' : ' events',
+    concertLabel: n => n === 1 ? ' concert' : ' concerts',
 
     // Collapsed section hint
     hiddenHint: n => `· · · ${n} hidden · · ·`,
@@ -51,8 +52,8 @@ const STRINGS = {
     scrollTopText:  '↑ Top',
 
     // Stats section headings
-    sectionByYear:    'Events by year',
-    sectionByVenue:   'Events by venue',
+    sectionByYear:    'Concerts by year',
+    sectionByVenue:   'Concerts by venue',
     sectionPerformers: 'Performers',
 
     // Stats table column headers
@@ -65,29 +66,53 @@ const STRINGS = {
     loading: 'Loading…',
     loaded:  n => `Loaded ${n} events.`,
 
-    // Header bar summary: "42 concerts (+ 3 mini-concerts)"
-    headerCounts: (c, mc) => `${c} concert${c !== 1 ? 's' : ''} (+ ${mc} mini-concert${mc !== 1 ? 's' : ''})`,
+    // Header bar main line: "42 concerts, 73 performances"
+    headerCounts: (c, perf) => `${c} concert${c !== 1 ? 's' : ''}, ${perf} performance${perf !== 1 ? 's' : ''}`,
+    // Header bar mini line: "+5 mini-concerts, +7 mini-performances" (zeros omitted)
+    headerMiniLine: (mc, mperf) => {
+      const parts = [];
+      if (mc > 0)    parts.push(`+${mc} mini-concert${mc !== 1 ? 's' : ''}`);
+      if (mperf > 0) parts.push(`+${mperf} mini-performance${mperf !== 1 ? 's' : ''}`);
+      return parts.join(', ');
+    },
 
-    // Prefix inside the search mode brackets: "" → "(performer)", "hits: " → "(hits: performer)".
-    searchModePrefix: '',
+    // Always-visible note below the search area.
+    // Idle (no search): allConcertsLabel. Active: searchMatches(mode). Zero results: non-breaking space.
+    allConcertsLabel: 'Showing all concerts',
+    searchMatches: mode => `Matched by ${mode}`,
+    // Conjunction used to join multiple mode labels: "performer names and venues".
+    modeJoin:      ' and ',
+    // Shown when a search matches multiple categories.
+    mixedSearchNote: 'Results span multiple categories — to narrow down, try a more specific search term.',
+    // Shown on mobile when a search returns no results.
+    noMatchLabel: 'No concerts matched.',
 
-    // Search mode labels shown in brackets after the event count, e.g. "(performer · venue)".
-    // Multiple labels are joined with " · ".
-    modePerformer: 'performer',
+    // Search mode labels — describe what field a term matched.
+    modePerformer: 'performer names',
     modeYear:      'year',
-    modeVenue:     'venue',
-    modeEvent:     'event',
-
-    // Shown below the toolbar when a search matches multiple categories (performer + venue, etc.)
-    mixedSearchNote: 'Results span multiple categories — if you only meant one, try a more specific search term.',
+    modeVenue:     'venues',
+    modeEvent:     'event names',
 
     // Mini-concert count badge tooltip (in fmtCountsHtml)
-    tooltipMiniEvents: n => `${n} mini-concert event${n !== 1 ? 's' : ''}`,
-    tooltipMiniOnlyC:  n => `${n} full event${n !== 1 ? 's' : ''} where every performance was a mini-concert`,
+    tooltipMiniEvents: n => `${n} mini-concert${n !== 1 ? 's' : ''}`,
     tooltipHidden1:    'hidden',
-    tooltipHidden2:    'both are hidden',
     tooltipHiddenN:    n => `all ${n} are hidden`,
     tooltipWhenOff:    'when mini-concerts are turned off',
+
+    // Mobile listing summary: second line of detail stats.
+    // perf = full performances, perfMc = mini performances (omitted when 0),
+    // performers = full-concert performers, years = years with concerts.
+    listingSummaryDetail: (perf, perfMc, performers, venues, years) => {
+      const perfStr = perfMc
+        ? `${perf} performance${perf !== 1 ? 's' : ''} (+${perfMc} mini)`
+        : `${perf} performance${perf !== 1 ? 's' : ''}`;
+      const performersStr = `${performers} performer${performers !== 1 ? 's' : ''}`;
+      const venuesStr = `${venues} venue${venues !== 1 ? 's' : ''}`;
+      const yearsStr = years === 1 ? '1 year' : `across ${years} years`;
+      const left  = `${perfStr} · ${performersStr}`;
+      const right = ` · ${venuesStr} · ${yearsStr}`;
+      return `<span style="white-space:nowrap">${left}</span><wbr><span style="white-space:nowrap">${right}</span>`;
+    },
   },
 
   fi: {
@@ -96,26 +121,25 @@ const STRINGS = {
     miniDef:   'minikeikka: enintään 5 biisiä, alle 30 min',
 
     // Search
-    searchPlaceholder: 'Hae tapahtumia…',
+    searchPlaceholder: 'Hae keikkoja…',
     searchClearLabel:  'Tyhjennä haku',
 
     // Stats summary labels
-    statEvents:       'Tapahtumat',
-    statPerformances: 'Esiintymiset (keikat)',
+    statConcerts:     'Keikat',
+    statPerformances: 'Keikka-esitykset',
     statPerformers:   'Esiintyjät',
+    statVenues:       'Keikkapaikat',
     statYears:        'Vuodet',
 
     // Listing toolbar
-    miniToggle:      'minikeikat',
+    miniToggle:      'myös minikeikat',
     sortOldestTitle: 'Järjestys: vanhin ensin',
     sortNewestTitle: 'Järjestys: uusin ensin',
     sortOldestLabel: '↑ Vanhin ensin',
     sortNewestLabel: '↓ Uusin ensin',
 
-    // Listing toolbar count line: "3 tapahtumaa (hakuosumat: artisti)"
-    // matchingLabel is empty — the search context is conveyed by searchModePrefix instead.
     matchingLabel: '',
-    eventLabel: n => n === 1 ? ' tapahtuma' : ' tapahtumaa',
+    concertLabel: n => n === 1 ? ' keikka' : ' keikkaa',
 
     // Collapsed section hint
     hiddenHint: n => `· · · ${n} piilotettu · · ·`,
@@ -125,8 +149,8 @@ const STRINGS = {
     scrollTopText:  '↑ Ylös',
 
     // Stats section headings
-    sectionByYear:     'Tapahtumat vuosittain',
-    sectionByVenue:    'Tapahtumat paikoittain',
+    sectionByYear:     'Keikat vuosittain',
+    sectionByVenue:    'Keikat paikoittain',
     sectionPerformers: 'Esiintyjät',
 
     // Stats table column headers
@@ -139,27 +163,45 @@ const STRINGS = {
     loading: 'Ladataan…',
     loaded:  n => `Ladattu ${n} tapahtumaa.`,
 
-    // Header bar summary: "42 keikkaa (+ 3 minikeikkaa)"
-    headerCounts: (c, mc) => `${c} keikka${c !== 1 ? 'a' : ''} (+ ${mc} minikeikka${mc !== 1 ? 'a' : ''})`,
+    // Header bar main line: "42 keikkaa, 73 keikka-esitystä"
+    headerCounts: (c, perf) => `${c} keikka${c !== 1 ? 'a' : ''}, ${perf} keikka-esitys${perf !== 1 ? 'tä' : ''}`,
+    // Header bar mini line: "+5 minikeikkaa, +7 mini-esitystä" (zeros omitted)
+    headerMiniLine: (mc, mperf) => {
+      const parts = [];
+      if (mc > 0)    parts.push(`+${mc} minikeikka${mc !== 1 ? 'a' : ''}`);
+      if (mperf > 0) parts.push(`+${mperf} mini-esitys${mperf !== 1 ? 'tä' : ''}`);
+      return parts.join(', ');
+    },
 
-    // Prefix inside the search mode brackets: "3 tapahtumaa (hakuosumat: artisti)"
-    searchModePrefix: 'hakuosumat: ',
-
-    // Search mode labels
-    modePerformer: 'esiintyjä',
-    modeYear:      'vuosi',
-    modeVenue:     'paikka',
-    modeEvent:     'tapahtuma',
-
-    // Shown below the toolbar when a search matches multiple categories
+    allConcertsLabel: 'Näytetään kaikki keikat',
+    searchMatches: mode => `Hakuosumat ${mode}`,
+    modeJoin:      ' ja ',
     mixedSearchNote: 'Hakutulokset kattavat useita kategorioita — jos etsit vain yhtä, tarkenna hakua.',
+    noMatchLabel: 'Ei osumia hausta.',
+
+    // Search mode labels — inessive/adessive phrases that complete "Hakuosumat ..."
+    modePerformer: 'esiintyjien nimissä',
+    modeYear:      'vuosiluvuissa',
+    modeVenue:     'tapahtumapaikoissa',
+    modeEvent:     'tapahtumien nimissä',
 
     // Mini-concert count badge tooltip
     tooltipMiniEvents: n => `${n} minikeikka${n !== 1 ? 'a' : ''}`,
-    tooltipMiniOnlyC:  n => `${n} tapahtuma${n !== 1 ? 'a' : ''}, jossa kaikki esiintymiset olivat minikeikkoja`,
     tooltipHidden1:    'piilotettu',
-    tooltipHidden2:    'molemmat piilotettu',
     tooltipHiddenN:    n => `kaikki ${n} piilotettu`,
     tooltipWhenOff:    'kun minikeikat on piilotettu',
+
+    // Mobile listing summary: second line of detail stats.
+    listingSummaryDetail: (perf, perfMc, performers, venues, years) => {
+      const perfStr = perfMc
+        ? `${perf} ${perf !== 1 ? 'keikka-esitystä' : 'keikka-esitys'} (+${perfMc} mini)`
+        : `${perf} ${perf !== 1 ? 'keikka-esitystä' : 'keikka-esitys'}`;
+      const performersStr = `${performers} ${performers !== 1 ? 'esiintyjää' : 'esiintyjä'}`;
+      const venuesStr = `${venues} ${venues !== 1 ? 'paikkaa' : 'paikka'}`;
+      const yearsStr = years === 1 ? '1 vuosi' : `${years} eri vuonna`;
+      const left  = `${perfStr} · ${performersStr}`;
+      const right = ` · ${venuesStr} · ${yearsStr}`;
+      return `<span style="white-space:nowrap">${left}</span><wbr><span style="white-space:nowrap">${right}</span>`;
+    },
   },
 };

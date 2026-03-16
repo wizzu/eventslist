@@ -54,6 +54,11 @@ header h1 {
   font-size: 0.9rem;
 }
 
+.header-mini-counts {
+  color: #888;
+  font-size: 0.8rem;
+}
+
 .header-legend {
   color: #999;
   font-size: 0.75rem;
@@ -152,10 +157,15 @@ main {
   overflow-x: hidden; /* overflow-y:auto implicitly enables overflow-x:auto; suppress it */
 }
 
+/* Search area: input + mini toggle + search mode note, grouped as a filter unit. */
+.search-area {
+  margin-bottom: 1rem;
+}
+
 /* Wrapper positions the clear button relative to the input. */
 .search-wrap {
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 /* Full-width search input above the event list. */
@@ -203,11 +213,26 @@ main {
   color: #333;
 }
 
-/* Note shown below the toolbar when a search matches multiple categories (e.g. performer + venue). */
-.mixed-search-note {
-  margin: 0 0 0.5rem 0;
+/* Note shown below the search area when a search is active — describes how the query was matched. */
+.search-mode-note {
+  margin: 0.3rem 0 0 0;
   font-size: 0.8rem;
-  color: #9a5000;  /* warm amber-brown — warm enough to stand out, not alarming */
+  color: #777;
+}
+
+/* Warning shown when a search matches multiple categories. */
+.mixed-search-note {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.8rem;
+  color: #9a5000;
+}
+
+/* Shown on mobile when a search returns no results, in place of the stats summary + toolbar. */
+.no-match-note {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
 }
 
 /* Hint shown in place of collapsed content: "· · · 42 hidden · · ·" */
@@ -269,10 +294,31 @@ main {
   font-size: 0.85rem;
 }
 
-/* Mobile duplicate of the summary — hidden on desktop (display:none must come after
-   .stats-summary { display:grid } above to win on equal specificity). */
-.stats-summary-mobile {
+/* Mobile listing summary: concerts headline + detail line. Hidden on desktop. */
+.listing-summary {
   display: none;
+}
+
+.listing-summary-concerts {
+  margin: 0 0 0.15rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.listing-summary-detail {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.listing-summary-concerts.stat-active {
+  color: #000;
+}
+
+.listing-summary-detail.stat-active {
+  color: #111;
+  font-weight: 600;
 }
 
 /* Each row is itself a grid item spanning both columns via subgrid. */
@@ -385,20 +431,25 @@ main {
 }
 
 
-/* Toolbar above the event list: count on the left, mini toggle centred, sort on the right.
-   1fr auto 1fr: the two outer columns share space equally; the middle column is exactly
-   as wide as its content, which keeps the mini toggle visually centred.
-   align-items: end keeps the sort button pinned to the bottom of the row even when the
-   count text wraps to multiple lines (common in Finnish with a search active). */
+/* Toolbar above the event list: count on the left, sort on the right (desktop).
+   On mobile the count is hidden and replaced by a collapse button. */
 .listing-toolbar {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: end;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 0.5rem;
 }
 
-.listing-toolbar .sort-toggle {
-  justify-self: end;
+/* Collapse button — mobile only, hidden on desktop via x-show. */
+.collapse-btn {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  user-select: none;
 }
 
 
@@ -547,14 +598,6 @@ main {
   opacity: 1;
 }
 
-/* Collapse chevron on the event count — mobile only, hidden on desktop.
-   No explicit font-size so it inherits from .event-count (looks right on both). */
-.listing-chevron {
-  display: none;
-  color: #888;
-  margin-left: 0.3rem;
-}
-
 /* Venue name before first comma stays on one line. The rest uses non-breaking
    spaces so wrapping only occurs at ", " boundaries (see venueRest in app.js). */
 .venue-main {
@@ -618,14 +661,15 @@ main {
     padding: 1rem;
   }
 
-  /* On mobile the summary is duplicated inside .left-col; hide the desktop copy. */
+  /* On mobile the listing summary lives in .left-col; hide the desktop stats copy. */
   .stats-summary-desktop {
     display: none;
   }
 
-  /* Show the mobile copy (hidden by default on desktop). */
-  .stats-summary-mobile {
-    display: grid;
+  /* Show the mobile listing summary (hidden by default on desktop). */
+  .listing-summary {
+    display: block;
+    margin-bottom: 0.75rem;
   }
 
 
@@ -678,49 +722,13 @@ main {
     overflow-y: visible;
   }
 
-  /* Show the collapse chevron. */
-  .listing-chevron {
-    display: inline;
-  }
-
   /* Match stats chevrons to the listing chevron size on mobile. */
   .stats-chevron {
     font-size: 1rem;
   }
 
-  /* Style the event count as a section heading so it reads as a collapsible
-     section header rather than just a count. */
-  .event-count {
-    font-size: 1rem;
-    color: #333;
-    font-weight: 600;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  /* Toolbar: two rows via flex-wrap.
-     Row 1: mini-toggle alone (flex-basis: 100% forces its own line).
-     Row 2: event count (left) + sort button (right, margin-left: auto).
-     Both row-2 items share order: 1; align-items: flex-end keeps them
-     bottom-aligned when the count text wraps to multiple lines. */
+  /* Toolbar on mobile: collapse button (left) + sort button (right). */
   .listing-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 0.25rem 0;
-  }
-
-  .listing-toolbar .mini-toggle {
-    flex: 0 0 100%; /* own row */
-  }
-
-  .event-count {
-    order: 1;
-  }
-
-  .listing-toolbar .sort-toggle {
-    order: 1;
-    margin-left: auto;
-    justify-self: unset; /* clear grid-specific rule from desktop */
+    gap: 0;
   }
 }

@@ -6,9 +6,11 @@
 
 - [ ] **Try mini toggle off by default**: currently `showMinis` initialises to `true` in `app.js`; flip it to `false` so the first-load view shows full concerts only, with minis opt-in. The "missing data" concern is weak: a visitor wouldn't know about minis, wouldn't necessarily care, and the primary message is full concerts anyway — all three factors point the same way. Also update the toggle label from the current bare noun (`'mini-concerts'` / `'minikeikat'`) to something that reads naturally when the checkbox is unchecked: EN → `'include mini-concerts'`; FI → something like `'myös minikeikat'` ("mini-concerts too") — `'sisällytä minikeikat'` is semantically exact but awkward; needs native-feel phrasing. Try `'myös minikeikat'` and see how it reads in context.
 
-- [ ] **Mini-concert checkbox placement** (holistic rethink): The checkbox filters events the same way the search bar does — they're functionally siblings and should live near each other visually. Current placement (right edge of toolbar on mobile, elsewhere on desktop) creates visual glitches when the checkbox label text length varies. Needs a layout approach that: (a) groups checkbox and search box logically, (b) doesn't cause reflow/jump when toggled, (c) works cleanly at all mobile breakpoints.
+- [ ] **Mini-concert checkbox placement** (holistic rethink): currently in the search area (below the search input, above the search-mode note) — better than the old toolbar placement, but not final. Subject to change during holistic UI review. Label updated to "include mini-concerts" / "myös minikeikat".
 
-- [ ] **Count/numbers confusion on mobile** (new — important): When the app loads on mobile with no search active, a user can read three different numbers that each plausibly answer "how many concerts have you been to?" — and they give different answers. Concretely:
+- [ ] **Three-counts problem** (mobile, main open issue): When the app loads on mobile with no search active, the concert count appears in three places: (1) header "N concerts, M performances", (2) summary block "Concerts" row, (3) collapse button in toolbar "N concerts ▾". The original plan removed the toolbar count in favour of the summary block, but evaluation showed users need the count immediately above the listing — the summary block is too far from the list and right-aligns numbers. Toolbar count was restored, reintroducing the triplication. Needs a design solution that provides the count visually above the listing without repeating it three times. Desktop layout remapping should wait until this is resolved.
+
+  **Old notes (count/numbers confusion):** When the app loads on mobile with no search active, a user can read three different numbers that each plausibly answer "how many concerts have you been to?" — and they give different answers. Concretely:
   - **Header** (`counts` getter): grand total, unfiltered, uses raw `event.type === 'C'` count. Always reflects all data, ignores current search.
   - **Summary block "Events" row + toolbar** (both use `fmtCountsHtml(filteredEvents)`): C-type events *minus* "miniOnlyC" events — i.e. C-typed events where every single performer is [MC]. Those are rolled into the mini badge count because they vanish when the mini toggle is off. So this number equals "events visible when mini is hidden."
   - **Summary block "Performances" row** (`performanceCounts`): sum of individual performer [C]/[MC] counts across all events. A 2-performer event contributes 2 to this total. Can substantially exceed event count.
@@ -33,6 +35,16 @@
   - Whatever the solution: must stay compact on mobile, must not require inline explanations, and must not change the underlying data model (only presentation).
 
 ## Open — Nice to have
+
+- [ ] **Hostname-based default locale** — derive the initial language from the hostname before falling back to `navigator.language`. Priority order: (1) `localStorage` (explicit user choice), (2) hostname: `keikat.*` → `fi`, `gigs.*` → `en`, (3) `navigator.language`, (4) `en`. One-liner change in `app.js:150` (`lang:` initialiser). Rationale: `keikat.wizzu.com` is naturally Finnish-first, `gigs.wizzu.com` English-first; anyone else deploying from the public repo gets the existing browser-locale fallback.
+
+- [ ] **Search: match in event names (festival/event prefix)** — The search haystack currently covers date, performer names, and venue; it does not include the `eventName` prefix (e.g. "Ruisrock" in "Ruisrock: The Beautiful South"). Searching "Ruisrock" should find those events.
+
+  **Corner case — year + festival name collision:** A year search like "2006" will match (a) the date field of every concert from 2006, and (b) any event whose name contains "2006" (e.g. "Ankkarock 2006"). The current multi-category logic would see both a *year* match and an *event name* match and flag it as a mixed result with a warning. But "Ankkarock 2006" was held in 2006, so the two categories are hitting the same set of concerts for the same underlying reason — this is not worth a warning.
+
+  **Suppression logic:** only raise the mixed-category warning when different categories produce *different* sets of matching concerts. If all concerts matched by category A are also matched by category B (i.e. the sets are equal or one is a subset of the other), treat it as a single-category match. This is the general rule; the festival-year case is just one instance of it.
+
+  Implementation note: the current `searchModeLabel` / `searchModeMixed` logic classifies each query *term* independently and OR-joins the categories. The suppression requires comparing matched-concert sets per category, which needs a different structure — compute per-category match sets first, then determine which categories contributed unique results.
 
 - [ ] Flesh out CLAUDE.md: project structure, conventions, verification steps (interview user and/or propose defaults once web app work begins)
 - [ ] Dark mode — design and implement a dark theme (CSS custom properties are a natural fit), then add a manual toggle; optionally respect `prefers-color-scheme` as the default

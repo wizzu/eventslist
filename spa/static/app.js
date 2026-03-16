@@ -132,9 +132,7 @@ function parseLine(raw) {
     eventName = eventName || descPart.trim();
   }
 
-  // A multi-performer [MC] event is a full [C] event — the event wasn't a
-  // mini-concert, only the individual sets were. Single-performer [MC] stays MC.
-  const eventType = (type === 'MC' && performers.length > 1) ? 'C' : type;
+  const eventType = type;
 
   return { date, year, eventName, performers, venue, comment, type: eventType, raw };
 }
@@ -259,41 +257,32 @@ document.addEventListener('alpine:init', () => {
       const mc = events.filter(e => e.type === 'MC').length;
       return this.fmtCount(c, mc);
     },
-    // Like fmtCounts but returns HTML, and accounts for C-type events where every performer is MC.
-    // Those events are subtracted from the main count and rolled into the mini badge as "+N",
-    // because they disappear when mini-concerts are hidden — keeping the displayed count stable.
-    // A tooltip is always shown on the badge to explain what the count means.
+    // Like fmtCounts but returns HTML with a tooltip on the mini badge.
     fmtCountsHtml(events) {
-      const cEvents = events.filter(e => e.type === 'C');
+      const c = events.filter(e => e.type === 'C').length;
       const mc = events.filter(e => e.type === 'MC').length;
-      const miniOnlyC = cEvents.filter(e =>
-        e.performers.length > 0 && e.performers.every(p => p.type === 'MC')
-      ).length;
-      const c = cEvents.length - miniOnlyC;
-      const total = mc + miniOnlyC;
-      if (!total) return String(c);
-
-      // Badge text: show N+M split only when both types are present.
-      const badgeText = (mc > 0 && miniOnlyC > 0) ? `${mc}+${miniOnlyC}` : `${total}`;
-
-      // Tooltip: describe each component, then note that all are hidden together.
-      const parts = [];
-      if (mc > 0) parts.push(this.t.tooltipMiniEvents(mc));
-      if (miniOnlyC > 0) parts.push(this.t.tooltipMiniOnlyC(miniOnlyC));
-      const hiddenNote = total === 1 ? this.t.tooltipHidden1 : total === 2 ? this.t.tooltipHidden2 : this.t.tooltipHiddenN(total);
-      const tooltip = parts.join(', ') + ` — ${hiddenNote} ${this.t.tooltipWhenOff}`;
-
-      return `${c} (+${badgeText} <span class="mini-badge" data-tooltip="${tooltip}">mini</span>)`;
+      if (!mc) return String(c);
+      const hiddenNote = mc === 1 ? this.t.tooltipHidden1 : this.t.tooltipHiddenN(mc);
+      const tooltip = this.t.tooltipMiniEvents(mc) + ` — ${hiddenNote} ${this.t.tooltipWhenOff}`;
+      return `${c} (+${mc} <span class="mini-badge" data-tooltip="${tooltip}">mini</span>)`;
     },
 
     // Getters (get foo() {}) are Alpine's computed properties: Alpine tracks which reactive
     // data they read, and automatically re-evaluates and re-renders whenever that data changes.
 
-    // Total event counts for the header — always labeled, always shows both.
+    // All-time header counts — concerts and performances (unfiltered, always stable).
     get counts() {
       const c = this.events.filter(e => e.type === 'C').length;
+      const perf = this.events.reduce((s, e) => s + e.performers.filter(p => p.type === 'C').length, 0);
+      return this.t.headerCounts(c, perf);
+    },
+
+    // Supplementary mini line for the header — empty string when there are no minis.
+    get miniCountsStr() {
       const mc = this.events.filter(e => e.type === 'MC').length;
-      return this.t.headerCounts(c, mc);
+      const mperf = this.events.reduce((s, e) => s + e.performers.filter(p => p.type === 'MC').length, 0);
+      if (!mc && !mperf) return '';
+      return this.t.headerMiniLine(mc, mperf);
     },
 
     // 'performer' if every filtered event has at least one performer matching the query.
@@ -327,13 +316,13 @@ document.addEventListener('alpine:init', () => {
         if (matchesVenue)     types.add(this.t.modeVenue);
         if (!matchesPerformer && !matchesVenue) types.add(this.t.modeEvent);
       }
-      return types.size ? [...types].join(' · ') : null;
+      return types.size ? [...types].join(this.t.modeJoin) : null;
     },
 
-    // True when searchModeLabel spans more than one category (e.g. "performer · venue").
-    // Used to show an explanatory note below the toolbar.
+    // True when searchModeLabel spans more than one category (e.g. "performer names and venues").
+    // Used to show a warning note below the search area.
     get searchModeMixed() {
-      return !!(this.searchModeLabel && this.searchModeLabel.includes(' · '));
+      return !!(this.searchModeLabel && this.searchModeLabel.includes(this.t.modeJoin));
     },
 
     // True if the given performer name matches any word in the current query.
@@ -370,9 +359,8 @@ document.addEventListener('alpine:init', () => {
       return this.events.some(e => e.type === 'MC' || e.performers.some(p => p.type === 'MC'));
     },
 
-    // Counts of mini-related events in the current query results, independent of showMinis.
-    // mc: MC-type events; miniOnlyC: C-type events where every performer is MC.
-    // Used to drive the mini-concerts toggle state, its count label, and fmtCountsHtml.
+    // Count of MC-type events in the current query results, independent of showMinis.
+    // Used to drive the mini-concerts toggle state and its count label.
     get filteredMiniCounts() {
       const terms = parseQuery(this.query);
       const matched = terms.length
@@ -382,21 +370,17 @@ document.addEventListener('alpine:init', () => {
           })
         : this.events;
       const mc = matched.filter(e => e.type === 'MC').length;
-      const miniOnlyC = matched.filter(e =>
-        e.type === 'C' && e.performers.length > 0 && e.performers.every(p => p.type === 'MC')
-      ).length;
-      return { mc, miniOnlyC };
+      return { mc };
     },
 
     // True if the current query matches any mini-concerts (ignoring showMinis).
     // Used to grey out the toggle when toggling it would have no effect.
     get filteredHasMinis() {
-      const { mc, miniOnlyC } = this.filteredMiniCounts;
-      return mc > 0 || miniOnlyC > 0;
+      return this.filteredMiniCounts.mc > 0;
     },
 
     // Returns events matching the current search query, in the current sort order.
-    // When showMinis is false, excludes MC events and C events where every performer is MC.
+    // When showMinis is false, excludes MC-type events.
     // Search requires ALL words to match somewhere in the event (date + title + venue).
     get filteredEvents() {
       const terms = parseQuery(this.query);
@@ -408,7 +392,7 @@ document.addEventListener('alpine:init', () => {
         : this.events;
       const visible = this.showMinis
         ? matched
-        : matched.filter(e => e.type !== 'MC' && e.performers.some(p => p.type !== 'MC'));
+        : matched.filter(e => e.type !== 'MC');
       // this.events is sorted newest-first; reverse a shallow copy for oldest-first.
       return this.sortAsc ? [...visible].reverse() : visible;
     },
@@ -513,6 +497,27 @@ document.addEventListener('alpine:init', () => {
         }
       }
       return result;
+    },
+
+    // Mobile listing summary — line 1: concerts headline with optional mini badge.
+    // Format: "1852 concerts" or "1852 concerts (+58 mini-badge)"
+    get listingSummaryConcertsHtml() {
+      const c = this.filteredEvents.filter(e => e.type === 'C').length;
+      const mc = this.filteredEvents.filter(e => e.type === 'MC').length;
+      const label = this.t.concertLabel(c).trim();
+      if (!mc) return `${c} ${label}`;
+      const hiddenNote = mc === 1 ? this.t.tooltipHidden1 : this.t.tooltipHiddenN(mc);
+      const tooltip = this.t.tooltipMiniEvents(mc) + ` — ${hiddenNote} ${this.t.tooltipWhenOff}`;
+      return `${c} ${label} (+${mc} <span class="mini-badge" data-tooltip="${tooltip}">mini</span>)`;
+    },
+
+    // Mobile listing summary — line 2: compact detail stats (performances · performers · years).
+    get listingSummaryDetailText() {
+      const { c: perf, mc: perfMc } = this.performanceCounts;
+      const { c: performers } = this.performerCounts;
+      const venues = this.venueStats.length;
+      const years = this.yearStats.length;
+      return this.t.listingSummaryDetail(perf, perfMc, performers, venues, years);
     },
 
     // Build a display title from the parsed event object.
