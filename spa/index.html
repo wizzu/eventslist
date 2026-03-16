@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
     /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
-    window.__appVersion = 'v20';
+    window.__appVersion = 'v21';
   </script>
   <link rel="stylesheet" href="static/style.css">
   <script src="static/strings.js" defer></script>
@@ -33,6 +33,8 @@
     </div>
   </header>
   <div class="sample-notice" x-show="usingSample" x-text="t.sampleNotice"></div>
+  <div class="data-error-notice" x-show="dataError" x-text="t.dataErrorNotice"></div>
+  <div class="no-data-notice" x-show="noData" x-text="t.noDataNotice"></div>
   <main>
     <div class="left-col" x-ref="listCol" @scroll="scrolled = $el.scrollTop > 50">
       <p x-show="!events.length" x-text="status"></p>

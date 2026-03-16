@@ -73,6 +73,24 @@ header h1 {
   font-size: 0.85rem;
 }
 
+/* Banner shown when data-source-url.txt is configured but loading failed. */
+.data-error-notice {
+  background: #f8d7da;
+  color: #842029;
+  text-align: center;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+}
+
+/* Banner shown when no data file was found at all. */
+.no-data-notice {
+  background: #e9ecef;
+  color: #495057;
+  text-align: center;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+}
+
 /* Shown only on mobile: version tag at the bottom-right of the header info row.
    Hidden on desktop (desktop uses .home-link in .header-end instead). */
 .header-version-mobile {

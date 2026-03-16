@@ -168,6 +168,8 @@ document.addEventListener('alpine:init', () => {
     isMobile: false,          // true when viewport is at mobile breakpoint (≤768px)
     version: '',              // set from window.__appVersion (version.js); shown in header
     usingSample: false,       // true when events.txt was not found and sample data was loaded instead
+    dataError: false,         // true when data-source-url.txt exists but loading from that URL failed
+    noData: false,            // true when no data file was found at all
     yearSort:      { col: 'year', dir: 'desc', yearDir: 'desc' }, // yearDir remembered independently
     venueSort:     { col: 'c',    dir: 'desc' },
     performerSort: { col: 'c',    dir: 'desc' },
@@ -182,11 +184,37 @@ document.addEventListener('alpine:init', () => {
 
       this.status = this.t.loading;
 
-      // Try real data first; fall back to sample data if not found.
-      let response = await fetch('events.txt');
-      if (!response.ok) {
-        response = await fetch('events-sample.txt');
-        this.usingSample = true;
+      // Determine data source:
+      // 1. data-source-url.txt (if present, use the URL inside; error and stop on failure)
+      // 2. events.txt (local)
+      // 3. events-sample.txt (fallback; sets usingSample)
+      // 4. nothing found → sets noData
+      let response;
+      const urlFile = await fetch('data-source-url.txt');
+      if (urlFile.ok) {
+        const dataUrl = (await urlFile.text()).trim();
+        if (dataUrl) {
+          try {
+            response = await fetch(dataUrl);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          } catch (_) {
+            this.dataError = true;
+            this.status = '';
+            return;
+          }
+        }
+      }
+      if (!response) {
+        response = await fetch('events.txt');
+        if (!response.ok) {
+          response = await fetch('events-sample.txt');
+          if (!response.ok) {
+            this.noData = true;
+            this.status = '';
+            return;
+          }
+          this.usingSample = true;
+        }
       }
       const text = await response.text();
       const concerts = parseEvents(text).filter(e => e.type !== null);

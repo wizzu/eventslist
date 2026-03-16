@@ -13,8 +13,9 @@ venv/
 # OS
 .DS_Store
 
-# Real event data — deployed separately, not committed
+# Real event data and deployment config — deployed separately, not committed
 spa/events.txt
+spa/data-source-url.txt
 
 # Local planning notes — not for the repo
 PLAN-*.md

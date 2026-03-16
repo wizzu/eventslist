@@ -66,6 +66,12 @@ const STRINGS = {
     // Sample data notice (shown when events.txt was not found)
     sampleNotice: 'Showing sample data — events.txt file not found.',
 
+    // Data load error notice (shown when data-source-url.txt exists but loading fails)
+    dataErrorNotice: 'Could not load event data from the configured URL — check the URL or try again later.',
+
+    // No data notice (shown when neither events.txt nor events-sample.txt was found)
+    noDataNotice: 'No event data found.',
+
     // Status line (shown while loading / after load)
     loading: 'Loading…',
     loaded:  n => `Loaded ${n} events.`,
@@ -166,6 +172,12 @@ const STRINGS = {
 
     // Sample data notice
     sampleNotice: 'Näytetään esimerkkiaineisto — events.txt tiedostoa ei löytynyt.',
+
+    // Data load error notice
+    dataErrorNotice: 'Tapahtumatietojen lataus epäonnistui — tarkista URL tai yritä myöhemmin uudelleen.',
+
+    // No data notice
+    noDataNotice: 'Tapahtumatietoja ei löytynyt.',
 
     // Status line
     loading: 'Ladataan…',
