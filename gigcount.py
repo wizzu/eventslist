@@ -71,9 +71,12 @@ def parse_line(raw):
 
             performers.append({'name': name, 'type': perf_type})
 
-    # A multi-performer [MC] event is a full [C] event — the event wasn't a
-    # mini-concert, only the individual sets were. Single-performer [MC] stays MC.
-    event_type = 'C' if (type_ == 'MC' and len(performers) > 1) else type_
+    # event_type is the line-level tag directly — no upgrade applied.
+    # Previously, a multi-performer [MC] event was upgraded to [C] on the
+    # theory that the event itself was long even if individual sets were short.
+    # Removed: a concert requires at least one full-concert performance; an
+    # event where every performer is [MC] is a mini-concert at event level too.
+    event_type = type_
 
     return {
         'year': year,
