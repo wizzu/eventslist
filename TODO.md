@@ -36,6 +36,8 @@
 
 ## Open — Nice to have
 
+- [ ] **Mobile header: version tag at right edge of header bottom** — try moving the version tag (e.g. "v16") so it sits at the right edge of the header's bottom row (same row as the language toggle), instead of below the language toggle. On desktop: no change. This matches the desktop pattern (version at top-right edge) but with shorter text — just the version tag, no home link.
+
 - [ ] **Hostname-based default locale** — derive the initial language from the hostname before falling back to `navigator.language`. Priority order: (1) `localStorage` (explicit user choice), (2) hostname: `keikat.*` → `fi`, `gigs.*` → `en`, (3) `navigator.language`, (4) `en`. One-liner change in `app.js:150` (`lang:` initialiser). Rationale: `keikat.wizzu.com` is naturally Finnish-first, `gigs.wizzu.com` English-first; anyone else deploying from the public repo gets the existing browser-locale fallback.
 
 - [ ] **Search: match in event names (festival/event prefix)** — The search haystack currently covers date, performer names, and venue; it does not include the `eventName` prefix (e.g. "Ruisrock" in "Ruisrock: The Beautiful South"). Searching "Ruisrock" should find those events.
@@ -55,6 +57,9 @@
 - [ ] Allow configuring the events data URL — e.g. via a query parameter or config file, so the data file can be loaded from an arbitrary URL rather than only the local directory
 - [ ] Show notice when using sample data: when the app falls back to `events-sample.txt` (because `events.txt` was not found), show a prominent notice so it's clear the data shown is not real. The notice should be invisible in normal use — ideally a banner element that exists in the HTML but is hidden by default and only shown when sample data is active. Requires adding a boolean `usingSample` state variable in `app.js` (set to `true` on the fallback fetch path) and an `x-show="usingSample"` banner element near or below the header. Minimal extra logic and markup.
 - [ ] Add a test suite for gigcount.py — at minimum, compare gigcount.py output against the JS parser/stats to catch divergence between the two implementations
+- [ ] **Search keyword "mini"**: when mini-concerts are enabled (checkbox on), searching for "mini" should show only mini-concert events/performers rather than treating it as a regular text search. If mini-concerts are disabled, "mini" falls through to regular search. Special-case handling.
+- [ ] **Mobile: "Top" button overlaps footer homelink** — when scrolled all the way to the bottom, the fixed-position "Top" scroll button partially covers the `eventslist` homelink in the footer. Low priority, cosmetic only.
+- [ ] **Venue text breaks mid-word on narrow screens** — e.g. "Tapiolasali, Espoon kulttuurike-" / "skus". Likely caused by `word-break: break-all` (or `overflow-wrap: anywhere`) on the venue element; fix by switching to `overflow-wrap: break-word`, which only breaks mid-word as a last resort when the whole word won't fit on any line.
 
 ## Completed
 
