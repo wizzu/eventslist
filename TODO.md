@@ -36,7 +36,7 @@
 
 ## Open — Nice to have
 
-- [ ] **Mobile header: version tag at right edge of header bottom** — try moving the version tag (e.g. "v16") so it sits at the right edge of the header's bottom row (same row as the language toggle), instead of below the language toggle. On desktop: no change. This matches the desktop pattern (version at top-right edge) but with shorter text — just the version tag, no home link.
+- [x] **Mobile header: version tag at right edge of header bottom** — try moving the version tag (e.g. "v16") so it sits at the right edge of the header's bottom row (same row as the language toggle), instead of below the language toggle. On desktop: no change. This matches the desktop pattern (version at top-right edge) but with shorter text — just the version tag, no home link.
 
 - [ ] **Hostname-based default locale** — derive the initial language from the hostname before falling back to `navigator.language`. Priority order: (1) `localStorage` (explicit user choice), (2) hostname: `keikat.*` → `fi`, `gigs.*` → `en`, (3) `navigator.language`, (4) `en`. One-liner change in `app.js:150` (`lang:` initialiser). Rationale: `keikat.wizzu.com` is naturally Finnish-first, `gigs.wizzu.com` English-first; anyone else deploying from the public repo gets the existing browser-locale fallback.
 

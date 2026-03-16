@@ -64,6 +64,12 @@ header h1 {
   font-size: 0.75rem;
 }
 
+/* Shown only on mobile: version tag at the bottom-right of the header info row.
+   Hidden on desktop (desktop uses .home-link in .header-end instead). */
+.header-version-mobile {
+  display: none;
+}
+
 /* Site footer — shown on mobile only (hidden on desktop via display:none below).
    Contains the same "Generated with" link as .home-link in the header. */
 .site-footer {
@@ -752,10 +758,21 @@ main {
     order: 3;
   }
 
-  /* Hide the "Generated with eventslist" text in the header on mobile;
-     keep only the version tag. The full link is in the footer instead. */
-  .home-link-text {
+  /* Hide home-link entirely on mobile; version tag moves to header-info row. */
+  .home-link {
     display: none;
+  }
+  /* Show version tag bottom-right of the header info row on mobile. */
+  .header-info {
+    position: relative;
+  }
+  .header-version-mobile {
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    font-size: 0.7rem;
+    color: #666;
   }
 
 
