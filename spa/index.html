@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
     /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
-    window.__appVersion = 'v16';
+    window.__appVersion = 'v17';
   </script>
   <link rel="stylesheet" href="static/style.css">
   <script src="static/strings.js" defer></script>
@@ -45,25 +45,26 @@
         <p class="search-mode-note" x-text="searchModeLabel ? t.searchMatches(searchModeLabel) : (query ? '\u00A0' : t.allConcertsLabel)"></p>
         <p class="mixed-search-note" x-show="query && searchModeMixed" x-text="t.mixedSearchNote"></p>
       </div>
-      <!-- Mobile listing summary: concerts headline + detail line. Hidden on desktop via CSS. -->
-      <div class="listing-summary" x-show="!query || filteredEvents.length">
-        <p class="listing-summary-concerts"
-           :class="query && searchMode !== 'performer' && 'stat-active'"
-           x-html="listingSummaryConcertsHtml"></p>
-        <p class="listing-summary-detail"
-           :class="query && searchMode === 'performer' && 'stat-active'"
-           x-html="listingSummaryDetailText"></p>
+      <!-- Listing header: summary text + sort button. On desktop they share a row; on mobile they stack. -->
+      <div class="listing-header">
+        <div class="listing-summary" x-show="!query || filteredEvents.length">
+          <p class="listing-summary-concerts"
+             :class="query && searchMode !== 'performer' && 'stat-active'"
+             x-html="listingSummaryConcertsHtml"></p>
+          <p class="listing-summary-detail"
+             :class="query && searchMode === 'performer' && 'stat-active'"
+             x-html="listingSummaryDetailText"></p>
+        </div>
+        <!-- On mobile with an active search that matches nothing: replace toolbar+listing with a single message. -->
+        <p class="no-match-note" x-show="isMobile && query && !filteredEvents.length" x-text="t.noMatchLabel"></p>
+        <div class="listing-toolbar">
+          <button class="collapse-btn" x-show="isMobile" @click="listingOpen = !listingOpen"><span x-text="t.statConcerts"></span><span x-text="listingOpen ? ' ▾' : ' ▸'"></span></button>
+          <button class="sort-toggle" @click="sortAsc = !sortAsc" :title="sortAsc ? t.sortOldestTitle : t.sortNewestTitle">
+            <span x-text="sortAsc ? t.sortOldestLabel : t.sortNewestLabel"></span>
+          </button>
+        </div>
       </div>
-      <!-- On mobile with an active search that matches nothing: replace toolbar+listing with a single message. -->
-      <p class="no-match-note" x-show="isMobile && query && !filteredEvents.length" x-text="t.noMatchLabel"></p>
       <div x-show="!isMobile || !query || filteredEvents.length">
-      <div class="listing-toolbar">
-        <button class="collapse-btn" x-show="isMobile" @click="listingOpen = !listingOpen"><span x-text="t.statConcerts"></span><span x-text="listingOpen ? ' ▾' : ' ▸'"></span></button>
-        <span class="event-count" x-show="!isMobile" :class="query && 'search-active'"><span x-html="fmtCountsHtml(filteredEvents) + (query ? t.matchingLabel : '') + t.concertLabel(filteredEvents.length)"></span></span>
-        <button class="sort-toggle" @click="sortAsc = !sortAsc" :title="sortAsc ? t.sortOldestTitle : t.sortNewestTitle">
-          <span x-text="sortAsc ? t.sortOldestLabel : t.sortNewestLabel"></span>
-        </button>
-      </div>
       <p class="collapsed-hint" x-show="!listingOpen" x-text="t.hiddenHint(filteredEvents.length)"></p>
       <div class="event-list" x-show="listingOpen">
         <template x-for="event in filteredEvents" :key="event.id">
