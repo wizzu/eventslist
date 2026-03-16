@@ -153,7 +153,9 @@ function parseLine(raw) {
 document.addEventListener('alpine:init', () => {
   Alpine.data('app', () => ({
     status: '',
-    lang: localStorage.getItem('lang') || (navigator.language.startsWith('fi') ? 'fi' : 'en'),
+    lang: localStorage.getItem('lang')
+        || (/^keikat\./.test(location.hostname) ? 'fi' : /^gigs\./.test(location.hostname) ? 'en' : null)
+        || (navigator.language.startsWith('fi') ? 'fi' : 'en'),
     events: [],
     rawQuery: '',  // updates on every keystroke (bound to the input)
     query: '',     // debounced copy used for filtering

@@ -40,7 +40,8 @@ TODO.md                   # Task list
 - Small and focused — one logical change per commit
 
 **Version:**
-- `window.__appVersion` in `spa/index.html` (e.g. `'v7'`)
+- Stored as `window.__appVersion` in `spa/index.html` (near the top, in an inline `<script>` block)
+- To bump: increment the string value, e.g. `'v19'` → `'v20'`
 - Bump when changes are substantial enough to constitute a release
 - At the end of a session with notable changes, ask the user whether to bump the version
 
