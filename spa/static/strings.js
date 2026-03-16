@@ -63,6 +63,9 @@ const STRINGS = {
     colVenue: 'Venue',
     colName:  'Name',
 
+    // Sample data notice (shown when events.txt was not found)
+    sampleNotice: 'Showing sample data — events.txt file not found.',
+
     // Status line (shown while loading / after load)
     loading: 'Loading…',
     loaded:  n => `Loaded ${n} events.`,
@@ -160,6 +163,9 @@ const STRINGS = {
     colCount: 'Määrä',
     colVenue: 'Paikka',
     colName:  'Nimi',
+
+    // Sample data notice
+    sampleNotice: 'Näytetään esimerkkiaineisto — events.txt tiedostoa ei löytynyt.',
 
     // Status line
     loading: 'Ladataan…',

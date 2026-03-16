@@ -32,6 +32,7 @@
       <span class="home-link"><span class="home-link-text">Generated with <a href="https://github.com/wizzu/eventslist" target="_blank" rel="noopener">eventslist</a> · </span><span x-show="version" x-text="version"></span></span>
     </div>
   </header>
+  <div class="sample-notice" x-show="usingSample" x-text="t.sampleNotice"></div>
   <main>
     <div class="left-col" x-ref="listCol" @scroll="scrolled = $el.scrollTop > 50">
       <p x-show="!events.length" x-text="status"></p>

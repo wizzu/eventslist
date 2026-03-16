@@ -64,6 +64,15 @@ header h1 {
   font-size: 0.75rem;
 }
 
+/* Banner shown below the header when sample data is active (events.txt not found). */
+.sample-notice {
+  background: #fff3cd;
+  color: #856404;
+  text-align: center;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+}
+
 /* Shown only on mobile: version tag at the bottom-right of the header info row.
    Hidden on desktop (desktop uses .home-link in .header-end instead). */
 .header-version-mobile {

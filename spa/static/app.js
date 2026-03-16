@@ -167,6 +167,7 @@ document.addEventListener('alpine:init', () => {
     listingOpen: true,        // whether the event list is expanded (collapsible on mobile)
     isMobile: false,          // true when viewport is at mobile breakpoint (≤768px)
     version: '',              // set from window.__appVersion (version.js); shown in header
+    usingSample: false,       // true when events.txt was not found and sample data was loaded instead
     yearSort:      { col: 'year', dir: 'desc', yearDir: 'desc' }, // yearDir remembered independently
     venueSort:     { col: 'c',    dir: 'desc' },
     performerSort: { col: 'c',    dir: 'desc' },
@@ -183,7 +184,10 @@ document.addEventListener('alpine:init', () => {
 
       // Try real data first; fall back to sample data if not found.
       let response = await fetch('events.txt');
-      if (!response.ok) response = await fetch('events-sample.txt');
+      if (!response.ok) {
+        response = await fetch('events-sample.txt');
+        this.usingSample = true;
+      }
       const text = await response.text();
       const concerts = parseEvents(text).filter(e => e.type !== null);
       this.events = concerts.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date)) // newest first
