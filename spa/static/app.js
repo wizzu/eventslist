@@ -44,6 +44,10 @@ function termMatches(haystack, term) {
   return term.exact ? term.regex.test(haystack) : haystack.includes(term.text);
 }
 
+// Cache for highlight-suppression flags, keyed by query + showMinis.
+// Lives outside Alpine's reactive proxy so reads don't trigger re-renders.
+const _hlCache = { key: null, performer: false, venue: false };
+
 // Convert "D.M.YYYY" to a numeric sort key (YYYYMMDD). '?' treated as 0.
 function dateSortKey(dateStr) {
   const [d, m, y] = dateStr.split('.').map(p => parseInt(p) || 0);
@@ -325,18 +329,52 @@ document.addEventListener('alpine:init', () => {
       return !!(this.searchModeLabel && this.searchModeLabel.includes(this.t.modeJoin));
     },
 
-    // True if the given performer name matches any word in the current query.
-    // Used to highlight matched performers in the event listing.
+    // Compute highlight-suppression flags, cached outside Alpine's reactive system.
+    // Highlight is suppressed when only one category matched AND highlighting every
+    // item would add no information (nothing left un-highlighted).
+    // - Performer: suppressed when every performer in every result matches the query.
+    // - Venue: suppressed when all results share a single venue.
+    // When multiple categories matched, highlighting is always shown.
+    _highlightFlags() {
+      const key = this.query + '|' + this.showMinis;
+      if (_hlCache.key === key) return _hlCache;
+      const trimmed = this.query.trim();
+      const events = this.filteredEvents;
+      if (!trimmed || !events.length) {
+        _hlCache.key = key; _hlCache.performer = false; _hlCache.venue = false;
+        return _hlCache;
+      }
+      const terms = parseQuery(this.query);
+      // Inline category check (avoids reading the searchModeMixed getter repeatedly).
+      const cats = new Set();
+      for (const term of terms) {
+        if (!term.exact && /^\d{4}$/.test(term.text)) { cats.add('year'); continue; }
+        const mp = events.some(e => e.performers.some(p => termMatches(p.name.toLowerCase(), term)));
+        const mv = events.some(e => termMatches(e.venue.toLowerCase(), term));
+        if (mp) cats.add('performer');
+        if (mv) cats.add('venue');
+        if (!mp && !mv) cats.add('event');
+      }
+      const mixed = cats.size > 1;
+      _hlCache.performer = mixed || events.some(e =>
+        e.performers.some(p => !terms.some(t => termMatches(p.name.toLowerCase(), t)))
+      );
+      const venues = new Set(events.map(e => e.venue));
+      _hlCache.venue = mixed || venues.size > 1;
+      _hlCache.key = key;
+      return _hlCache;
+    },
+
+    // True if the given performer name matches the query AND highlighting is active.
     performerMatchesQuery(name) {
-      if (!this.query.trim()) return false;
+      if (!this._highlightFlags().performer) return false;
       const terms = parseQuery(this.query);
       return terms.some(t => termMatches(name.toLowerCase(), t));
     },
 
-    // True if the given venue matches any word in the current query.
-    // Used to highlight matched venues in the event listing.
+    // True if the given venue matches the query AND highlighting is active.
     venueMatchesQuery(venue) {
-      if (!this.query.trim()) return false;
+      if (!this._highlightFlags().venue) return false;
       const terms = parseQuery(this.query);
       return terms.some(t => termMatches(venue.toLowerCase(), t));
     },

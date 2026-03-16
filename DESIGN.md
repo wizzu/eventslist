@@ -113,7 +113,8 @@ Single search box with broad matching across performer/event names, venue, and y
 
 - **Substring match** by default; case-insensitive
 - **Quoted phrases** (`"maija vilkkumaa"`) match the exact phrase
-- **Search mode classification:** each search word is independently classified as performer, venue, year, or event match; the classification is shown as a label in the toolbar (e.g. "esiintyjä · paikka") and used to highlight matched performer names in the listing and emphasise the relevant summary row
+- **Search mode classification:** each search word is independently classified as performer, venue, year, or event match; the classification is shown as a label in the toolbar (e.g. "esiintyjä · paikka") and used to highlight matched performer/venue names in the listing and emphasise the relevant summary row
+- **Highlight suppression:** highlighting is only shown when it adds information — i.e. when some items in that category would be highlighted and some wouldn't. If multiple categories match, highlighting is always shown. If only one category matches: performer names are suppressed when every performer in every result matches (nothing left un-highlighted); venue names are suppressed when all results share the same single venue.
 
 ## Statistics
 
