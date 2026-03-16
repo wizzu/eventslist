@@ -637,6 +637,12 @@ main {
   color: #333;
 }
 
+/* Event name prefix that matches the current search query. */
+.event-name-match {
+  font-weight: 600;
+  color: #333;
+}
+
 /* Mini-concert badge: small, bordered, muted. */
 .mini-badge {
   font-size: 0.7rem;

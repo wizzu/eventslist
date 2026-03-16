@@ -324,11 +324,17 @@ document.addEventListener('alpine:init', () => {
         // and venue Awalon), so check all independently rather than else-if.
         const matchesPerformer = this.filteredEvents.some(e => e.performers.some(p => termMatches(p.name.toLowerCase(), term)));
         const matchesVenue     = this.filteredEvents.some(e => termMatches(e.venue.toLowerCase(), term));
+        const matchesEventName = this.filteredEvents.some(e => e.eventName && termMatches(e.eventName.toLowerCase(), term));
         if (matchesPerformer) types.add(this.t.modePerformer);
+        if (matchesEventName) types.add(this.t.modeEvent);
         if (matchesVenue)     types.add(this.t.modeVenue);
-        if (!matchesPerformer && !matchesVenue) types.add(this.t.modeEvent);
+        if (!matchesPerformer && !matchesVenue && !matchesEventName) types.add(this.t.modeEvent);
       }
-      return types.size ? [...types].join(this.t.modeJoin) : null;
+      if (!types.size) return null;
+      const arr = [...types];
+      return arr.length === 1
+        ? arr[0]
+        : arr.slice(0, -1).join(', ') + this.t.modeJoin + arr[arr.length - 1];
     },
 
     // True when searchModeLabel spans more than one category (e.g. "performer names and venues").
@@ -349,7 +355,7 @@ document.addEventListener('alpine:init', () => {
       const trimmed = this.query.trim();
       const events = this.filteredEvents;
       if (!trimmed || !events.length) {
-        _hlCache.key = key; _hlCache.performer = false; _hlCache.venue = false;
+        _hlCache.key = key; _hlCache.performer = false; _hlCache.venue = false; _hlCache.event = false;
         return _hlCache;
       }
       const terms = parseQuery(this.query);
@@ -357,11 +363,13 @@ document.addEventListener('alpine:init', () => {
       const cats = new Set();
       for (const term of terms) {
         if (!term.exact && /^\d{4}$/.test(term.text)) { cats.add('year'); continue; }
-        const mp = events.some(e => e.performers.some(p => termMatches(p.name.toLowerCase(), term)));
-        const mv = events.some(e => termMatches(e.venue.toLowerCase(), term));
-        if (mp) cats.add('performer');
-        if (mv) cats.add('venue');
-        if (!mp && !mv) cats.add('event');
+        const mp  = events.some(e => e.performers.some(p => termMatches(p.name.toLowerCase(), term)));
+        const mv  = events.some(e => termMatches(e.venue.toLowerCase(), term));
+        const men = events.some(e => e.eventName && termMatches(e.eventName.toLowerCase(), term));
+        if (mp)  cats.add('performer');
+        if (mv)  cats.add('venue');
+        if (men) cats.add('eventName');
+        if (!mp && !mv && !men) cats.add('other');
       }
       const mixed = cats.size > 1;
       _hlCache.performer = mixed || events.some(e =>
@@ -369,6 +377,8 @@ document.addEventListener('alpine:init', () => {
       );
       const venues = new Set(events.map(e => e.venue));
       _hlCache.venue = mixed || venues.size > 1;
+      const eventNames = new Set(events.map(e => e.eventName || ''));
+      _hlCache.event = cats.has('eventName') && (mixed || eventNames.size > 1);
       _hlCache.key = key;
       return _hlCache;
     },
@@ -385,6 +395,13 @@ document.addEventListener('alpine:init', () => {
       if (!this._highlightFlags().venue) return false;
       const terms = parseQuery(this.query);
       return terms.some(t => termMatches(venue.toLowerCase(), t));
+    },
+
+    // True if the given event name matches the query AND highlighting is active.
+    eventNameMatchesQuery(name) {
+      if (!name || !this._highlightFlags().event) return false;
+      const terms = parseQuery(this.query);
+      return terms.some(t => termMatches(name.toLowerCase(), t));
     },
 
     // Split a joint display name ("A + B") into parts, each with its own match flag.

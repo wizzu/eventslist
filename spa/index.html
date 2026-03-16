@@ -74,7 +74,7 @@
             <span class="event-date" x-text="event.date"></span>
             <span class="event-title">
               <template x-if="event.eventName">
-                <span class="event-name-prefix" x-text="event.eventName + ':'"></span>
+                <span class="event-name-prefix" x-text="event.eventName + ':'" :class="eventNameMatchesQuery(event.eventName) && 'event-name-match'"></span>
               </template>
               <template x-for="(p, pi) in displayPerformers(event)" :key="pi">
                 <span class="event-performer" x-show="showMinis || p.type !== 'MC'">
