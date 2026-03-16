@@ -333,6 +333,14 @@ document.addEventListener('alpine:init', () => {
       return terms.some(t => termMatches(name.toLowerCase(), t));
     },
 
+    // True if the given venue matches any word in the current query.
+    // Used to highlight matched venues in the event listing.
+    venueMatchesQuery(venue) {
+      if (!this.query.trim()) return false;
+      const terms = parseQuery(this.query);
+      return terms.some(t => termMatches(venue.toLowerCase(), t));
+    },
+
     // Split performers into full-concert and mini-only buckets.
     // c = performers with at least one full concert; mc = performers seen only in minis.
     get performerCounts() {

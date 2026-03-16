@@ -81,7 +81,7 @@
               </template>
             </span>
             <span class="event-venue">
-              <span class="venue-main" x-text="venueMain(event.venue)"></span><span class="venue-rest" x-show="venueRest(event.venue)" x-text="venueRest(event.venue)"></span><span class="event-comment" x-show="event.comment" x-text="event.comment ? ' · ' + event.comment : ''"></span>
+              <span class="venue-main" :class="venueMatchesQuery(event.venue) && 'venue-match'" x-text="venueMain(event.venue)"></span><span class="venue-rest" x-show="venueRest(event.venue)" :class="venueMatchesQuery(event.venue) && 'venue-match'" x-text="venueRest(event.venue)"></span><span class="event-comment" x-show="event.comment" x-text="event.comment ? ' · ' + event.comment : ''"></span>
             </span>
           </div>
         </template>

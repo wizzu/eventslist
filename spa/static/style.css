@@ -616,6 +616,12 @@ main {
   font-weight: 600;
 }
 
+/* Venue name that matches the current search query. */
+.venue-match {
+  font-weight: 600;
+  color: #333;
+}
+
 /* Mini-concert badge: small, bordered, muted. */
 .mini-badge {
   font-size: 0.7rem;
