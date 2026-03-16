@@ -76,7 +76,8 @@
               </template>
               <template x-for="(p, pi) in displayPerformers(event)" :key="pi">
                 <span class="event-performer" x-show="showMinis || p.type !== 'MC'">
-                  <span x-text="p.name" :class="performerMatchesQuery(p.name) && 'performer-match'"></span><span class="performer-detail" x-show="p.detail" x-text="' (' + p.detail + ')'"></span> <span class="mini-badge" x-show="p.type === 'MC'">mini</span>
+                  <!-- Joint performers ("A + B") are split into parts so each name can be highlighted independently. -->
+                  <template x-for="(part, partIdx) in performerNameParts(p.name)" :key="partIdx"><span><span class="joint-sep" x-show="part.sep" x-text="part.sep"></span><span x-text="part.text" :class="part.match && 'performer-match'"></span></span></template><span class="performer-detail" x-show="p.detail" x-text="' (' + p.detail + ')'"></span> <span class="mini-badge" x-show="p.type === 'MC'">mini</span>
                 </span>
               </template>
             </span>

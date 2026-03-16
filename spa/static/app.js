@@ -45,7 +45,9 @@ function termMatches(haystack, term) {
 }
 
 // Cache for highlight-suppression flags, keyed by query + showMinis.
-// Lives outside Alpine's reactive proxy so reads don't trigger re-renders.
+// Lives outside Alpine's reactive proxy because Alpine getters re-run on every
+// access — performerMatchesQuery/venueMatchesQuery are called per item in the
+// x-for loop, so without caching the suppression check would be O(n²).
 const _hlCache = { key: null, performer: false, venue: false };
 
 // Convert "D.M.YYYY" to a numeric sort key (YYYYMMDD). '?' treated as 0.
@@ -377,6 +379,20 @@ document.addEventListener('alpine:init', () => {
       if (!this._highlightFlags().venue) return false;
       const terms = parseQuery(this.query);
       return terms.some(t => termMatches(venue.toLowerCase(), t));
+    },
+
+    // Split a joint display name ("A + B") into parts, each with its own match flag.
+    // Returns [{ text, sep, match }] where sep is the " + " before each part (empty for first).
+    // For solo performers, returns a single-element array.
+    performerNameParts(displayName) {
+      const parts = displayName.split(' + ');
+      const shouldHL = this._highlightFlags().performer;
+      const terms = shouldHL ? parseQuery(this.query) : [];
+      return parts.map((name, i) => ({
+        text: name,
+        sep: i > 0 ? ' + ' : '',
+        match: shouldHL && terms.some(t => termMatches(name.toLowerCase(), t)),
+      }));
     },
 
     // Split performers into full-concert and mini-only buckets.
