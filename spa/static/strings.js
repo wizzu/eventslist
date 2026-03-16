@@ -33,7 +33,8 @@ const STRINGS = {
     statYears:        'Years',
 
     // Listing toolbar
-    miniToggle:      'include mini-concerts',
+    miniToggle:       'include mini-concerts',
+    miniToggleMobile: 'include minis',
     sortOldestTitle: 'Sort: oldest first',  // title attribute (tooltip)
     sortNewestTitle: 'Sort: newest first',
     sortOldestLabel: '↑ Oldest first',      // visible button text
@@ -132,7 +133,8 @@ const STRINGS = {
     statYears:        'Vuodet',
 
     // Listing toolbar
-    miniToggle:      'myös minikeikat',
+    miniToggle:       'myös minikeikat',
+    miniToggleMobile: 'myös minikeikat',
     sortOldestTitle: 'Järjestys: vanhin ensin',
     sortNewestTitle: 'Järjestys: uusin ensin',
     sortOldestLabel: '↑ Vanhin ensin',

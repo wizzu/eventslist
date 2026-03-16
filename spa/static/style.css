@@ -470,6 +470,15 @@ main {
   cursor: default;
 }
 
+/* Reserve fixed space for the mini count so the toggle width stays stable
+   as the count changes with filtering. */
+.mini-toggle-count {
+  display: inline-block;
+  min-width: 3.2em;
+  margin-left: 0.25em;
+  font-variant-numeric: tabular-nums;
+}
+
 .sort-toggle {
   font-size: 0.8rem;
   color: #555;
@@ -730,5 +739,30 @@ main {
   /* Toolbar on mobile: collapse button (left) + sort button (right). */
   .listing-toolbar {
     gap: 0;
+  }
+
+  /* Search row: input and mini-toggle side by side. */
+  .search-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .search-row .search-wrap {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  /* Mini-toggle: checkbox vertically centred beside the text. */
+  .search-row .mini-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  /* Gap already handles spacing between flex items; remove the margin used on desktop. */
+  .search-row .mini-toggle-count {
+    margin-left: 0;
   }
 }
