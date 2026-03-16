@@ -678,6 +678,7 @@ main {
   min-width: 10rem;
   margin-left: auto;
   overflow-wrap: break-word;
+  align-self: flex-end;
 }
 
 /* Muted event comment appended after venue, e.g. " · 2". */
