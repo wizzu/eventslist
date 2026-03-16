@@ -59,7 +59,7 @@
 - [ ] Add a test suite for gigcount.py — at minimum, compare gigcount.py output against the JS parser/stats to catch divergence between the two implementations
 - [ ] **Search keyword "mini"**: when mini-concerts are enabled (checkbox on), searching for "mini" should show only mini-concert events/performers rather than treating it as a regular text search. If mini-concerts are disabled, "mini" falls through to regular search. Special-case handling.
 - [ ] **Mobile: "Top" button overlaps footer homelink** — when scrolled all the way to the bottom, the fixed-position "Top" scroll button partially covers the `eventslist` homelink in the footer. Low priority, cosmetic only.
-- [ ] **Venue text breaks mid-word on narrow screens** — e.g. "Tapiolasali, Espoon kulttuurike-" / "skus". Likely caused by `word-break: break-all` (or `overflow-wrap: anywhere`) on the venue element; fix by switching to `overflow-wrap: break-word`, which only breaks mid-word as a last resort when the whole word won't fit on any line.
+- [x] **Venue text breaks mid-word on narrow screens** — e.g. "Tapiolasali, Espoon kulttuurike-" / "skus". Likely caused by `word-break: break-all` (or `overflow-wrap: anywhere`) on the venue element; fix by switching to `overflow-wrap: break-word`, which only breaks mid-word as a last resort when the whole word won't fit on any line.
 
 ## Completed
 

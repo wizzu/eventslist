@@ -537,9 +537,7 @@ document.addEventListener('alpine:init', () => {
     venueRest(venue) {
       const i = venue.indexOf(',');
       if (i === -1) return '';
-      // Replace plain spaces with non-breaking spaces so wrapping only happens at ", "
-      const rest = venue.slice(i + 1);
-      return rest.replaceAll(' ', '\u00A0').replaceAll(',\u00A0', ', ');
+      return venue.slice(i + 1);
     },
 
     displayPerformers(event) {

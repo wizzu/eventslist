@@ -564,10 +564,14 @@ main {
   color: #fff;
 }
 
-/* Each event is a horizontal row of fields. gap adds space between them. */
+/* Each event is a horizontal row of fields. gap adds space between them.
+   flex-wrap lets the venue drop to its own line rather than being crushed
+   by a long performer name (see min-width on .event-venue). */
 .event-row {
   display: flex;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  column-gap: 0.75rem;
+  row-gap: 0.15rem;
   padding: 0.4rem 0;
   border-bottom: 1px solid #ddd;
   align-items: flex-start; /* date/venue sit at the top when title spans multiple lines */
@@ -659,18 +663,20 @@ main {
   opacity: 1;
 }
 
-/* Venue name before first comma stays on one line. The rest uses non-breaking
-   spaces so wrapping only occurs at ", " boundaries (see venueRest in app.js). */
+/* Venue name before first comma stays on one line. */
 .venue-main {
   white-space: nowrap;
 }
 
-/* Venue is muted, doesn't need to dominate. */
+/* Venue is muted, doesn't need to dominate. min-width sets the threshold
+   below which the venue wraps to its own line (requires flex-wrap on parent).
+   margin-left: auto keeps it right-aligned whether inline or wrapped. */
 .event-venue {
   color: #666;
   font-size: 0.9rem;
   text-align: right;
-  min-width: 0;
+  min-width: 10rem;
+  margin-left: auto;
   overflow-wrap: break-word;
 }
 
