@@ -610,9 +610,14 @@ document.addEventListener('alpine:init', () => {
       return result;
     },
 
-    // Mobile listing summary — line 1: concerts headline with optional mini badge.
-    // Format: "1852 concerts" or "1852 concerts (+58 mini-badge)"
-    get listingSummaryConcertsHtml() {
+    // Mobile listing summary — line 1 (headline).
+    // Single-performer search: shows performances count ("N performances").
+    // All other cases: shows concerts count ("N concerts [+M mini]").
+    get listingSummaryHeadlineHtml() {
+      if (this.query && this.searchMode === 'performer' && this.performerStats.length === 1) {
+        const { c: perf, mc: perfMc } = this.performanceCounts;
+        return this.t.listingSummaryPerformerHeadline(perf, perfMc);
+      }
       const c = this.filteredEvents.filter(e => e.type === 'C').length;
       const mc = this.filteredEvents.filter(e => e.type === 'MC').length;
       const label = this.t.concertLabel(c).trim();
@@ -622,8 +627,17 @@ document.addEventListener('alpine:init', () => {
       return `${c} ${label} (+${mc} <span class="mini-badge" data-tooltip="${tooltip}">mini</span>)`;
     },
 
-    // Mobile listing summary — line 2: compact detail stats (performances · performers · years).
+    // Mobile listing summary — line 2: compact detail stats.
+    // Single-performer search: shows "across N events · performers · venues · years".
+    // All other cases: shows "performances · performers · venues · years".
     get listingSummaryDetailText() {
+      if (this.query && this.searchMode === 'performer' && this.performerStats.length === 1) {
+        const events = this.filteredEvents.filter(e => e.type === 'C').length;
+        const { c: performers } = this.performerCounts;
+        const venues = this.venueStats.length;
+        const years = this.yearStats.length;
+        return this.t.listingSummaryDetailPerformer(events, performers, venues, years);
+      }
       const { c: perf, mc: perfMc } = this.performanceCounts;
       const { c: performers } = this.performerCounts;
       const venues = this.venueStats.length;

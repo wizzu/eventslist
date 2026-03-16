@@ -123,6 +123,21 @@ const STRINGS = {
       const right = ` · ${venuesStr} · ${yearsStr}`;
       return `<span style="white-space:nowrap">${left}</span><wbr><span style="white-space:nowrap">${right}</span>`;
     },
+
+    // Performer-search mode: headline = performances count; detail = event/performer/venue/year breakdown.
+    listingSummaryPerformerHeadline: (perf, perfMc) => {
+      const base = `${perf} performance${perf !== 1 ? 's' : ''}`;
+      return perfMc ? `${base} (+${perfMc} mini)` : base;
+    },
+    listingSummaryDetailPerformer: (events, performers, venues, years) => {
+      const eventsStr    = events === 1    ? 'across 1 event'    : `across ${events} events`;
+      const performersStr = `${performers} performer${performers !== 1 ? 's' : ''}`;
+      const venuesStr    = `${venues} venue${venues !== 1 ? 's' : ''}`;
+      const yearsStr     = years === 1 ? '1 year' : `${years} years`;
+      const left  = `${eventsStr} · ${performersStr}`;
+      const right = ` · ${venuesStr} · ${yearsStr}`;
+      return `<span style="white-space:nowrap">${left}</span><wbr><span style="white-space:nowrap">${right}</span>`;
+    },
   },
 
   fi: {
@@ -220,6 +235,21 @@ const STRINGS = {
       const venuesStr = `${venues} ${venues !== 1 ? 'paikkaa' : 'paikka'}`;
       const yearsStr = years === 1 ? '1 vuosi' : `${years} eri vuonna`;
       const left  = `${perfStr} · ${performersStr}`;
+      const right = ` · ${venuesStr} · ${yearsStr}`;
+      return `<span style="white-space:nowrap">${left}</span><wbr><span style="white-space:nowrap">${right}</span>`;
+    },
+
+    // Performer-search mode: headline = performances count; detail = event/performer/venue/year breakdown.
+    listingSummaryPerformerHeadline: (perf, perfMc) => {
+      const base = `${perf} keikkaa (esiintymistä)`;
+      return perfMc ? `${base} (+${perfMc} mini)` : base;
+    },
+    listingSummaryDetailPerformer: (events, performers, venues, years) => {
+      const eventsStr    = `${events} tapahtumassa`;
+      const performersStr = `${performers} ${performers !== 1 ? 'esiintyjää' : 'esiintyjä'}`;
+      const venuesStr    = `${venues} ${venues !== 1 ? 'paikkaa' : 'paikka'}`;
+      const yearsStr     = years === 1 ? '1 vuosi' : `${years} eri vuonna`;
+      const left  = `${eventsStr} · ${performersStr}`;
       const right = ` · ${venuesStr} · ${yearsStr}`;
       return `<span style="white-space:nowrap">${left}</span><wbr><span style="white-space:nowrap">${right}</span>`;
     },

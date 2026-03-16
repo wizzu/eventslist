@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
     /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
-    window.__appVersion = 'v21';
+    window.__appVersion = 'v22';
   </script>
   <link rel="stylesheet" href="static/style.css">
   <script src="static/strings.js" defer></script>
@@ -53,10 +53,9 @@
       <div class="listing-header">
         <div class="listing-summary" x-show="!query || filteredEvents.length">
           <p class="listing-summary-concerts"
-             :class="query && searchMode !== 'performer' && 'stat-active'"
-             x-html="listingSummaryConcertsHtml"></p>
+             :class="query && 'stat-active'"
+             x-html="listingSummaryHeadlineHtml"></p>
           <p class="listing-summary-detail"
-             :class="query && searchMode === 'performer' && 'stat-active'"
              x-html="listingSummaryDetailText"></p>
         </div>
         <!-- On mobile with an active search that matches nothing: replace toolbar+listing with a single message. -->
@@ -98,12 +97,12 @@
       <!-- Desktop stats summary panel (always visible in right column). -->
       <dl class="stats-summary stats-summary-desktop">
         <div class="stats-summary-row">
-          <dt :class="query && searchMode !== 'performer' && 'stat-active'" x-text="t.statConcerts"></dt>
-          <dd :class="query && searchMode !== 'performer' && 'stat-active'" x-html="fmtCountsHtml(filteredEvents)"></dd>
+          <dt :class="query && !(searchMode === 'performer' && performerStats.length === 1) && 'stat-active'" x-text="t.statConcerts"></dt>
+          <dd :class="query && !(searchMode === 'performer' && performerStats.length === 1) && 'stat-active'" x-html="fmtCountsHtml(filteredEvents)"></dd>
         </div>
         <div class="stats-summary-row">
-          <dt :class="query && searchMode === 'performer' && 'stat-active'" x-text="t.statPerformances"></dt>
-          <dd :class="query && searchMode === 'performer' && 'stat-active'" x-html="fmtCountHtml(performanceCounts.c, performanceCounts.mc)"></dd>
+          <dt :class="query && searchMode === 'performer' && performerStats.length === 1 && 'stat-active'" x-text="t.statPerformances"></dt>
+          <dd :class="query && searchMode === 'performer' && performerStats.length === 1 && 'stat-active'" x-html="fmtCountHtml(performanceCounts.c, performanceCounts.mc)"></dd>
         </div>
         <div class="stats-summary-row">
           <dt x-text="t.statPerformers"></dt>
