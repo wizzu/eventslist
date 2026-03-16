@@ -224,7 +224,7 @@ document.addEventListener('alpine:init', () => {
         this._debounceTimer = setTimeout(() => {
           this.query = val;
           this.searching = false;
-        }, 400);
+        }, this.isMobile ? 700 : 400);
       });
     },
 
