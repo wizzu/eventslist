@@ -162,6 +162,32 @@ main {
   margin-bottom: 1rem;
 }
 
+/* Search row: input and mini toggle side by side. */
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Search wrap grows to fill available space; no bottom margin (gap handles spacing). */
+.search-row .search-wrap {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Mini-toggle: checkbox vertically centred beside the text. */
+.search-row .mini-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* Gap already handles spacing; remove the margin used when toggle is standalone. */
+.search-row .mini-toggle-count {
+  margin-left: 0;
+}
+
 /* Wrapper positions the clear button relative to the input. */
 .search-wrap {
   position: relative;
@@ -474,7 +500,7 @@ main {
    as the count changes with filtering. */
 .mini-toggle-count {
   display: inline-block;
-  min-width: 3.2em;
+  min-width: 2.4em;
   margin-left: 0.25em;
   font-variant-numeric: tabular-nums;
 }
@@ -741,28 +767,9 @@ main {
     gap: 0;
   }
 
-  /* Search row: input and mini-toggle side by side. */
+  /* Search row: same flex layout as desktop; stretch makes the toggle the same
+     height as the input so it's easier to tap on mobile. */
   .search-row {
-    display: flex;
     align-items: stretch;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .search-row .search-wrap {
-    flex: 1;
-    margin-bottom: 0;
-  }
-
-  /* Mini-toggle: checkbox vertically centred beside the text. */
-  .search-row .mini-toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-  }
-
-  /* Gap already handles spacing between flex items; remove the margin used on desktop. */
-  .search-row .mini-toggle-count {
-    margin-left: 0;
   }
 }
