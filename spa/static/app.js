@@ -232,8 +232,6 @@ document.addEventListener('alpine:init', () => {
       });
 
       // On mobile the whole page scrolls (not .left-col), so track window scroll for the
-      // scroll-to-top button. The .left-col @scroll handler covers desktop.
-      // On mobile the whole page scrolls (not .left-col), so track window scroll for the
       // scroll-to-top button. Safe on desktop too: body has overflow:hidden there so window
       // never scrolls and this listener never fires.
       window.addEventListener('scroll', () => { this.scrolled = window.scrollY > 50; });
@@ -459,13 +457,6 @@ document.addEventListener('alpine:init', () => {
       return this.performerStats.reduce((s, p) => ({ c: s.c + p.c, mc: s.mc + p.mc }), { c: 0, mc: 0 });
     },
 
-    // Formatted performance counts string for the summary block.
-    get performanceCountsStr() {
-      const { c, mc } = this.performanceCounts;
-      return this.fmtCount(c, mc);
-    },
-
-
     // True if any event in the full dataset has a mini-concert (MC) tag.
     // Used to conditionally show the showMinis toggle.
     get hasMinis() {
@@ -577,9 +568,6 @@ document.addEventListener('alpine:init', () => {
       });
     },
 
-    // Merge jointly-billed performers (jointGroup !== null) into single display entries.
-    // "A + B, C" (joint A&B, solo C) → [{ name: "A + B", ... }, { name: "C", ... }]
-    // Stats still use event.performers (the flat list) so counting is unchanged.
     // Split venue at first comma: "013 Poppodium, Tilburg" → "013 Poppodium," and " Tilburg"
     venueMain(venue) {
       const i = venue.indexOf(',');
@@ -591,6 +579,9 @@ document.addEventListener('alpine:init', () => {
       return venue.slice(i + 1);
     },
 
+    // Merge jointly-billed performers (jointGroup !== null) into single display entries.
+    // "A + B, C" (joint A&B, solo C) → [{ name: "A + B", ... }, { name: "C", ... }]
+    // Stats still use event.performers (the flat list) so counting is unchanged.
     displayPerformers(event) {
       const result = [];
       const seenGroups = new Set();

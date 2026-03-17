@@ -18,18 +18,15 @@ body {
   flex-direction: column; /* stack children vertically */
 }
 
-/* Fixed header bar at the top. */
+/* Fixed header bar at the top.
+   Lay out contents horizontally; align-items: center keeps the title and info
+   block vertically centered relative to each other, which looks good on desktop
+   and avoids the title sitting at the bottom when the info block wraps to
+   multiple lines on mobile. */
 header {
   background: #1a1a2e;
   color: #eee;
   padding: 1rem 2rem;     /* rem = relative to root font size (~16px) */
-}
-
-/* Lay out header contents horizontally, vertically centered.
-   center keeps the title and info block vertically centered relative to each
-   other, which looks good on desktop and avoids the title sitting at the
-   bottom when the info block wraps to multiple lines on mobile. */
-header {
   position: relative; /* anchor for .home-link absolute positioning */
   display: flex;
   align-items: center;
@@ -328,20 +325,6 @@ main {
   margin-bottom: 0.5rem;
 }
 
-
-/* Inline label appended to the event count in the toolbar: how the query was interpreted. */
-.search-mode-label {
-  font-size: 0.75rem;
-  color: #aaa;
-}
-
-/* When a search is active, lift the whole count line and its mode label. */
-.event-count.search-active {
-  color: #444;
-}
-.event-count.search-active .search-mode-label {
-  color: #777;
-}
 
 /* Summary block at the top of the stats panel. Always visible, reacts to search. */
 .stats-summary {
@@ -789,15 +772,12 @@ main {
   .header-info {
     flex-basis: 100%;
     order: 3;
+    position: relative; /* anchor for .header-version-mobile absolute positioning */
   }
 
   /* Hide home-link entirely on mobile; version tag moves to header-info row. */
   .home-link {
     display: none;
-  }
-  /* Show version tag bottom-right of the header info row on mobile. */
-  .header-info {
-    position: relative;
   }
   .header-version-mobile {
     display: block;
