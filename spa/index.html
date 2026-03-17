@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
     /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
-    window.__appVersion = 'v23';
+    window.__appVersion = 'v24';
   </script>
   <link rel="stylesheet" href="static/style.css">
   <script src="static/strings.js" defer></script>
@@ -58,9 +58,8 @@
           <p class="listing-summary-detail"
              x-html="listingSummaryDetailText"></p>
         </div>
-        <!-- On mobile with an active search that matches nothing: replace toolbar+listing with a single message. -->
-        <p class="no-match-note" x-show="isMobile && query && !filteredEvents.length" x-text="t.noMatchLabel"></p>
-        <div class="listing-toolbar">
+        <p class="no-match-note" x-show="query && !filteredEvents.length" x-text="t.noMatchLabel"></p>
+        <div class="listing-toolbar" x-show="!query || filteredEvents.length">
           <button class="collapse-btn" x-show="isMobile" @click="listingOpen = !listingOpen"><span x-text="t.statConcerts"></span><span x-text="listingOpen ? ' ▾' : ' ▸'"></span></button>
           <button class="sort-toggle" @click="sortAsc = !sortAsc" :title="sortAsc ? t.sortOldestTitle : t.sortNewestTitle">
             <span x-text="sortAsc ? t.sortOldestLabel : t.sortNewestLabel"></span>
@@ -117,7 +116,7 @@
           <dd x-text="yearStats.length"></dd>
         </div>
       </dl>
-      <div class="stats-sections">
+      <div class="stats-sections" x-show="!query || filteredEvents.length">
       <div class="stats-section" x-data="{ open: true }">
         <h2 class="stats-heading" @click="open = !open"><span x-text="t.sectionByYear"></span> <span class="stats-chevron" x-text="open ? '▾' : '▸'"></span></h2>
         <p class="collapsed-hint" x-show="!open" x-text="t.hiddenHint(yearStats.length)"></p>
