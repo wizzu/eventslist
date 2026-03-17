@@ -395,12 +395,23 @@ main {
 .stats-summary dt {
   color: #888;
   font-weight: normal;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.2rem;
 }
 
 .stats-summary dd {
   margin: 0;
   text-align: right;
   font-variant-numeric: tabular-nums; /* keep numbers from shifting width as they change */
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.2rem;
+}
+
+/* Remove bottom border from the last summary row — a section heading follows with its own divider. */
+.stats-summary-row:last-child dt,
+.stats-summary-row:last-child dd {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 /* Emphasised summary row: active when search mode matches (Events or Performances). */
@@ -486,7 +497,11 @@ main {
 
 .stats-table td {
   padding: 0.2rem 0.5rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ddd;
+}
+
+.stats-table tr:last-child td {
+  border-bottom: none;
 }
 
 /* Count column: fixed width, tabular numbers, left-aligned, no wrapping. */
@@ -591,6 +606,10 @@ main {
   padding: 0.4rem 0;
   border-bottom: 1px solid #ddd;
   align-items: flex-start; /* date/venue sit at the top when title spans multiple lines */
+}
+
+.event-list .event-row:last-child {
+  border-bottom: none;
 }
 
 /* Fixed-width date column so all titles align vertically.
