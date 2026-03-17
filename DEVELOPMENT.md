@@ -8,6 +8,7 @@ Practical reference for working on this project.
 spa/
   index.html              # SPA entry point; x-data="app" on <body>
   events.txt              # Event data (master copy lives outside repo)
+  data-source-url.txt     # Optional: external data URL (not committed; deploy-specific)
   static/
     app.js                # Alpine component + JS parser
     strings.js            # Localisation strings (English + Finnish)
@@ -69,3 +70,22 @@ The active language is stored in `this.lang` on the Alpine component and default
 ## Alpine and Tables
 
 `<template x-for>` must be placed directly inside `<table>`, not inside `<tbody>` — the HTML parser may relocate or drop `<template>` tags inside `<tbody>` before Alpine can process them.
+
+## Data Source
+
+The app tries to load event data in this order:
+
+1. `data-source-url.txt` — if present and non-empty, fetch data from the URL inside. On failure, show an error banner and stop.
+2. `events.txt` — local data file (gitignored; deployed separately).
+3. `events-sample.txt` — fallback sample data; triggers a "sample data" notice banner.
+4. If none found, show a "no data" banner.
+
+`data-source-url.txt` is not committed — it's deploy-specific configuration for pointing at an external data source.
+
+## Behavior Notes
+
+**Notice banners** — three mutually exclusive banners can appear below the header: sample data active (yellow), data load error (red), no data found (grey). Controlled by `usingSample`, `dataError`, and `noData` state flags.
+
+**Single-performer search** — when a search matches exactly one performer, the listing headline switches from concerts to performances ("N performances" instead of "N concerts"), with a detail line showing "across N events · ...". The stats summary panel highlights the Performances row instead of Concerts. For 2+ matched performers the default concerts framing is kept.
+
+**Joint performers** — `A + B` in the data format means two performers billed together. They are displayed as a single line ("A + B") in the event listing but counted individually in statistics. The `jointGroup` field on performer objects tracks which performers belong to the same joint group.

@@ -36,7 +36,7 @@
 
 - [x] **Performer search: highlight performances, not concerts** — "How many gigs have you seen?" → concerts; "How many gigs have you seen by X?" → performances. When exactly one performer is matched, the listing headline now shows performances ("N performances" / "N keikkaa (esiintymistä)") with a secondary detail line ("across N events · …" / "N tapahtumassa · …"), instead of the usual concerts headline. For 2+ matched performers the default concerts headline is kept, since the performances total across multiple artists is not a meaningful primary answer. The same single-performer condition applies to the `stat-active` highlight in the desktop right-column summary table (Performances row highlighted instead of Concerts).
 
-- [ ] A lot of features have been implemented and UI has been tweaked. Right now things are more or less good in terms of features and no serious bugs. It's time to make a holistic review of the web app, evaluate and see if anything needs polishing or updating for general goals of maintainability and quality.
+- [x] A lot of features have been implemented and UI has been tweaked. Right now things are more or less good in terms of features and no serious bugs. It's time to make a holistic review of the web app, evaluate and see if anything needs polishing or updating for general goals of maintainability and quality.
 
 ## Open — Nice to have
 

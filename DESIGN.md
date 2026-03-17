@@ -84,7 +84,7 @@ Both listing and stats react live to the current search filter.
 
 ## Data Flow
 
-1. On load, fetch `events.txt` via HTTP; fall back to `events-sample.txt` if not found (404)
+1. On load, check for `data-source-url.txt` — if present, fetch data from the URL inside (error and stop on failure). Otherwise fetch `events.txt`; fall back to `events-sample.txt` if not found (404)
 2. Parse into structured event objects
 3. Alpine.js reactive state holds: all events, current filter query, UI toggles
 4. Listing and all stats are computed reactively from the filtered event list
@@ -97,19 +97,20 @@ Both listing and stats react live to the current search filter.
   year: 1992,
   eventName: "Festival Name" | null,
   performers: [
-    { name: "Performer A", type: "C", detail: "acoustic" | null },
-    { name: "Performer B", type: "MC", detail: null }
+    { name: "Performer A", type: "C", detail: "acoustic" | null, jointGroup: 0 | null },
+    { name: "Performer B", type: "MC", detail: null, jointGroup: null }
   ],
   venue: "Venue, City, Country",
   comment: "2 days" | "(1)" | null,  // trailing parenthesized note after venue
   type: "C" | "MC" | null,
-  raw: "original line text"
+  raw: "original line text",
+  id: 0  // stable integer index for x-for keying
 }
 ```
 
 ## Filtering
 
-Single search box with broad matching across performer/event names, venue, and year. All words must match (AND logic). Debounced (~200ms) to avoid recomputing stats on every keystroke.
+Single search box with broad matching across performer/event names, venue, and year. All words must match (AND logic). Debounced (400ms on desktop, 700ms on mobile) to avoid recomputing stats on every keystroke.
 
 - **Substring match** by default; case-insensitive
 - **Quoted phrases** (`"maija vilkkumaa"`) match the exact phrase
@@ -132,7 +133,7 @@ The underlying data should match `gigcount.py` output. The web presentation is n
 
 English and Finnish are supported. All UI strings are in `spa/static/strings.js`.
 
-- Language defaults to Finnish if `navigator.language` starts with `'fi'`, otherwise English
+- Language defaults based on hostname (`keikat.*` → fi, `gigs.*` → en), then `navigator.language` (`fi` → fi, otherwise en)
 - The user can toggle between languages via a button in the header
 - The choice is persisted in `localStorage`
 - The `t` computed property on the Alpine component returns the current language's strings object, so templates and JS code always use `t.key` without branching on language
@@ -144,7 +145,7 @@ Fully static — can be served from any static file host with no server-side log
 
 - `events.txt` is gitignored; real data is deployed separately from code. The repo is public, so real event data must never be committed.
 - The app fetches `events.txt` on load; if not found (404), falls back to `events-sample.txt`. This fallback is useful for local development and testing; it is an acceptable convenience at this project's scope, not a production-grade feature.
-- The `events.txt` path is currently hardcoded to the same directory as `index.html`. Making it configurable (e.g. via query parameter) is a future option tracked in TODO.
+- The data source URL can be configured via `data-source-url.txt` (not committed; deploy-specific). If present and non-empty, the app loads data from that URL. If absent, falls through to the local `events.txt` → `events-sample.txt` chain.
 
 ## CLI Tool (gigcount.py)
 
