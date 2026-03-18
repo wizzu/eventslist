@@ -102,6 +102,7 @@ const STRINGS = {
     modeYear:      'year',
     modeVenue:     'venues',
     modeEvent:     'event names',
+    modeDate:      'dates',
 
     // Mini-concert count badge tooltip (in fmtCountsHtml)
     tooltipMiniEvents: n => `${n} mini-concert${n !== 1 ? 's' : ''}`,
@@ -219,6 +220,7 @@ const STRINGS = {
     modeYear:      'vuosiluvuissa',
     modeVenue:     'tapahtumapaikoissa',
     modeEvent:     'tapahtumien nimissä',
+    modeDate:      'päivämäärissä',
 
     // Mini-concert count badge tooltip
     tooltipMiniEvents: n => `${n} minikeikka${n !== 1 ? 'a' : ''}`,

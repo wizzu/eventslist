@@ -113,8 +113,9 @@ Both listing and stats react live to the current search filter.
 Single search box with broad matching across performer/event names, venue, and year. All words must match (AND logic). Debounced (400ms on desktop, 700ms on mobile) to avoid recomputing stats on every keystroke.
 
 - **Substring match** by default; case-insensitive
-- **Quoted phrases** (`"maija vilkkumaa"`) match the exact phrase
-- **Search mode classification:** each search word is independently classified as performer, venue, year, or event match; the classification is shown as a label in the toolbar (e.g. "esiintyjä · paikka") and used to highlight matched performer/venue names in the listing and emphasise the relevant summary row
+- **Quoted phrases** (`"maija vilkkumaa"`) match the exact phrase with word-boundary semantics; boundaries are only asserted on sides where the term starts/ends with an alphanumeric character, so `"1.8."` matches `1.8.2007` but not `31.8.2007`
+- **Search mode classification:** each search word is independently classified as performer, venue, year, date, or event name match; the classification is shown as a label in the toolbar and used to highlight matched fields and emphasise the relevant summary row
+- **Mixed-category warning:** shown when categories yield genuinely different result sets (partial overlap). Suppressed when one category's matches are a subset of another's — e.g. searching "2006" matches both year and any event named "Ankkarock 2006", but the event-name set is a subset of the year set, so no warning is raised
 - **Highlight suppression:** highlighting is only shown when it adds information — i.e. when some items in that category would be highlighted and some wouldn't. If multiple categories match, highlighting is always shown. If only one category matches: performer names are suppressed when every performer in every result matches (nothing left un-highlighted); venue names are suppressed when all results share the same single venue.
 
 ## Statistics

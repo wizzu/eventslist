@@ -31,9 +31,16 @@ function parseQuery(query) {
     // fall back to plain substring matching rather than silently matching nothing.
     const text = (exact ? m[1] : m[2].replace(/^"|"$/g, '')).toLowerCase();
     if (!text) continue;
-    const regex = exact
-      ? new RegExp('(?<![a-zA-Z0-9\u00C0-\u024F])' + text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![a-zA-Z0-9\u00C0-\u024F])', 'i')
-      : null;
+    const regex = exact ? (() => {
+      const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const alpha = '[a-zA-Z0-9\u00C0-\u024F]';
+      // Only assert a boundary on sides where the term itself starts/ends with
+      // an alphanumeric character. A leading/trailing dot (e.g. "1.8.") is already
+      // a natural separator, so no lookahead/lookbehind is needed on that side.
+      const pre  = /^[a-zA-Z0-9\u00C0-\u024F]/.test(text) ? `(?<!${alpha})` : ''; // lookbehind only if term starts with alphanum
+      const post = /[a-zA-Z0-9\u00C0-\u024F]$/.test(text) ? `(?!${alpha})`  : ''; // lookahead only if term ends with alphanum
+      return new RegExp(pre + escaped + post, 'i');
+    })() : null;
     terms.push({ text, exact, regex });
   }
   return terms;
@@ -342,19 +349,20 @@ document.addEventListener('alpine:init', () => {
       const terms = parseQuery(this.query);
       const types = new Set();
       for (const term of terms) {
-        if (!term.exact && /^\d{4}$/.test(term.text)) {
-          types.add(this.t.modeYear);
-          continue;
-        }
+        const isYear = !term.exact && /^\d{4}$/.test(term.text);
+        if (isYear) types.add(this.t.modeYear);
         // A term can match multiple categories (e.g. "awa" matches performer AWA
         // and venue Awalon), so check all independently rather than else-if.
+        // Year terms still fall through to catch event names like "Ankkarock 2006".
         const matchesPerformer = this.filteredEvents.some(e => e.performers.some(p => termMatches(p.name.toLowerCase(), term)));
         const matchesVenue     = this.filteredEvents.some(e => termMatches(e.venue.toLowerCase(), term));
         const matchesEventName = this.filteredEvents.some(e => e.eventName && termMatches(e.eventName.toLowerCase(), term));
+        const matchesDate      = this.filteredEvents.some(e => termMatches(e.date.toLowerCase(), term));
         if (matchesPerformer) types.add(this.t.modePerformer);
         if (matchesEventName) types.add(this.t.modeEvent);
         if (matchesVenue)     types.add(this.t.modeVenue);
-        if (!matchesPerformer && !matchesVenue && !matchesEventName) types.add(this.t.modeEvent);
+        if (matchesDate && !isYear) types.add(this.t.modeDate);
+        if (!isYear && !matchesPerformer && !matchesVenue && !matchesEventName && !matchesDate) types.add(this.t.modeEvent);
       }
       if (!types.size) return null;
       const arr = [...types];
@@ -363,10 +371,36 @@ document.addEventListener('alpine:init', () => {
         : arr.slice(0, -1).join(', ') + this.t.modeJoin + arr[arr.length - 1];
     },
 
-    // True when searchModeLabel spans more than one category (e.g. "performer names and venues").
-    // Used to show a warning note below the search area.
+    // True when searchModeLabel spans more than one category AND those categories
+    // yield genuinely different match sets. Suppressed when one category's matches
+    // are a subset of another's (e.g. "2006" matching year + "Ankkarock 2006" event
+    // name — same concerts either way, no real ambiguity).
     get searchModeMixed() {
-      return !!(this.searchModeLabel && this.searchModeLabel.includes(this.t.modeJoin));
+      if (!this.searchModeLabel || !this.searchModeLabel.includes(this.t.modeJoin)) return false;
+      const terms = parseQuery(this.query);
+      const events = this.filteredEvents;
+      // Build one Set<event> per category across all terms.
+      const catSets = {};
+      const add = (cat, e) => { (catSets[cat] ??= new Set()).add(e); };
+      for (const term of terms) {
+        const isYear = !term.exact && /^\d{4}$/.test(term.text);
+        if (isYear)
+          events.forEach(e => { if (e.date.includes(term.text)) add('year', e); });
+        events.forEach(e => {
+          if (e.performers.some(p => termMatches(p.name.toLowerCase(), term))) add('performer', e);
+          if (termMatches(e.venue.toLowerCase(), term))                         add('venue', e);
+          if (e.eventName && termMatches(e.eventName.toLowerCase(), term))      add('event', e);
+          if (!isYear && termMatches(e.date.toLowerCase(), term))               add('date', e);
+        });
+      }
+      const sets = Object.values(catSets);
+      if (sets.length <= 1) return false;
+      // If every pair is nested (one ⊆ other), all categories resolve the same events.
+      const isSubset = (a, b) => [...a].every(e => b.has(e));
+      for (let i = 0; i < sets.length; i++)
+        for (let j = i + 1; j < sets.length; j++)
+          if (!isSubset(sets[i], sets[j]) && !isSubset(sets[j], sets[i])) return true;
+      return false;
     },
 
     // Compute highlight-suppression flags, cached outside Alpine's reactive system.
