@@ -41,9 +41,13 @@ def parse_line(raw):
     event_raw = m.group('event')
     event_name = event_raw.removesuffix(': ').strip() if event_raw else None
     performers_str = m.group('performers')
-    venue = m.group('venue').strip()
-    count_raw = m.group('count')
-    comment = count_raw.strip('()').strip() if count_raw else None
+    # Extract trailing (comment) from venue, e.g. "Tavastia (2)" → venue="Tavastia", comment="2".
+    # Post-processing mirrors the JS parser (parser.js), because the main regex's venue
+    # character class includes parentheses, so the count group never captures.
+    raw_venue = m.group('venue').strip()
+    loc_match = re.fullmatch(r'(.*\S)\s*\(([^)]+)\)', raw_venue)
+    venue = loc_match.group(1).strip() if loc_match else raw_venue
+    comment = loc_match.group(2) if loc_match else None
     type_str = m.group('type').strip() if m.group('type') else None
     type_ = 'MC' if type_str == '[MC]' else ('C' if type_str == '[C]' else None)
 
@@ -106,61 +110,86 @@ def parse_events(text):
 
 # ---- Stats ----
 
-args_parser = argparse.ArgumentParser(description="Gigcount")
-args_parser.add_argument("events_file", type=str, help="path to event text file")
-args = args_parser.parse_args()
+def compute_stats(events):
+    """Compute year, total, and performer stats from a list of event dicts.
 
-with open(args.events_file) as f:
-    events = parse_events(f.read())
+    Returns a tuple: (year_stats, total_stats, perf_stats)
+      year_stats:  {year_str: {"gigs": int, "minigigs": int, "other": int}}
+      total_stats: {"gigs": int, "minigigs": int, "other": int}
+      perf_stats:  {name: {"gigs": int, "minigigs": int}}
+    """
+    year_stats = {}
+    total_stats = {"gigs": 0, "minigigs": 0, "other": 0}
+    perf_stats = {}
 
-year_stats = {}
-total_stats = {"gigs": 0, "minigigs": 0, "other": 0}
-perf_stats = {}
+    for event in events:
+        year = str(event['year'])
+        is_gig = event['type'] == 'C'
+        is_minigig = event['type'] == 'MC'
+        is_other = event['type'] is None
 
-for event in events:
-    year = str(event['year'])
-    is_gig = event['type'] == 'C'
-    is_minigig = event['type'] == 'MC'
-    is_other = event['type'] is None
+        if year not in year_stats:
+            year_stats[year] = {"gigs": 0, "minigigs": 0, "other": 0}
+        if is_gig:
+            year_stats[year]["gigs"] += 1
+            total_stats["gigs"] += 1
+        if is_minigig:
+            year_stats[year]["minigigs"] += 1
+            total_stats["minigigs"] += 1
+        if is_other:
+            year_stats[year]["other"] += 1
+            total_stats["other"] += 1
 
-    if year not in year_stats:
-        year_stats[year] = {"gigs": 0, "minigigs": 0, "other": 0}
-    if is_gig:
-        year_stats[year]["gigs"] += 1
-        total_stats["gigs"] += 1
-    if is_minigig:
-        year_stats[year]["minigigs"] += 1
-        total_stats["minigigs"] += 1
-    if is_other:
-        year_stats[year]["other"] += 1
-        total_stats["other"] += 1
+        for p in event['performers']:
+            name = p['name']
+            if name not in perf_stats:
+                perf_stats[name] = {"gigs": 0, "minigigs": 0}
+            if p['type'] == 'C':
+                perf_stats[name]["gigs"] += 1
+            elif p['type'] == 'MC':
+                perf_stats[name]["minigigs"] += 1
 
-    for p in event['performers']:
-        name = p['name']
-        if name not in perf_stats:
-            perf_stats[name] = {"gigs": 0, "minigigs": 0}
-        if p['type'] == 'C':
-            perf_stats[name]["gigs"] += 1
-        elif p['type'] == 'MC':
-            perf_stats[name]["minigigs"] += 1
+    return year_stats, total_stats, perf_stats
 
 
 # ---- Output ----
 
-for key, value in sorted(perf_stats.items(), key=lambda x: (-1 * (x[1]["gigs"] * 100 + x[1]["minigigs"]), x[0])):
-    perf_gigcount = perf_stats[key]["gigs"]
-    perf_minigigcount = perf_stats[key]["minigigs"]
-    counts = f"{perf_gigcount} {'('+str(perf_minigigcount)+')' if perf_minigigcount > 0 else ''}"
-    print(f"{counts:8} {key}")
+def format_output(year_stats, total_stats, perf_stats):
+    """Format stats as the CLI output string (without the Generated timestamp)."""
+    lines = []
 
-for year in sorted(year_stats):
-    gigcount = year_stats[year]["gigs"]
-    minigigcount = year_stats[year]["minigigs"]
-    print(f"{year}: {gigcount}{' ('+str(minigigcount)+')' if minigigcount else ''}")
+    for key, value in sorted(perf_stats.items(), key=lambda x: (-1 * (x[1]["gigs"] * 100 + x[1]["minigigs"]), x[0])):
+        perf_gigcount = perf_stats[key]["gigs"]
+        perf_minigigcount = perf_stats[key]["minigigs"]
+        counts = f"{perf_gigcount} {'('+str(perf_minigigcount)+')' if perf_minigigcount > 0 else ''}"
+        lines.append(f"{counts:8} {key}")
 
-totalgigs = total_stats["gigs"]
-totalminigigs = total_stats["minigigs"]
-print(f"Total: {totalgigs} ({totalminigigs})")
+    for year in sorted(year_stats):
+        gigcount = year_stats[year]["gigs"]
+        minigigcount = year_stats[year]["minigigs"]
+        lines.append(f"{year}: {gigcount}{' ('+str(minigigcount)+')' if minigigcount else ''}")
 
-ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M %Z")
-print(f"Generated: {ts}")
+    totalgigs = total_stats["gigs"]
+    totalminigigs = total_stats["minigigs"]
+    lines.append(f"Total: {totalgigs} ({totalminigigs})")
+
+    return "\n".join(lines)
+
+
+def main():
+    args_parser = argparse.ArgumentParser(description="Gigcount")
+    args_parser.add_argument("events_file", type=str, help="path to event text file")
+    args = args_parser.parse_args()
+
+    with open(args.events_file) as f:
+        events = parse_events(f.read())
+
+    year_stats, total_stats, perf_stats = compute_stats(events)
+    print(format_output(year_stats, total_stats, perf_stats))
+
+    ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M %Z")
+    print(f"Generated: {ts}")
+
+
+if __name__ == '__main__':
+    main()
