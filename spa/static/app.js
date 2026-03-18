@@ -1,157 +1,12 @@
-// ---- Parser ----
-// Keep in sync with gigcount.py
-
-// Matches a full event line. Permissive about text content to support Unicode.
-// Groups: (1) full date, (2) year, (3) description (performers or event desc),
-//         (4) venue, (5) " [C]" or " [MC]" (optional).
-// Venue explicitly excludes "[" so it can't accidentally consume the type tag.
-const LINE_RE = /^([\d?]{1,3}\.[\d?]{1,2}\.(\d{4}))\s+(.+); ([^\[]+)( \[M?C\])?$/;
-
-// Split performers on comma, but NOT inside parentheses.
-// e.g. "Fish (with band), Opeth" → ["Fish (with band)", "Opeth"]
-// The negative lookahead (?![^()]*\)) means: don't split if inside parentheses.
-const COMMA_SPLIT_RE = /,\s+(?![^()]*\))/;
-
-// Split joint-billed performers on +, but NOT inside parentheses.
-// "A + B" means they performed together — shown as one listing entry, counted separately in stats.
-const JOINT_SPLIT_RE = /\+\s+(?![^()]*\))/;
-
-// Parse a search query into term tokens, respecting double-quoted phrases.
-// Returns an array of { text, exact, re }:
-//   exact: true  → quoted term, matched as a whole word/phrase (word-boundary regex)
-//   exact: false → plain word, matched as a case-insensitive substring
-// Regex uses lookbehind/lookahead instead of \b so non-ASCII letters (ä, ö, …) work.
-function parseQuery(query) {
-  const terms = [];
-  const re = /"([^"]+)"|(\S+)/g;
-  let m;
-  while ((m = re.exec(query)) !== null) {
-    const exact = m[1] !== undefined;
-    // Strip stray quotes from plain tokens (e.g. mid-typing "abc or abc") so they
-    // fall back to plain substring matching rather than silently matching nothing.
-    const text = (exact ? m[1] : m[2].replace(/^"|"$/g, '')).toLowerCase();
-    if (!text) continue;
-    const regex = exact ? (() => {
-      const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const alpha = '[a-zA-Z0-9\u00C0-\u024F]';
-      // Only assert a boundary on sides where the term itself starts/ends with
-      // an alphanumeric character. A leading/trailing dot (e.g. "1.8.") is already
-      // a natural separator, so no lookahead/lookbehind is needed on that side.
-      const pre  = /^[a-zA-Z0-9\u00C0-\u024F]/.test(text) ? `(?<!${alpha})` : ''; // lookbehind only if term starts with alphanum
-      const post = /[a-zA-Z0-9\u00C0-\u024F]$/.test(text) ? `(?!${alpha})`  : ''; // lookahead only if term ends with alphanum
-      return new RegExp(pre + escaped + post, 'i');
-    })() : null;
-    terms.push({ text, exact, regex });
-  }
-  return terms;
-}
-
-// Returns true if haystack (lowercase) contains the given parsed term.
-function termMatches(haystack, term) {
-  return term.exact ? term.regex.test(haystack) : haystack.includes(term.text);
-}
+// ---- Alpine component ----
+// Parser (parseLine, parseEvents, etc.) and stats helpers (filterEvents, computeVenueStats, etc.)
+// live in parser.js and stats.js, loaded as <script> tags before this file.
 
 // Cache for highlight-suppression flags, keyed by query + showMinis.
 // Lives outside Alpine's reactive proxy because Alpine getters re-run on every
 // access — performerMatchesQuery/venueMatchesQuery are called per item in the
 // x-for loop, so without caching the suppression check would be O(n²).
-const _hlCache = { key: null, performer: false, venue: false };
-
-// Convert "D.M.YYYY" to a numeric sort key (YYYYMMDD). '?' treated as 0.
-function dateSortKey(dateStr) {
-  const [d, m, y] = dateStr.split('.').map(p => parseInt(p) || 0);
-  return y * 10000 + m * 100 + d;
-}
-
-function parseEvents(text) {
-  const events = [];
-  for (const raw of text.split('\n')) {
-    const line = raw.trim();
-    if (!line) continue;
-    const event = parseLine(line);
-    if (event) {
-      events.push(event);
-    } else {
-      console.warn('Non-matched line:', line);
-    }
-  }
-  return events;
-}
-
-function parseLine(raw) {
-  const m = raw.match(LINE_RE);
-  if (!m) return null;
-
-  const date = m[1];
-  const year = parseInt(m[2]);
-  const desc = m[3];
-  const rawVenue = m[4].trim();
-  const typeStr = m[5] ? m[5].trim() : null;
-
-  // Extract trailing (comment) from venue, e.g. "Tavastia (2)" → venue="Tavastia", comment="2".
-  // Greedy first group ensures we match the *last* parenthesized group.
-  const locMatch = rawVenue.match(/^(.*\S)\s*\(([^)]+)\)$/);
-  const venue = locMatch ? locMatch[1].trim() : rawVenue;
-  const comment  = locMatch ? locMatch[2] : null;
-  const type = typeStr ? (typeStr.includes('MC') ? 'MC' : 'C') : null;
-
-  // Detect optional event name prefix: "Ruisrock-95: The Beautiful South, ..."
-  // If ": " appears in the description, everything before it is the event name.
-  let eventName = null;
-  let descPart = desc;
-  const colonIdx = desc.indexOf(': ');
-  if (colonIdx !== -1) {
-    eventName = desc.slice(0, colonIdx).trim();
-    descPart = desc.slice(colonIdx + 2).trim();
-  }
-
-  const performers = [];
-  if (type !== null) {
-    // Concert or mini-concert: parse individual performers from descPart.
-    // Comma separates independent performers; + separates jointly-billed performers
-    // (displayed as one entry in the listing, counted individually in stats).
-    let jointGroupId = 0;
-    for (const group of descPart.split(COMMA_SPLIT_RE)) {
-      const members = group.trim().split(JOINT_SPLIT_RE);
-      const jointGroup = members.length > 1 ? jointGroupId++ : null;
-
-      for (let p of members) {
-        p = p.trim();
-        if (!p) continue;
-
-        let perfType = type;
-        let perfName = p;
-
-        // Per-performer type override, e.g. "Opening Act [MC]" in a [C] event.
-        if (perfName.endsWith(' [C]')) {
-          perfType = 'C';
-          perfName = perfName.slice(0, -4).trim();
-        } else if (perfName.endsWith(' [MC]')) {
-          perfType = 'MC';
-          perfName = perfName.slice(0, -5).trim();
-        }
-
-        // Strip trailing parenthesized detail for stats, matching gigcount.py.
-        // "Fish (acoustic)" → name="Fish", detail="acoustic"
-        const detailMatch = perfName.match(/^(.*\S)\s*\(([^)]+)\)$/);
-        const detail = detailMatch ? detailMatch[2] : null;
-        perfName = detailMatch ? detailMatch[1].trim() : perfName;
-
-        performers.push({ name: perfName, type: perfType, detail, jointGroup });
-      }
-    }
-  } else {
-    // Non-concert event: the description is the event name, no performers.
-    eventName = eventName || descPart.trim();
-  }
-
-  const eventType = type;
-
-  return { date, year, eventName, performers, venue, comment, type: eventType, raw };
-}
-
-
-// ---- Alpine component ----
+const _hlCache = { key: null, performer: false, venue: false, event: false };
 
 // Alpine fires 'alpine:init' before it processes the DOM, giving us a chance to
 // register components. Alpine.data('app', factory) registers a component named 'app';
@@ -284,7 +139,7 @@ document.addEventListener('alpine:init', () => {
       if (col === 'year') s.yearDir = s.dir;
     },
 
-    // Format C and MC counts as "N" (when MC=0) or "N (M)".
+    // Format C and MC counts as "N" (when MC=0) or "N (+M)".
     fmtCount(c, mc) {
       return mc ? `${c} (+${mc})` : `${c}`;
     },
@@ -503,7 +358,7 @@ document.addEventListener('alpine:init', () => {
       const terms = parseQuery(this.query);
       const matched = terms.length
         ? this.events.filter(e => {
-            const haystack = [e.date, this.eventTitle(e), e.venue].join(' ').toLowerCase();
+            const haystack = [e.date, eventTitle(e), e.venue].join(' ').toLowerCase();
             return terms.every(t => termMatches(haystack, t));
           })
         : this.events;
@@ -521,85 +376,24 @@ document.addEventListener('alpine:init', () => {
     // When showMinis is false, excludes MC-type events.
     // Search requires ALL words to match somewhere in the event (date + title + venue).
     get filteredEvents() {
-      const terms = parseQuery(this.query);
-      const matched = terms.length
-        ? this.events.filter(e => {
-            const haystack = [e.date, this.eventTitle(e), e.venue].join(' ').toLowerCase();
-            return terms.every(t => termMatches(haystack, t));
-          })
-        : this.events;
-      const visible = this.showMinis
-        ? matched
-        : matched.filter(e => e.type !== 'MC');
-      // this.events is sorted newest-first; reverse a shallow copy for oldest-first.
-      return this.sortAsc ? [...visible].reverse() : visible;
+      return filterEvents(this.events, this.query, this.showMinis, this.sortAsc);
     },
 
     // Aggregate per-venue counts from the filtered event list.
     get venueStats() {
-      const map = new Map();
-      for (const event of this.filteredEvents) {
-        const loc = event.venue;
-        if (!map.has(loc)) map.set(loc, { venue: loc, c: 0, mc: 0 });
-        const entry = map.get(loc);
-        if (event.type === 'C') entry.c++;
-        else if (event.type === 'MC') entry.mc++;
-      }
-      const { col } = this.venueSort;
-      return [...map.values()].sort((a, b) => {
-        if (col === 'venue') return a.venue.localeCompare(b.venue); // always asc
-        const cmp = (a.c - b.c) || (a.mc - b.mc);
-        return cmp !== 0 ? -cmp : a.venue.localeCompare(b.venue); // count desc, tiebreak asc
-      });
+      return computeVenueStats(this.filteredEvents, this.venueSort);
     },
 
     // Aggregate per-year counts from the filtered event list.
     get yearStats() {
-      const map = new Map();
-      for (const event of this.filteredEvents) {
-        if (!map.has(event.year)) map.set(event.year, { year: event.year, c: 0, mc: 0 });
-        const entry = map.get(event.year);
-        if (event.type === 'C') entry.c++;
-        else if (event.type === 'MC') entry.mc++;
-      }
-      const { col, dir, yearDir } = this.yearSort;
-      return [...map.values()].sort((a, b) => {
-        if (col === 'year') return (a.year - b.year) * (dir === 'asc' ? 1 : -1);
-        const cmp = (a.c - b.c) || (a.mc - b.mc);
-        return cmp !== 0 ? -cmp : (a.year - b.year) * (yearDir === 'asc' ? 1 : -1); // count desc, tiebreak uses remembered year dir
-      });
+      return computeYearStats(this.filteredEvents, this.yearSort);
     },
 
     // Aggregate per-performer counts from the filtered event list.
     // If a search word matches performer names, only those performers are counted.
     // If the event matched on venue/date (no performers match), all are counted.
     get performerStats() {
-      const terms = parseQuery(this.query);
-      const map = new Map();
-
-      for (const event of this.filteredEvents) {
-        // Which performers in this event match at least one search term?
-        const matched = terms.length
-          ? event.performers.filter(p => terms.some(t => termMatches(p.name.toLowerCase(), t)))
-          : event.performers;
-        // If none matched by name, the event matched on another field — include all.
-        const toCount = matched.length ? matched : event.performers;
-
-        for (const p of toCount) {
-          if (!this.showMinis && p.type === 'MC') continue;
-          if (!map.has(p.name)) map.set(p.name, { name: p.name, c: 0, mc: 0 });
-          const entry = map.get(p.name);
-          if (p.type === 'C') entry.c++;
-          else if (p.type === 'MC') entry.mc++;
-        }
-      }
-
-      const { col } = this.performerSort;
-      return [...map.values()].sort((a, b) => {
-        if (col === 'name') return a.name.localeCompare(b.name); // always asc
-        const cmp = (a.c - b.c) || (a.mc - b.mc);
-        return cmp !== 0 ? -cmp : a.name.localeCompare(b.name); // count desc, tiebreak asc
-      });
+      return computePerformerStats(this.filteredEvents, this.query, this.showMinis, this.performerSort);
     },
 
     // Split venue at first comma: "013 Poppodium, Tilburg" → "013 Poppodium," and " Tilburg"
@@ -611,28 +405,6 @@ document.addEventListener('alpine:init', () => {
       const i = venue.indexOf(',');
       if (i === -1) return '';
       return venue.slice(i + 1);
-    },
-
-    // Merge jointly-billed performers (jointGroup !== null) into single display entries.
-    // "A + B, C" (joint A&B, solo C) → [{ name: "A + B", ... }, { name: "C", ... }]
-    // Stats still use event.performers (the flat list) so counting is unchanged.
-    displayPerformers(event) {
-      const result = [];
-      const seenGroups = new Set();
-      for (const p of event.performers) {
-        if (p.jointGroup !== null) {
-          if (!seenGroups.has(p.jointGroup)) {
-            seenGroups.add(p.jointGroup);
-            const members = event.performers.filter(m => m.jointGroup === p.jointGroup);
-            const details = members.map(m => m.detail).filter(Boolean);
-            const detail = details.length > 0 ? details.join(' / ') : null;
-            result.push({ name: members.map(m => m.name).join(' + '), type: p.type, detail });
-          }
-        } else {
-          result.push(p);
-        }
-      }
-      return result;
     },
 
     // Mobile listing summary — line 1 (headline).
@@ -668,15 +440,6 @@ document.addEventListener('alpine:init', () => {
       const venues = this.venueStats.length;
       const years = this.yearStats.length;
       return this.t.listingSummaryDetail(perf, perfMc, performers, venues, years);
-    },
-
-    // Build a display title from the parsed event object.
-    eventTitle(event) {
-      if (event.performers.length > 0) {
-        const names = event.performers.map(p => p.name).join(', ');
-        return event.eventName ? `${event.eventName}: ${names}` : names;
-      }
-      return event.eventName || '';
     },
   }));
 });

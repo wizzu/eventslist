@@ -10,7 +10,9 @@ spa/
   events.txt              # Event data (master copy lives outside repo)
   data-source-url.txt     # Optional: external data URL (not committed; deploy-specific)
   static/
-    app.js                # Alpine component + JS parser
+    parser.js             # Pure functions: parser, parseQuery, termMatches, dateSortKey
+    stats.js              # Pure functions: filterEvents, computeVenueStats/YearStats/PerformerStats, eventTitle, displayPerformers
+    app.js                # Alpine component (UI state, getters, event handlers)
     strings.js            # Localisation strings (English + Finnish)
     style.css             # All styles
     vendor/
@@ -18,6 +20,11 @@ spa/
       alpine.min.js         # symlink -> alpine-x.y.z.min.js (stable name used in index.html)
 scripts/
   update-alpine.sh          # check and update vendored Alpine.js
+tests/
+  spa/                    # JS unit tests — run with: bun test
+    parser.test.js        # parseLine, parseEvents, dateSortKey
+    query.test.js         # parseQuery, termMatches
+    stats.test.js         # filterEvents, computeVenueStats/YearStats/PerformerStats, eventTitle, displayPerformers
 sample/
   events.txt              # Sample data, may be outdated
 gigcount.py               # CLI stats tool (standalone, predates the web app)
@@ -31,7 +38,7 @@ TODO.md                   # Task list
 **JavaScript:**
 - Derived/computed state goes in Alpine `get` getters, not imperative code
 - No direct DOM manipulation — let Alpine handle rendering
-- Parser functions are plain JS outside the Alpine component
+- Pure functions (parser, stats) live in `parser.js` and `stats.js`; the Alpine component in `app.js` calls them as globals
 
 **CSS:**
 - Comment non-obvious rules (e.g. `min-height: 0` for flex scrolling, `box-sizing`, vendor prefixes)
@@ -45,6 +52,19 @@ TODO.md                   # Task list
 - To bump: increment the string value, e.g. `'v19'` → `'v20'`
 - Bump when changes are substantial enough to constitute a release
 - At the end of a session with notable changes, ask the user whether to bump the version
+
+## Running Tests
+
+```bash
+# All SPA tests
+bun test
+
+# Specific file or pattern
+bun test tests/spa/parser.test.js
+bun test tests/spa/stats
+```
+
+Tests live in `tests/spa/` and cover the pure JS functions in `parser.js` and `stats.js`. They have no browser dependency and run entirely in Bun.
 
 ## Browser Caching
 
