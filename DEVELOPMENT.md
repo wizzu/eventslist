@@ -2,6 +2,13 @@
 
 Practical reference for working on this project.
 
+## Prerequisites
+
+- **Python 3** — for `gigcount.py` and the Python tests
+- **Bun** — for the JS unit tests (`bun test`) and the cross-compat test driver; install from [bun.sh](https://bun.sh)
+
+The web app itself has no build step and no runtime dependencies beyond a static file server.
+
 ## File Structure
 
 ```
@@ -25,6 +32,11 @@ tests/
     parser.test.js        # parseLine, parseEvents, dateSortKey
     query.test.js         # parseQuery, termMatches
     stats.test.js         # filterEvents, computeVenueStats/YearStats/PerformerStats, eventTitle, displayPerformers
+  cli/                    # Python unit tests for gigcount.py — run with: python3 -m unittest tests.cli.test_gigcount
+    test_gigcount.py      # parse_line, parse_events, compute_stats, format_output (30 tests)
+  compat/                 # Cross-compat tests: gigcount.py vs JS parser/stats — run with: python3 -m unittest tests.compat.test_compat
+    test_compat.py        # compares performer counts, year counts, totals (requires spa/events.txt and Bun)
+    gigcount_js_driver.js # Bun helper: runs JS parser/stats and outputs gigcount.py-compatible format
 sample/
   events.txt              # Sample data, may be outdated
 gigcount.py               # CLI stats tool (standalone, predates the web app)
@@ -56,16 +68,21 @@ TODO.md                   # Task list
 
 ## Running Tests
 
+**1. SPA / JS tests** — pure functions in `parser.js` and `stats.js`; no browser dependency:
 ```bash
-# All SPA tests
 bun test
-
-# Specific file or pattern
-bun test tests/spa/parser.test.js
-bun test tests/spa/stats
 ```
 
-Tests live in `tests/spa/` and cover the pure JS functions in `parser.js` and `stats.js`. They have no browser dependency and run entirely in Bun.
+**2. CLI / Python tests** — unit tests for `gigcount.py` pure functions:
+```bash
+python3 -m unittest tests.cli.test_gigcount
+```
+
+**3. Cross-compat tests** — verify `gigcount.py` and the JS parser/stats produce identical stats; requires `spa/events.txt` and Bun:
+```bash
+python3 -m unittest tests.compat.test_compat
+```
+Skipped automatically if `spa/events.txt` is absent.
 
 ## Browser Caching
 
