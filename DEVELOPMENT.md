@@ -52,6 +52,7 @@ TODO.md                   # Task list
 - To bump: increment the string value, e.g. `'v19'` → `'v20'`
 - Bump when changes are substantial enough to constitute a release
 - At the end of a session with notable changes, ask the user whether to bump the version
+- Commit messages should include the version tag (e.g. "fix search bug (v26)") **only** when `index.html` was actually edited to bump it — if the version didn't change, leave the tag out
 
 ## Running Tests
 
