@@ -61,7 +61,7 @@
 - [x] Mobile toolbar: retry right-aligning the mini-toggle checkbox so it shares the same right edge as the sort button. *(resolved differently: checkbox moved inline with search input on mobile, to the right of the search box — better placement than toolbar right-alignment)*
 - [ ] Stats count column alignment — the summary block (dl) right-aligns its count column, but the stats tables (by year, by location, performers) have a fixed-width count column where numbers are left-aligned within it. These should match visually. Low priority, cosmetic only.
 - [x] Allow configuring the events data URL — via `spa/data-source-url.txt` (not committed; deploy-specific). If present and non-empty, load data from that URL and stop (error banner on failure). If absent, fall through to `events.txt` → `events-sample.txt` → no-data banner.
-- [ ] **Verify data-source-url.txt feature end-to-end** — cannot be tested locally; requires the following prerequisites on the data-source server first:
+- [x] **Verify data-source-url.txt feature end-to-end** — cannot be tested locally; requires the following prerequisites on the data-source server first:
   - HTTPS enabled on the data host (HTTP fetch from an HTTPS-hosted app is blocked by browsers as mixed content)
   - `Access-Control-Allow-Origin: *` response header on the events data file (browser blocks cross-origin fetches without it)
   - Once both are in place: create `spa/data-source-url.txt` containing `https://<host>/events.txt`, deploy, and confirm data loads correctly with no banners shown. Also confirm the error banner appears if the URL is intentionally wrong.
