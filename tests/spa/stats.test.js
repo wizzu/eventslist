@@ -191,6 +191,42 @@ describe('filterEvents', () => {
     expect(result).toHaveLength(1);
     expect(result[0].eventName).toBe('Ruisrock');
   });
+
+  // ---- "mini" keyword special-casing ----
+
+  const miniEvents = [
+    mkEvent({ venue: 'Tavastia', type: 'C',  performers: [mkPerf('Opeth', 'C')] }),
+    mkEvent({ venue: 'Gloria',   type: 'MC', performers: [mkPerf('Opener', 'MC')] }),
+    // C-typed event with one MC performer (mixed)
+    mkEvent({ venue: 'Club 007', type: 'C',  performers: [mkPerf('Main', 'C'), mkPerf('Support', 'MC')] }),
+  ];
+
+  it('"mini" keyword with showMinis=true returns MC-typed and mixed events', () => {
+    const result = filterEvents(miniEvents, 'mini', true, false);
+    expect(result).toHaveLength(2);
+    const venues = result.map(e => e.venue);
+    expect(venues).toContain('Gloria');
+    expect(venues).toContain('Club 007');
+    expect(venues).not.toContain('Tavastia');
+  });
+
+  it('"mini" keyword with showMinis=false falls through to text search (no MC results)', () => {
+    // "mini" as text doesn't appear in any haystack, so result is empty
+    const result = filterEvents(miniEvents, 'mini', false, false);
+    expect(result).toHaveLength(0);
+  });
+
+  it('"mini" combined with another term narrows to MC events matching that term', () => {
+    const result = filterEvents(miniEvents, 'gloria mini', true, false);
+    expect(result).toHaveLength(1);
+    expect(result[0].venue).toBe('Gloria');
+  });
+
+  it('quoted "mini" is not treated as keyword, falls through to text search', () => {
+    // Exact-quoted term — the keyword special-case only applies to non-exact tokens
+    const result = filterEvents(miniEvents, '"mini"', true, false);
+    expect(result).toHaveLength(0); // "mini" as exact text matches nothing
+  });
 });
 
 // ---- computeVenueStats ----

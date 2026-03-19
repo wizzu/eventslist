@@ -35,14 +35,23 @@ function displayPerformers(event) {
 
 // Returns events matching query, filtered by showMinis, in the requested sort order.
 // events is assumed pre-sorted newest-first; sortAsc=true reverses a shallow copy.
+// Special case: when showMinis is true, the bare word "mini" (non-exact) filters to
+// events that have at least one MC-typed performer or are MC-typed at event level,
+// and is stripped from the regular text search so it doesn't match venue/name text.
 function filterEvents(events, query, showMinis, sortAsc) {
   const terms = parseQuery(query);
-  const matched = terms.length
-    ? events.filter(e => {
-        const haystack = [e.date, eventTitle(e), e.venue].join(' ').toLowerCase();
-        return terms.every(t => termMatches(haystack, t));
-      })
+  const miniTerm = showMinis ? terms.find(t => !t.exact && t.text === 'mini') : null;
+  const regularTerms = miniTerm ? terms.filter(t => t !== miniTerm) : terms;
+
+  let matched = miniTerm
+    ? events.filter(e => e.type === 'MC' || e.performers.some(p => p.type === 'MC'))
     : events;
+  if (regularTerms.length) {
+    matched = matched.filter(e => {
+      const haystack = [e.date, eventTitle(e), e.venue].join(' ').toLowerCase();
+      return regularTerms.every(t => termMatches(haystack, t));
+    });
+  }
   const visible = showMinis
     ? matched
     : matched.filter(e => e.type !== 'MC');

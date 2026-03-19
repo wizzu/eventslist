@@ -205,6 +205,8 @@ document.addEventListener('alpine:init', () => {
       const types = new Set();
       for (const term of terms) {
         const isYear = !term.exact && /^\d{4}$/.test(term.text);
+        // "mini" keyword (non-exact, showMinis on): its own category, no further checks.
+        if (!term.exact && term.text === 'mini' && this.showMinis) { types.add(this.t.modeMini); continue; }
         if (isYear) types.add(this.t.modeYear);
         // A term can match multiple categories (e.g. "awa" matches performer AWA
         // and venue Awalon), so check all independently rather than else-if.
@@ -238,6 +240,10 @@ document.addEventListener('alpine:init', () => {
       const catSets = {};
       const add = (cat, e) => { (catSets[cat] ??= new Set()).add(e); };
       for (const term of terms) {
+        if (!term.exact && term.text === 'mini' && this.showMinis) {
+          events.forEach(e => { if (e.type === 'MC' || e.performers.some(p => p.type === 'MC')) add('mini', e); });
+          continue;
+        }
         const isYear = !term.exact && /^\d{4}$/.test(term.text);
         if (isYear)
           events.forEach(e => { if (e.date.includes(term.text)) add('year', e); });
@@ -278,6 +284,7 @@ document.addEventListener('alpine:init', () => {
       const cats = new Set();
       for (const term of terms) {
         if (!term.exact && /^\d{4}$/.test(term.text)) { cats.add('year'); continue; }
+        if (!term.exact && term.text === 'mini' && this.showMinis) { cats.add('mini'); continue; }
         const mp  = events.some(e => e.performers.some(p => termMatches(p.name.toLowerCase(), term)));
         const mv  = events.some(e => termMatches(e.venue.toLowerCase(), term));
         const men = events.some(e => e.eventName && termMatches(e.eventName.toLowerCase(), term));
@@ -354,14 +361,10 @@ document.addEventListener('alpine:init', () => {
 
     // Count of MC-type events in the current query results, independent of showMinis.
     // Used to drive the mini-concerts toggle state and its count label.
+    // Always evaluates with showMinis=true so the "mini" keyword is active even when
+    // the toggle is off, giving an accurate count of how many minis would match.
     get filteredMiniCounts() {
-      const terms = parseQuery(this.query);
-      const matched = terms.length
-        ? this.events.filter(e => {
-            const haystack = [e.date, eventTitle(e), e.venue].join(' ').toLowerCase();
-            return terms.every(t => termMatches(haystack, t));
-          })
-        : this.events;
+      const matched = filterEvents(this.events, this.query, true, false);
       const mc = matched.filter(e => e.type === 'MC').length;
       return { mc };
     },
