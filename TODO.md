@@ -1,6 +1,6 @@
 # TODO
 
-## Open — Priority
+## Active
 
 - [x] **Britannia data issue**: fixed in data — `Britannia (Kannelmäki)` → `Britannia Kannelmäki`, `Britannia (Espoontori)` → `Britannia Espoontori` (district as part of compound name, no parens); `Cafe Segeli (1), Kotka` → `Cafe Segeli, Kotka (1)` (comment moved to end per format spec).
 
@@ -38,7 +38,7 @@
 
 - [x] A lot of features have been implemented and UI has been tweaked. Right now things are more or less good in terms of features and no serious bugs. It's time to make a holistic review of the web app, evaluate and see if anything needs polishing or updating for general goals of maintainability and quality.
 
-## Open — Nice to have
+## Backlog
 
 - [x] **Unit tests for JS parser and stats** — use Bun's built-in test runner (`bun test`, no npm/config needed; Bun 1.x installed). Requires extracting pure functions out of `app.js` into two new files: `spa/static/parser.js` (LINE_RE, COMMA_SPLIT_RE, JOINT_SPLIT_RE, `parseQuery`, `termMatches`, `dateSortKey`, `parseLine`, `parseEvents`) and `spa/static/stats.js` (`eventTitle`, `displayPerformers`, `filterEvents`, `computeVenueStats`, `computeYearStats`, `computePerformerStats`). Each file ends with `if (typeof module !== 'undefined') module.exports = { ... }` so Bun can `require()` them while the browser uses them as globals. Alpine component stays in `app.js` as thin wrappers calling the extracted functions. Tests live in `tests/` at repo root (not served). Cross-file dependency: stats.js uses `parseQuery`/`termMatches` as globals; tests inject them first with `Object.assign(global, require('../spa/static/parser.js'))` before requiring stats.js. Three test files: `tests/parser.test.js` (parseLine edge cases, parseEvents), `tests/query.test.js` (parseQuery, termMatches), `tests/stats.test.js` (filterEvents, computeVenueStats/YearStats/PerformerStats).
 
@@ -67,7 +67,7 @@
   - Once both are in place: create `spa/data-source-url.txt` containing `https://<host>/events.txt`, deploy, and confirm data loads correctly with no banners shown. Also confirm the error banner appears if the URL is intentionally wrong.
 - [x] Show notice when using sample data: when the app falls back to `events-sample.txt` (because `events.txt` was not found), show a prominent notice so it's clear the data shown is not real. The notice should be invisible in normal use — ideally a banner element that exists in the HTML but is hidden by default and only shown when sample data is active. Requires adding a boolean `usingSample` state variable in `app.js` (set to `true` on the fallback fetch path) and an `x-show="usingSample"` banner element near or below the header. Minimal extra logic and markup.
 - [x] Add a test suite for gigcount.py — unit tests (tests/cli/test_gigcount.py, 30 tests) + cross-compat comparison against JS parser/stats (tests/compat/test_compat.py + gigcount_js_driver.js, 5 tests)
-- [ ] **Search keyword "mini"**: when mini-concerts are enabled (checkbox on), searching for "mini" should show only mini-concert events/performers rather than treating it as a regular text search. If mini-concerts are disabled, "mini" falls through to regular search. Special-case handling.
+- [ ] **Search keyword "mini"**: when mini-concerts are enabled (checkbox on), searching for "mini" should show only mini-concert events/performers rather than treating it as a regular text search. If mini-concerts are disabled, "mini" falls through to regular search. Combining with other search words should work as expected, e.g. "<performer> mini" or "<year> mini". Special-case handling.
 - [x] **Mobile: "Top" button overlaps footer homelink** — when scrolled all the way to the bottom, the fixed-position "Top" scroll button partially covers the `eventslist` homelink in the footer. Low priority, cosmetic only.
 - [x] **Venue text breaks mid-word on narrow screens** — e.g. "Tapiolasali, Espoon kulttuurike-" / "skus". Likely caused by `word-break: break-all` (or `overflow-wrap: anywhere`) on the venue element; fix by switching to `overflow-wrap: break-word`, which only breaks mid-word as a last resort when the whole word won't fit on any line.
 

@@ -60,6 +60,7 @@ See `DEVELOPMENT.md` for file structure, code conventions, browser caching notes
 - **Do not commit** after making changes — wait for the user to verify and explicitly approve first.
 
 ## TODO Hygiene
+- TODO.md format follows the shared convention defined in the global CLAUDE.md. Don't change the format locally without considering cross-project impact.
 - Add new tasks to `TODO.md` immediately when they come up during a session.
 - **Do not mark a task `[x]`** without verification: for UI/browser changes, ask the user to confirm it works; for non-UI changes, verify automatically (e.g. run the CLI) if possible, otherwise ask.
 - Mark completed tasks `[x]` in the same commit as the change, once verified.
