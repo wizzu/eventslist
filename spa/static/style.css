@@ -176,6 +176,7 @@ main {
   padding: 2rem;
   overflow-y: auto;
   overflow-x: hidden; /* overflow-y:auto implicitly enables overflow-x:auto; suppress it */
+  scrollbar-gutter: stable; /* reserve scrollbar space always so layout doesn't shift when it appears/disappears */
 }
 
 /* Right column: sticky stats panel. */
@@ -185,6 +186,7 @@ main {
   border-left: 1px solid #bbb;
   overflow-y: auto;
   overflow-x: hidden; /* overflow-y:auto implicitly enables overflow-x:auto; suppress it */
+  scrollbar-gutter: stable;
 }
 
 /* Search area: input + mini toggle + search mode note, grouped as a filter unit. */
@@ -425,6 +427,7 @@ main {
 .stats-table-scroll {
   max-height: 12rem;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   margin-bottom: 0.5rem;
 }
 
