@@ -837,9 +837,34 @@ main {
     font-size: 1rem;
   }
 
+  /* Collapsible section headings and the Concerts collapse button get a faint
+     border on mobile so they read as tappable targets, not just text labels.
+     The stats headings swap their top-border separator for a margin + full border. */
+  .stats-heading {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 1.5rem;
+    border: 1px solid #b8b8b8;
+    border-radius: 6px;
+    padding: 0.4rem 0.7rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #efefef;
+  }
+
+  .collapse-btn {
+    border: 1px solid #b8b8b8;
+    border-radius: 6px;
+    padding: 0.3rem 0.7rem;
+    background: #efefef;
+    flex: 1;
+    text-align: left;
+  }
+
   /* Toolbar on mobile: collapse button (left) + sort button (right). */
   .listing-toolbar {
-    gap: 0;
+    gap: 1rem;
   }
 
   /* Search row: same flex layout as desktop; stretch makes the toggle the same
