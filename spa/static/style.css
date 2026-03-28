@@ -303,17 +303,29 @@ main {
 
 /* Stats panel heading — clickable to collapse/expand its section. */
 .stats-heading {
-  margin: 0 0 0.75rem 0;
+  margin: 1.5rem 0 0.75rem 0;
   font-size: 1rem;
   color: #444;
-  padding-top: 1.5rem;
-  border-top: 1px solid #bbb;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #efefef;
   cursor: pointer;
   user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .stats-heading:hover {
+  background: #e2e2e2;
+  border-color: #999;
   color: #222;
+}
+
+/* First section sits directly below the summary — no extra top margin needed. */
+.stats-section:first-child .stats-heading {
+  margin-top: 0;
 }
 
 /* Collapse chevron inside the heading. */
@@ -322,7 +334,6 @@ main {
   color: #888;
 }
 
-/* Space between sections; the heading already has padding-top. */
 .stats-section {
   margin-bottom: 0.5rem;
 }
@@ -369,7 +380,7 @@ main {
 
 .listing-summary-concerts {
   margin: 0 0 0.15rem 0;
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: #333;
 }
@@ -837,29 +848,21 @@ main {
     font-size: 1rem;
   }
 
-  /* Collapsible section headings and the Concerts collapse button get a faint
-     border on mobile so they read as tappable targets, not just text labels.
-     The stats headings swap their top-border separator for a margin + full border. */
-  .stats-heading {
-    border-top: none;
-    padding-top: 0;
-    margin-top: 1.5rem;
-    border: 1px solid #b8b8b8;
-    border-radius: 6px;
-    padding: 0.4rem 0.7rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #efefef;
-  }
-
+  /* On mobile, slightly rounder corners and a touch-friendlier border colour
+     for both the stats headings and the Concerts collapse button. */
+  .stats-heading,
   .collapse-btn {
     border: 1px solid #b8b8b8;
     border-radius: 6px;
-    padding: 0.3rem 0.7rem;
+  }
+
+  .collapse-btn {
+    padding: 0.4rem 0.7rem;
     background: #efefef;
-    flex: 1;
-    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1; /* fill available space in the listing-toolbar flex row */
   }
 
   /* Toolbar on mobile: collapse button (left) + sort button (right). */
