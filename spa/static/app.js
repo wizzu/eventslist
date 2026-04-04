@@ -32,6 +32,7 @@ document.addEventListener('alpine:init', () => {
     usingSample: false,       // true when events.txt was not found and sample data was loaded instead
     dataError: false,         // true when data-source-url.txt exists but loading from that URL failed
     noData: false,            // true when no data file was found at all
+    dataUpdated: null,        // formatted date string from Last-Modified header, or null if unavailable
     yearSort:      { col: 'year', dir: 'desc', yearDir: 'desc' }, // yearDir remembered independently
     venueSort:     { col: 'c',    dir: 'desc' },
     performerSort: { col: 'c',    dir: 'desc' },
@@ -78,6 +79,12 @@ document.addEventListener('alpine:init', () => {
           this.usingSample = true;
         }
       }
+      // Extract Last-Modified from the response headers. This is a CORS-safelisted
+      // header so it passes through cross-origin fetches without Expose-Headers config.
+      // May still be null if the server omits it or the browser blocks it unexpectedly.
+      const lm = response.headers.get('Last-Modified');
+      this.dataUpdated = lm ? new Date(lm).toLocaleDateString() : null;
+
       const text = await response.text();
       const concerts = parseEvents(text).filter(e => e.type !== null);
       this.events = concerts.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date)) // newest first

@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="static/favicon.ico">
   <script>
     /* Version string displayed in the header. Increment on each deploy: v1, v2, v3, ... */
-    window.__appVersion = 'v27';
+    window.__appVersion = 'v28';
   </script>
   <link rel="stylesheet" href="static/style.css">
   <script src="static/parser.js" defer></script>
@@ -24,14 +24,17 @@
       <span class="header-counts" x-text="counts"></span>
       <span class="header-mini-counts" x-show="miniCountsStr" x-text="miniCountsStr"></span>
       <span class="header-legend" x-text="t.miniDef"></span>
-      <span class="header-version-mobile" x-show="version" x-text="version"></span>
+      <span class="header-meta-mobile" x-show="version || dataUpdated"><span x-show="dataUpdated" x-text="dataUpdated"></span><span x-show="version" x-text="version"></span></span>
     </div>
     <div class="header-end">
       <div class="lang-switcher">
         <button @click="lang = 'en'" :class="lang === 'en' && 'lang-active'">EN</button>
         <button @click="lang = 'fi'" :class="lang === 'fi' && 'lang-active'">FI</button>
       </div>
-      <span class="home-link"><span class="home-link-text">Generated with <a href="https://github.com/wizzu/eventslist" target="_blank" rel="noopener">eventslist</a> · </span><span x-show="version" x-text="version"></span></span>
+      <div class="header-meta-desktop">
+        <span class="header-data-updated" x-show="dataUpdated"><span class="header-data-updated-prefix">Data </span><span x-text="dataUpdated"></span></span>
+        <span class="home-link"><span class="home-link-text">Generated with <a href="https://github.com/wizzu/eventslist" target="_blank" rel="noopener">eventslist</a> · </span><span x-show="version" x-text="version"></span></span>
+      </div>
     </div>
   </header>
   <div class="sample-notice" x-show="usingSample" x-text="t.sampleNotice"></div>

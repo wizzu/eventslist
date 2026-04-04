@@ -88,9 +88,9 @@ header h1 {
   font-size: 0.85rem;
 }
 
-/* Shown only on mobile: version tag at the bottom-right of the header info row.
-   Hidden on desktop (desktop uses .home-link in .header-end instead). */
-.header-version-mobile {
+/* Shown only on mobile: data date + version at the bottom-right of the header info row.
+   Hidden on desktop (desktop uses .header-meta-desktop in .header-end instead). */
+.header-meta-mobile {
   display: none;
 }
 
@@ -144,7 +144,11 @@ header h1 {
   font-weight: bold;
 }
 
-.home-link {
+.header-meta-desktop {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.4;
   font-size: 0.7rem;
   color: #666;
 }
@@ -808,17 +812,26 @@ main {
     position: relative; /* anchor for .header-version-mobile absolute positioning */
   }
 
-  /* Hide home-link entirely on mobile; version tag moves to header-info row. */
+  /* Hide desktop-only .header-meta-desktop; meta (date + version) moves to .header-meta-mobile. */
   .home-link {
     display: none;
   }
-  .header-version-mobile {
-    display: block;
+  .header-meta-desktop {
+    display: none;
+  }
+  .header-data-updated-prefix {
+    display: none;
+  }
+  .header-meta-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     position: absolute;
     right: 0;
     bottom: 0;
     font-size: 0.7rem;
     color: #666;
+    line-height: 1.4;
   }
 
 
