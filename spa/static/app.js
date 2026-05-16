@@ -86,9 +86,11 @@ document.addEventListener('alpine:init', () => {
       this.dataUpdated = lm ? new Date(lm).toLocaleDateString() : null;
 
       const text = await response.text();
-      const concerts = parseEvents(text).filter(e => e.type !== null);
-      this.events = concerts.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date)) // newest first
-        .map((e, i) => ({ ...e, id: i })); // stable integer ID for x-for keying
+      const concerts = parseEvents(text).filter(e => e.type !== null)
+        .map((e, i) => ({ ...e, fileIndex: i }));
+      this.events = concerts.sort((a, b) =>
+        dateSortKey(b.date) - dateSortKey(a.date) || b.fileIndex - a.fileIndex // newest first; fileIndex breaks date ties
+      ).map((e, i) => ({ ...e, id: i })); // stable integer ID for x-for keying
       this.status = this.t.loaded(this.events.length);
 
       // When the window grows past the mobile breakpoint, uncollapse the listing.
